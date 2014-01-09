@@ -7,10 +7,7 @@ requirejs.config({
 });
 
 require(
-[ // deps
-	'libs/kage',
-	'config/application'
-],
+['libs/kage'],
 // main application function (starter)
 function(kage) {
 	

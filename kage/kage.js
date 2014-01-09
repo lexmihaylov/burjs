@@ -25,7 +25,7 @@
 * THE SOFTWARE.
 */
 
-define(['libs/jquery'], function () { 
+define(['libs/jquery', 'config/application'], function () { 
 
 
 	/**
