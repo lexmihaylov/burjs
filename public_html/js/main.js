@@ -1,15 +1,20 @@
 requirejs.config({
-    shim: {
-        jquery: {
-            exports: 'jQuery'
-        }
+    baseUrl: 'js/',
+    paths: {
+        sections: 'app/sections',
+        models: 'app/models',
+        helpers: 'app/helpers'
     }
 });
 
 require(
-['libs/kage'],
+[
+    'libs/kage'
+],
 // main application function (starter)
-function(kage) {
+function(
+    kage
+) {
 	
     // TODO: your starter code here
 	
