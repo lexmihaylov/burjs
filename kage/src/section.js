@@ -7,8 +7,22 @@ kage.Section = kage.Class({
     extends: kage.Component,
     constructor: function(tag) {
         this._super(tag);
+        
+        var _this = this;
+        this.on('domInserted', function(event) {
+            event.stopPropagation();
+            if(typeof(_this.on_init) === 'function') {
+                _this.on_init(event);
+            }
+        });
     }
 });
+
+/**
+ * This method is executed when the element has been inserted in the dom
+ * @type {function}
+ */
+kage.Section.prototype.on_init;
 
 /**
  * Loads view in the section object's context
