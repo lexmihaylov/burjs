@@ -1,8 +1,8 @@
-var Applicaton = {
-    css_path: 'styles/',
-    image_path: 'styles/images',
-    resource_path: 'resources/',
-    config: function() {
-        return requirejs.s.contexts._.config;
-    }
+var ApplicationConfig = {
+    base_url: 'js/',
+    url_args: 't=' + Date.now(),
+    
+    css_path: 'css/',
+    image_path: 'css/images',
+    resource_path: 'resources/'
 };

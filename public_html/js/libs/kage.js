@@ -25,7 +25,7 @@
 * THE SOFTWARE.
 */
 
-define(['libs/jquery', 'config/application'], function () { 
+define(['libs/jquery'], function () { 
 
 
 /**
@@ -92,6 +92,10 @@ var kage = {
      * @return {Object}
      */
     init: function() {
+        if(!window.ApplicationConfig) {
+            throw new Error('ApplicationConfig object is required.');
+        }
+        
         if (!window.KAGE_GLOBALS) {
             window.KAGE_GLOBALS = {
                 window: new jQuery(window),
@@ -104,7 +108,7 @@ var kage = {
         kage.window = window.KAGE_GLOBALS.window;
         kage.dom = window.KAGE_GLOBALS.dom;
 
-        kage.Config.app_dir = Application.config().baseUrl + 'app/';
+        kage.Config.app_dir = ApplicationConfig.base_url + 'app/';
         kage._set_config();
 
         return this;
@@ -1010,11 +1014,16 @@ kage.View.prototype.render = function(variables) {
 kage.View.prototype._compile_template_resource = function() {
     var resource = null;
     var no_cache = false;
-
+    
+    var urlArgs = '';
+    if (ApplicationConfig && ApplicationConfig.url_args) {
+        urlArgs = '?' + ApplicationConfig.url_args;
+    }
+    
     if (this._opt.view) {
-        resource = kage.Config.template_dir + this._opt.view + '.html';
+        resource = kage.Config.template_dir + this._opt.view + '.html' + urlArgs;
     } else if (this._opt.url) {
-        resource = this._opt.url;
+        resource = this._opt.url + urlArgs;
     } else if (this._opt.string) {
         resource = this._opt.string;
         no_cache = true; // do not cache compilation output
@@ -1026,7 +1035,7 @@ kage.View.prototype._compile_template_resource = function() {
     if (no_cache) {
         template_source = kage.View.Compile(resource);
     } else {
-        template_source = this._load_resource(resource)
+        template_source = this._load_resource(resource);
     }
 
 

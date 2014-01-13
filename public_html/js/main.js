@@ -1,5 +1,6 @@
 requirejs.config({
-    baseUrl: 'js/',
+    baseUrl: ApplicationConfig.base_url,
+    urlArgs: ApplicationConfig.url_args, // no cache
     paths: {
         sections: 'app/sections',
         models: 'app/models',

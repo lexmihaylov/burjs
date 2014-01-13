@@ -62,6 +62,10 @@ var kage = {
      * @return {Object}
      */
     init: function() {
+        if(!window.ApplicationConfig) {
+            throw new Error('ApplicationConfig object is required.');
+        }
+        
         if (!window.KAGE_GLOBALS) {
             window.KAGE_GLOBALS = {
                 window: new jQuery(window),
@@ -74,7 +78,7 @@ var kage = {
         kage.window = window.KAGE_GLOBALS.window;
         kage.dom = window.KAGE_GLOBALS.dom;
 
-        kage.Config.app_dir = Application.config().baseUrl + 'app/';
+        kage.Config.app_dir = ApplicationConfig.base_url + 'app/';
         kage._set_config();
 
         return this;
