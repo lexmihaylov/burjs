@@ -58,41 +58,42 @@ kage.Class = function(definition) {
         return class_definition;
     };
 
-    /**
-     * Provides easy access to the parent class' prototype
-     * @method _super
-     * @return {mixed} result of the execution if there is any
-     */
-    class_definition.prototype._super = function() {
-        var result;
-        var argv = Array.prototype.splice.call(arguments, 0);
-        var _this = this;
+    if(definition.extends) {
+        // variable to use in the closure
+        var super_class = definition.extends;
+        
+        /**
+         * Provides easy access to the parent class' prototype
+         * @method _super
+         * @static
+         * @return {mixed} result of the execution if there is any
+         */
+        class_definition._super = function() {
+            var result;
+            var argv = Array.prototype.splice.call(arguments, 0);
+            
+            if(!argv[0]) {
+                throw new Error('Undefined context.');
+            }
+            
+            var _this = argv[0];
+            argv.splice(0,1);
+            
+            if (argv[0] && 
+                    super_class.prototype[argv[0]] && 
+                    typeof super_class.prototype[argv[0]] === 'function') {
+                // execte a method from the parent prototype
+                var method = argv[0];
+                argv.splice(0, 1);
+                result = super_class.prototype[method].apply(_this, argv);
+            } else {
+                // if no method is set, then we execute the parent constructor
+                result = super_class.apply(_this, argv);
+            }
 
-        // check if there is a superclass set to the object's prototype
-        if (!_this.__SUPER_CLASS__) {
-            throw new Error('No base class found.');
-        }
-
-        var super_class = _this.__SUPER_CLASS__;
-
-        // change the current super class to the parent's super class to escape from an infinite recursion
-        _this.__SUPER_CLASS__ = super_class.prototype.__SUPER_CLASS__;
-
-        if (super_class.prototype[argv[0]] && typeof super_class.prototype[argv[0]] === 'function') {
-            // execte a method from the parent prototype
-            var method = argv[0];
-            argv.splice(0, 1);
-            result = super_class.prototype[method].apply(_this, argv);
-        } else {
-            // if no method is set, then we execute the parent constructor
-            result = super_class.apply(_this, argv);
-        }
-
-        // reset __SUPER_CLASS__ var to it's original value
-        _this.__SUPER_CLASS__ = super_class;
-
-        return result;
-    };
+            return result;
+        };
+    }
 
     // return the new class
     return class_definition;
@@ -113,8 +114,6 @@ kage.Class._inherits = function(child_class, base_class) {
     };
     std_class.prototype = base_class.prototype;
     child_class.prototype = new std_class();
-    // add the super class to the child class' prototype for use with _super method
-    child_class.prototype.__SUPER_CLASS__ = base_class;
     // set the constructor
     child_class.prototype.constructor = child_class;
     // return the new class

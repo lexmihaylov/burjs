@@ -251,7 +251,7 @@ kage.util.Http.prototype.post = function(data) {
 kage.util.Collection = kage.Class({
     extends: Array,
     constructor: function() {
-        this._super();
+        kage.util.Collection._super(this);
         var argv = this.splice.call(arguments, 0);
         for (var i = 0; i < argv.length; i++) {
             this.push(argv[i]);

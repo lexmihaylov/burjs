@@ -6,7 +6,7 @@
 kage.Section = kage.Class({
     extends: kage.Component,
     constructor: function(tag) {
-        this._super(tag);
+        kage.Section._super(this, tag);
         
         var _this = this;
         this.on('domInserted', function(event) {
