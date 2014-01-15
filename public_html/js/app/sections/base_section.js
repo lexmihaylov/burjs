@@ -7,7 +7,7 @@ define(['libs/kage'], function(kage) {
     var BaseSection = kage.Class({
         extends: kage.Section,
         constructor: function(tag) {
-            BaseSection._super(this, tag);
+            BaseSection._super(this, [tag]);
         }
     });
 
