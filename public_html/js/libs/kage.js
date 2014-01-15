@@ -185,23 +185,33 @@ kage.Class = function(definition) {
          * @static
          * @return {mixed} result of the execution if there is any
          */
-        class_definition._super = function() {
+        class_definition._super = function(context, method, argv) {
             var result;
-            var argv = Array.prototype.splice.call(arguments, 0);
             
-            if(!argv[0]) {
+            if(!context) {
                 throw new Error('Undefined context.');
             }
             
-            var _this = argv[0];
-            argv.splice(0,1);
+            var _this = context;
             
-            if (argv[0] && 
-                    super_class.prototype[argv[0]] && 
-                    typeof super_class.prototype[argv[0]] === 'function') {
-                // execte a method from the parent prototype
-                var method = argv[0];
-                argv.splice(0, 1);
+            if(!argv) {
+                argv = [];
+            }
+            
+            if(method) {
+                if(method instanceof Array) {
+                    argv = method;
+                    method = undefined;
+                } else if(typeof(method) !== 'string') {
+                    throw new Error('Expected string for method value, but ' + typeof(method) + ' given.');
+                }
+            }
+            
+            if (method !== null && 
+                    super_class.prototype[method] && 
+                    typeof(super_class.prototype[method]) === 'function') {
+                // execute a method from the parent prototype
+                
                 result = super_class.prototype[method].apply(_this, argv);
             } else {
                 // if no method is set, then we execute the parent constructor
@@ -1067,7 +1077,7 @@ kage.View.prototype._load_resource = function(resource) {
 kage.Section = kage.Class({
     extends: kage.Component,
     constructor: function(tag) {
-        kage.Section._super(this, tag);
+        kage.Section._super(this, [tag]);
         
         var _this = this;
         this.on('domInserted', function(event) {
