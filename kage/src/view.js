@@ -11,7 +11,7 @@
  }`
  */
 kage.View = kage.Class({
-    constructor: function(opt) {
+    _construct: function(opt) {
         if (!opt) {
             throw new Error("Available options are: 'context','view', 'url' and 'string'.");
         } else if (!opt.view &&

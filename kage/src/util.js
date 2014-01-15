@@ -78,7 +78,7 @@ kage.util.cookie.destroy = function(name) {
  * @param {function} task the task that will be executed async
  */
 kage.util.AsyncTask = kage.Class({
-    constructor: function(task) {
+    _construct: function(task) {
         if (task && typeof task === 'function') {
             this._task = task;
             this._on_start = null;
@@ -138,7 +138,7 @@ kage.util.AsyncTask.prototype.start = function() {
  * @param {bool} async default is false
  */
 kage.util.Http = kage.Class({
-    constructor: function(url, async) {
+    _construct: function(url, async) {
         // by default the http requests are synchronious
         if (async) {
             this._async = async;
@@ -250,7 +250,7 @@ kage.util.Http.prototype.post = function(data) {
  */
 kage.util.Collection = kage.Class({
     extends: Array,
-    constructor: function() {
+    _construct: function() {
         kage.util.Collection._super(this);
         var argv = this.splice.call(arguments, 0);
         for (var i = 0; i < argv.length; i++) {
@@ -324,7 +324,7 @@ kage.util.Collection.prototype.to_json = function() {
  * @param {object} map an initial hash map
  */
 kage.util.HashMap = kage.Class({
-    constructor: function(map) {
+    _construct: function(map) {
         if (map) {
             for (var i in map) {
                 if (map.hasOwnProperty(i)) {

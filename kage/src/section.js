@@ -5,7 +5,7 @@
  */
 kage.Section = kage.Class({
     extends: kage.Component,
-    constructor: function(tag) {
+    _construct: function(tag) {
         kage.Section._super(this, [tag]);
         
         var _this = this;

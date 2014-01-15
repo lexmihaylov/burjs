@@ -3,7 +3,7 @@
  * @class Model
  */
 kage.Model = kage.Class({
-    constructor: function() {
+    _construct: function() {
         /**
          * @var {HashMap<String, Array>} _events holds the event callbacks
          */

@@ -6,7 +6,7 @@ define(['libs/kage'], function(kage) {
      */
     var BaseModel = kage.Class({
         extends: kage.Model,
-        constructor: function() {
+        _construct: function() {
             BaseModel._super(this);
         }
     });

@@ -124,14 +124,16 @@ var kage = {
 kage.Class = function(definition) {
     // load class helper functions
     // define simple constructor
-    var class_definition = function() {
-    };
+    var class_definition = function() {};
+    class_definition.prototype._construct = class_definition;
 
     if (definition) {
 
         // set construnctor if it exists in definition
-        if (definition.constructor) {
-            class_definition = definition.constructor;
+        if (definition._construct) {
+            class_definition.prototype._construct = 
+                class_definition = 
+                    definition._construct;
         }
 
         // extend a class if it's set in the definition
@@ -244,7 +246,9 @@ kage.Class._inherits = function(child_class, base_class) {
     std_class.prototype = base_class.prototype;
     child_class.prototype = new std_class();
     // set the constructor
-    child_class.prototype.constructor = child_class;
+    child_class.prototype._construct = 
+        child_class.prototype.constructor = 
+            child_class;
     // return the new class
     return child_class;
 };
@@ -345,7 +349,7 @@ kage.util.cookie.destroy = function(name) {
  * @param {function} task the task that will be executed async
  */
 kage.util.AsyncTask = kage.Class({
-    constructor: function(task) {
+    _construct: function(task) {
         if (task && typeof task === 'function') {
             this._task = task;
             this._on_start = null;
@@ -405,7 +409,7 @@ kage.util.AsyncTask.prototype.start = function() {
  * @param {bool} async default is false
  */
 kage.util.Http = kage.Class({
-    constructor: function(url, async) {
+    _construct: function(url, async) {
         // by default the http requests are synchronious
         if (async) {
             this._async = async;
@@ -517,7 +521,7 @@ kage.util.Http.prototype.post = function(data) {
  */
 kage.util.Collection = kage.Class({
     extends: Array,
-    constructor: function() {
+    _construct: function() {
         kage.util.Collection._super(this);
         var argv = this.splice.call(arguments, 0);
         for (var i = 0; i < argv.length; i++) {
@@ -591,7 +595,7 @@ kage.util.Collection.prototype.to_json = function() {
  * @param {object} map an initial hash map
  */
 kage.util.HashMap = kage.Class({
-    constructor: function(map) {
+    _construct: function(map) {
         if (map) {
             for (var i in map) {
                 if (map.hasOwnProperty(i)) {
@@ -786,15 +790,15 @@ kage.util.HashMap.prototype.to_json = function() {
  */
 kage.Component = kage.Class({
     extends: jQuery,
-    constructor: function(object) {
+    _construct: function(object) {
         // set a default object
         if (!object) {
             object = '<div/>';
         }
-
-        this.init(object); // init the object
         this.constructor = jQuery; // jquery uses it's constructor internaly in some methods
-
+        
+        this.init(object); // init the object
+        
         this.data('__KAGAMI__', this); // adds the class instance to the dom's data object
     }
 });
@@ -804,7 +808,7 @@ kage.Component = kage.Class({
  * @class Model
  */
 kage.Model = kage.Class({
-    constructor: function() {
+    _construct: function() {
         /**
          * @var {HashMap<String, Array>} _events holds the event callbacks
          */
@@ -916,7 +920,7 @@ kage.Model.prototype.to_json = function() {
  }`
  */
 kage.View = kage.Class({
-    constructor: function(opt) {
+    _construct: function(opt) {
         if (!opt) {
             throw new Error("Available options are: 'context','view', 'url' and 'string'.");
         } else if (!opt.view &&
@@ -1078,7 +1082,7 @@ kage.View.prototype._load_resource = function(resource) {
  */
 kage.Section = kage.Class({
     extends: kage.Component,
-    constructor: function(tag) {
+    _construct: function(tag) {
         kage.Section._super(this, [tag]);
         
         var _this = this;

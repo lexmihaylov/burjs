@@ -7,14 +7,16 @@
 kage.Class = function(definition) {
     // load class helper functions
     // define simple constructor
-    var class_definition = function() {
-    };
+    var class_definition = function() {};
+    class_definition.prototype._construct = class_definition;
 
     if (definition) {
 
         // set construnctor if it exists in definition
-        if (definition.constructor) {
-            class_definition = definition.constructor;
+        if (definition._construct) {
+            class_definition.prototype._construct = 
+                class_definition = 
+                    definition._construct;
         }
 
         // extend a class if it's set in the definition
@@ -127,7 +129,9 @@ kage.Class._inherits = function(child_class, base_class) {
     std_class.prototype = base_class.prototype;
     child_class.prototype = new std_class();
     // set the constructor
-    child_class.prototype.constructor = child_class;
+    child_class.prototype._construct = 
+        child_class.prototype.constructor = 
+            child_class;
     // return the new class
     return child_class;
 };
