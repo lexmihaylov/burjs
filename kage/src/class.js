@@ -90,12 +90,14 @@ kage.Class = function(definition) {
                 }
             }
             
-            if (method !== null && 
-                    super_class.prototype[method] && 
-                    typeof(super_class.prototype[method]) === 'function') {
+            if (method) {
                 // execute a method from the parent prototype
-                
-                result = super_class.prototype[method].apply(_this, argv);
+                if(super_class.prototype[method] &&
+                        typeof(super_class.prototype[method]) === 'function') {
+                    result = super_class.prototype[method].apply(_this, argv);
+                } else {
+                    throw new Error("Parent class does not have a method named '" + method + "'.");
+                }
             } else {
                 // if no method is set, then we execute the parent constructor
                 result = super_class.apply(_this, argv);
