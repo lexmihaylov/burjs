@@ -1,15 +1,15 @@
 /**
- * Provides an extendable class with full jquery functionality
+ * Provides an extendable class with full $.fn functionality
  * @class Component
  */
 kage.Component = kage.Class({
-    extends: jQuery,
+    extends: $,
     _construct: function(object) {
         // set a default object
         if (!object) {
             object = '<div/>';
         }
-        this.constructor = jQuery; // jquery uses it's constructor internaly in some methods
+        this.constructor = $; // jquery uses it's constructor internaly in some methods
         
         this.init(object); // init the object
         

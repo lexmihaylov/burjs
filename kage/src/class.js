@@ -53,7 +53,7 @@ kage.Class = function(definition) {
 
     /**
      * Provides easy access to the current class' static methods
-     * @method _self
+     * 
      * @return {function} the class' constructor
      */
     class_definition.prototype._self = function() {
@@ -66,7 +66,7 @@ kage.Class = function(definition) {
         
         /**
          * Provides easy access to the parent class' prototype
-         * @method _super
+         * 
          * @static
          * @return {mixed} result of the execution if there is any
          */
@@ -116,7 +116,7 @@ kage.Class = function(definition) {
 /**
  * <p>Creates a new class and inherits a parent class</p>
  * <p><b>Note: when calling a super function use: [ParentClass].prototype.[method].call(this, arguments)</b></p>
- * @method _inherits
+ * 
  * @param {object} child_class the class that will inherit the parent class
  * @param {object} base_class the class that this class will inherit
  * @private
@@ -138,7 +138,7 @@ kage.Class._inherits = function(child_class, base_class) {
 
 /**
  * Copies methods form an object to the class prototype
- * @method _extendPrototypeOf
+ * 
  * @param {object} child_class the class that will inherit the methods
  * @param {object} methods the object that contains the methods
  * @private

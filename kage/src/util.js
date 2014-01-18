@@ -14,7 +14,7 @@ kage.util.cookie = {};
 
 /**
  * Create a cookie on the clients browser
- * @method set
+ * 
  * @param {String} name
  * @param {String} value
  * @param {Object} opt
@@ -49,7 +49,7 @@ kage.util.cookie.set = function(name, value, opt) {
 
 /**
  * Retrieve a cookie's value
- * @method get
+ * 
  * @param {string} name
  */
 kage.util.cookie.get = function(name) {
@@ -63,7 +63,7 @@ kage.util.cookie.get = function(name) {
 
 /**
  * Deletes cookie
- * @method destroy
+ * 
  * @param {string} name
  * @return {mixed} the value of the cookie or null if the cookie does not exist
  */
@@ -91,7 +91,7 @@ kage.util.AsyncTask = kage.Class({
 
 /**
  * Adds a callback that will be executed before the task starts
- * @method on_start
+ * 
  * @param {function} fn callback
  */
 kage.util.AsyncTask.prototype.on_start = function(fn) {
@@ -101,7 +101,7 @@ kage.util.AsyncTask.prototype.on_start = function(fn) {
 
 /**
  * Adds a callback that will be executed when the task finishes
- * @method on_finish
+ * 
  * @param {function} fn callback
  */
 kage.util.AsyncTask.prototype.on_finish = function(fn) {
@@ -111,7 +111,7 @@ kage.util.AsyncTask.prototype.on_finish = function(fn) {
 
 /**
  * starts the task execution
- * @method start
+ * 
  */
 kage.util.AsyncTask.prototype.start = function() {
     var _this = this;
@@ -146,7 +146,7 @@ kage.util.Http = kage.Class({
             this._async = false;
         }
 
-        // jquery.ajax settings object
+        // $.ajax settings object
         this._ajax_opt = {
             url: url,
             async: async
@@ -157,7 +157,7 @@ kage.util.Http = kage.Class({
 /**
  * executes a GET http request
  * @static
- * @method Get
+ * 
  * @param {string} url
  * @param {object} data http params
  */
@@ -176,7 +176,7 @@ kage.util.Http.Get = function(url, data) {
 /**
  * executes a POST http request
  * @static
- * @method Post
+ * 
  * @param {string} url
  * @param {object} data http params
  */
@@ -193,7 +193,7 @@ kage.util.Http.Post = function(url, data) {
 
 /**
  * Adds a callback for successful execution of the http reguest
- * @method on_success
+ * 
  * @param {function} fn
  */
 kage.util.Http.prototype.on_success = function(fn) {
@@ -203,7 +203,7 @@ kage.util.Http.prototype.on_success = function(fn) {
 
 /**
  * Adds a callback for failed http execution
- * @method on_fail
+ * 
  * @param {function} fn
  */
 kage.util.Http.prototype.on_fail = function(fn) {
@@ -213,7 +213,7 @@ kage.util.Http.prototype.on_fail = function(fn) {
 
 /**
  * executes the http request
- * @method exec
+ * 
  * @param {string} type type of the http request (GET or POST)
  * @param {object} data http parameters
  */
@@ -221,13 +221,13 @@ kage.util.Http.prototype.exec = function(type, data) {
     this._ajax_opt.type = type;
     this._ajax_opt.data = data;
 
-    jQuery.ajax(this._ajax_opt);
+    $.ajax(this._ajax_opt);
     return this;
 };
 
 /**
  * Executes a GET http request
- * @method get
+ * 
  * @param {object} data http parameters
  */
 kage.util.Http.prototype.get = function(data) {
@@ -236,7 +236,7 @@ kage.util.Http.prototype.get = function(data) {
 
 /**
  * Executes a POST http request
- * @method post
+ * 
  * @param {object} data http parameters
  */
 kage.util.Http.prototype.post = function(data) {
@@ -261,7 +261,7 @@ kage.util.Collection = kage.Class({
 
 /**
  * Iterates through the collection. To break from the loop, use 'this._break();'
- * @method each
+ * 
  * @param {function} fn callback
  */
 kage.util.Collection.prototype.each = function(fn) {
@@ -285,7 +285,7 @@ kage.util.Collection.prototype.each = function(fn) {
 
 /**
  * Removes an item from the collection
- * @method remove
+ * 
  * @param {int} index item index
  */
 kage.util.Collection.prototype.remove = function(index) {
@@ -294,7 +294,7 @@ kage.util.Collection.prototype.remove = function(index) {
 
 /**
  * Extends the collection with elements from another array
- * @method extend
+ * 
  * @param {Array|Collection} array secondary array
  */
 kage.util.Collection.prototype.extend = function(array) {
@@ -311,7 +311,7 @@ kage.util.Collection.prototype.extend = function(array) {
 
 /**
  * converts the collection to a json string
- * @method to_json
+ * 
  * @return {string}
  */
 kage.util.Collection.prototype.to_json = function() {
@@ -346,7 +346,7 @@ kage.util.HashMap.prototype.has = function(key) {
 
 /**
  * Iterates through the hash map. To break from the look use this._break() inside the callback.
- * @method each
+ * 
  * @param {function} fn callback
  */
 kage.util.HashMap.prototype.each = function(fn) {
@@ -372,7 +372,7 @@ kage.util.HashMap.prototype.each = function(fn) {
 
 /**
  * Adds an element to the hash map
- * @method add
+ * 
  * @param {string} key
  * @param {string} value 
  */
@@ -383,7 +383,7 @@ kage.util.HashMap.prototype.add = function(key, value) {
 
 /**
  * finds the key of a value
- * @method key_of
+ * 
  * @param {mixed} val
  * @return {string}
  */
@@ -411,7 +411,7 @@ kage.util.HashMap.prototype.remove = function(key) {
 
 /**
  * Extends the hashmap
- * @method extend
+ * 
  * @param {object|HashMap} object
  */
 kage.util.HashMap.prototype.extend = function(object) {
@@ -430,7 +430,7 @@ kage.util.HashMap.prototype.extend = function(object) {
 
 /**
  * Converts the hash map to a json string
- * @method to_json
+ * 
  * @return {string} 
  */
 kage.util.HashMap.prototype.to_json = function() {

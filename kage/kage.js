@@ -30,7 +30,7 @@ define(['libs/jquery'], function () {
 
 /**
  * A library for creating an MVC onepage web applications.
- * The library is build on top of jquery and depends on requirejs
+ * The library is built for use with jquery and depends on requirejs
  * @namespace kage
  */
 var kage = {
@@ -92,17 +92,20 @@ var kage = {
      * @return {Object}
      */
     init: function() {
+        if(!$.fn.jquery) {
+            throw new Error("jQuery is not loaded but it's required by kage.js");
+        }
         if(!window.ApplicationConfig) {
             throw new Error('ApplicationConfig object is required.');
         }
         
         if (!window.KAGE_GLOBALS) {
             window.KAGE_GLOBALS = {
-                window: new jQuery(window),
-                dom: new jQuery('html')
+                window: $(window),
+                dom: $('html')
             };
 
-            window.KAGE_GLOBALS.dom.body = new jQuery('body');
+            window.KAGE_GLOBALS.dom.body = $('body');
         }
         // load references to shared objects
         kage.window = window.KAGE_GLOBALS.window;
@@ -170,7 +173,7 @@ kage.Class = function(definition) {
 
     /**
      * Provides easy access to the current class' static methods
-     * @method _self
+     * 
      * @return {function} the class' constructor
      */
     class_definition.prototype._self = function() {
@@ -183,7 +186,7 @@ kage.Class = function(definition) {
         
         /**
          * Provides easy access to the parent class' prototype
-         * @method _super
+         * 
          * @static
          * @return {mixed} result of the execution if there is any
          */
@@ -233,7 +236,7 @@ kage.Class = function(definition) {
 /**
  * <p>Creates a new class and inherits a parent class</p>
  * <p><b>Note: when calling a super function use: [ParentClass].prototype.[method].call(this, arguments)</b></p>
- * @method _inherits
+ * 
  * @param {object} child_class the class that will inherit the parent class
  * @param {object} base_class the class that this class will inherit
  * @private
@@ -255,7 +258,7 @@ kage.Class._inherits = function(child_class, base_class) {
 
 /**
  * Copies methods form an object to the class prototype
- * @method _extendPrototypeOf
+ * 
  * @param {object} child_class the class that will inherit the methods
  * @param {object} methods the object that contains the methods
  * @private
@@ -285,7 +288,7 @@ kage.util.cookie = {};
 
 /**
  * Create a cookie on the clients browser
- * @method set
+ * 
  * @param {String} name
  * @param {String} value
  * @param {Object} opt
@@ -320,7 +323,7 @@ kage.util.cookie.set = function(name, value, opt) {
 
 /**
  * Retrieve a cookie's value
- * @method get
+ * 
  * @param {string} name
  */
 kage.util.cookie.get = function(name) {
@@ -334,7 +337,7 @@ kage.util.cookie.get = function(name) {
 
 /**
  * Deletes cookie
- * @method destroy
+ * 
  * @param {string} name
  * @return {mixed} the value of the cookie or null if the cookie does not exist
  */
@@ -362,7 +365,7 @@ kage.util.AsyncTask = kage.Class({
 
 /**
  * Adds a callback that will be executed before the task starts
- * @method on_start
+ * 
  * @param {function} fn callback
  */
 kage.util.AsyncTask.prototype.on_start = function(fn) {
@@ -372,7 +375,7 @@ kage.util.AsyncTask.prototype.on_start = function(fn) {
 
 /**
  * Adds a callback that will be executed when the task finishes
- * @method on_finish
+ * 
  * @param {function} fn callback
  */
 kage.util.AsyncTask.prototype.on_finish = function(fn) {
@@ -382,7 +385,7 @@ kage.util.AsyncTask.prototype.on_finish = function(fn) {
 
 /**
  * starts the task execution
- * @method start
+ * 
  */
 kage.util.AsyncTask.prototype.start = function() {
     var _this = this;
@@ -417,7 +420,7 @@ kage.util.Http = kage.Class({
             this._async = false;
         }
 
-        // jquery.ajax settings object
+        // $.ajax settings object
         this._ajax_opt = {
             url: url,
             async: async
@@ -428,7 +431,7 @@ kage.util.Http = kage.Class({
 /**
  * executes a GET http request
  * @static
- * @method Get
+ * 
  * @param {string} url
  * @param {object} data http params
  */
@@ -447,7 +450,7 @@ kage.util.Http.Get = function(url, data) {
 /**
  * executes a POST http request
  * @static
- * @method Post
+ * 
  * @param {string} url
  * @param {object} data http params
  */
@@ -464,7 +467,7 @@ kage.util.Http.Post = function(url, data) {
 
 /**
  * Adds a callback for successful execution of the http reguest
- * @method on_success
+ * 
  * @param {function} fn
  */
 kage.util.Http.prototype.on_success = function(fn) {
@@ -474,7 +477,7 @@ kage.util.Http.prototype.on_success = function(fn) {
 
 /**
  * Adds a callback for failed http execution
- * @method on_fail
+ * 
  * @param {function} fn
  */
 kage.util.Http.prototype.on_fail = function(fn) {
@@ -484,7 +487,7 @@ kage.util.Http.prototype.on_fail = function(fn) {
 
 /**
  * executes the http request
- * @method exec
+ * 
  * @param {string} type type of the http request (GET or POST)
  * @param {object} data http parameters
  */
@@ -492,13 +495,13 @@ kage.util.Http.prototype.exec = function(type, data) {
     this._ajax_opt.type = type;
     this._ajax_opt.data = data;
 
-    jQuery.ajax(this._ajax_opt);
+    $.ajax(this._ajax_opt);
     return this;
 };
 
 /**
  * Executes a GET http request
- * @method get
+ * 
  * @param {object} data http parameters
  */
 kage.util.Http.prototype.get = function(data) {
@@ -507,7 +510,7 @@ kage.util.Http.prototype.get = function(data) {
 
 /**
  * Executes a POST http request
- * @method post
+ * 
  * @param {object} data http parameters
  */
 kage.util.Http.prototype.post = function(data) {
@@ -532,7 +535,7 @@ kage.util.Collection = kage.Class({
 
 /**
  * Iterates through the collection. To break from the loop, use 'this._break();'
- * @method each
+ * 
  * @param {function} fn callback
  */
 kage.util.Collection.prototype.each = function(fn) {
@@ -556,7 +559,7 @@ kage.util.Collection.prototype.each = function(fn) {
 
 /**
  * Removes an item from the collection
- * @method remove
+ * 
  * @param {int} index item index
  */
 kage.util.Collection.prototype.remove = function(index) {
@@ -565,7 +568,7 @@ kage.util.Collection.prototype.remove = function(index) {
 
 /**
  * Extends the collection with elements from another array
- * @method extend
+ * 
  * @param {Array|Collection} array secondary array
  */
 kage.util.Collection.prototype.extend = function(array) {
@@ -582,7 +585,7 @@ kage.util.Collection.prototype.extend = function(array) {
 
 /**
  * converts the collection to a json string
- * @method to_json
+ * 
  * @return {string}
  */
 kage.util.Collection.prototype.to_json = function() {
@@ -617,7 +620,7 @@ kage.util.HashMap.prototype.has = function(key) {
 
 /**
  * Iterates through the hash map. To break from the look use this._break() inside the callback.
- * @method each
+ * 
  * @param {function} fn callback
  */
 kage.util.HashMap.prototype.each = function(fn) {
@@ -643,7 +646,7 @@ kage.util.HashMap.prototype.each = function(fn) {
 
 /**
  * Adds an element to the hash map
- * @method add
+ * 
  * @param {string} key
  * @param {string} value 
  */
@@ -654,7 +657,7 @@ kage.util.HashMap.prototype.add = function(key, value) {
 
 /**
  * finds the key of a value
- * @method key_of
+ * 
  * @param {mixed} val
  * @return {string}
  */
@@ -682,7 +685,7 @@ kage.util.HashMap.prototype.remove = function(key) {
 
 /**
  * Extends the hashmap
- * @method extend
+ * 
  * @param {object|HashMap} object
  */
 kage.util.HashMap.prototype.extend = function(object) {
@@ -701,7 +704,7 @@ kage.util.HashMap.prototype.extend = function(object) {
 
 /**
  * Converts the hash map to a json string
- * @method to_json
+ * 
  * @return {string} 
  */
 kage.util.HashMap.prototype.to_json = function() {
@@ -709,13 +712,13 @@ kage.util.HashMap.prototype.to_json = function() {
 };
 
 /** 
- * Adds a domInsert event to jquery dom insertion methods 
+ * Adds a domInsert event to dom insertion methods 
  */
 
 (function($) {
     /**
     * If the object already has an instance of a class it will retun it
-    * @method kage_object
+    * 
     * @return {object}
     */
     $.fn.kage_object = function() {
@@ -753,49 +756,77 @@ kage.util.HashMap.prototype.to_json = function() {
      * @param {type} item
      * @return {undefined}
      */
-    var dom_events_modifyer = function(item) {
-        if (item.trigger) {
-            item.trigger('domInserted');
+    var on_after_insert = function(item) {
+        if (item.triggerHandler) {
+            if(item.closest('body').length > 0) {
+                item.triggerHandler('domInsert');
+                item.find('*').each(function() {
+                    $(this).triggerHandler('domInsert');
+                });
+            }
         }
     };
     
     /**
-     * modifys a dom insertion jquery method
+     * Triggers an event before the element has been inserted
+     * @param {type} item
+     * @returns {undefined}
+     */
+    var on_before_insert = function(item) {
+        if(item.triggerHandler) {
+            if(item.closest('body').length === 0) {
+                item.triggerHandler('beforeDomInsert');
+                item.find('*').each(function() {
+                    $(this).triggerHandler('beforeDomInsert');
+                });
+            }
+        }
+    };
+    
+    /**
+     * modifys a dom insertion method
      * @param {type} method
      * @return {unresolved}
      */
-    var on_after_insert = function(method) {
+    var dom_events_modifyer = function(method) {
         return function() {
-            var result = parent_methods[method].apply(this, arguments);
+            var args = Array.prototype.splice.call(arguments,0),
+                result = undefined,
+                i = 0;
         
-            var args = Array.prototype.splice.call(arguments,0);
-            for(var i =0; i < args.length; i++) {
-                dom_events_modifyer(args[i]);
+            for(i = 0; i < args.length; i++) {
+                on_before_insert(args[i]);
+            }
+            
+            result = parent_methods[method].apply(this, args);
+            
+            for(i = 0; i < args.length; i++) {
+                on_after_insert(args[i]);
             }
 
             return result;
         };
     };
     
-    $.fn.append = on_after_insert('append');
-    $.fn.prepend = on_after_insert('prepend');
-    $.fn.after = on_after_insert('after');
-    $.fn.before = on_after_insert('before');
+    $.fn.append = dom_events_modifyer('append');
+    $.fn.prepend = dom_events_modifyer('prepend');
+    $.fn.after = dom_events_modifyer('after');
+    $.fn.before = dom_events_modifyer('before');
     
 })(jQuery);
 
 /**
- * Provides an extendable class with full jquery functionality
+ * Provides an extendable class with full $.fn functionality
  * @class Component
  */
 kage.Component = kage.Class({
-    extends: jQuery,
+    extends: $,
     _construct: function(object) {
         // set a default object
         if (!object) {
             object = '<div/>';
         }
-        this.constructor = jQuery; // jquery uses it's constructor internaly in some methods
+        this.constructor = $; // jquery uses it's constructor internaly in some methods
         
         this.init(object); // init the object
         
@@ -819,7 +850,7 @@ kage.Model = kage.Class({
 /**
  * Used to define static methods for initializing models
  * @static
- * @method Define
+ * 
  * @param {function} child_class the child model class
  */
 kage.Model.Define = function(child_class) {
@@ -827,7 +858,7 @@ kage.Model.Define = function(child_class) {
     /**
      * Creates a new model an initializes it's properties
      * @static
-     * @method create
+     * 
      * @param {object} parameters object attributes
      * @return {Model} the newly created model
      */
@@ -846,7 +877,7 @@ kage.Model.Define = function(child_class) {
     /**
      * Creates a collection of models with initialized properties
      * @static
-     * @method create_from_array
+     * 
      * @param {Array} array array of parameteres
      * @return {Collection} a collection of models
      */
@@ -861,34 +892,104 @@ kage.Model.Define = function(child_class) {
     };
 };
 
-/**
- * adds an event to the event map of the object
- * @method on
- * @param {String} type the event name
- * @param {function} callback the callback function
- * @return {Model}
- */
-kage.Model.prototype.on = function(type, callback) {
-    if (!this._events.has(type)) {
-        this._events.add(type, new kage.util.Collection);
+kage.Model.prototype._normalize_types = function(types) {
+    if(typeof(types) === 'string') {
+        if(types.indexOf(',') === -1) {
+            types = [types];
+        } else {
+            types = $.map(types.split(','), $.trim);
+        }
+    } else if(!types instanceof Array) {
+        throw new Error("'types' can be a String or Array.");
     }
-    this._events[type].push(callback);
+    
+    return types;
+};
+
+/**
+ * Adds an event to the event map of the object
+ * @param {Array|String} types the event'(s) name(s)
+ * @param {function} callback the callback function
+ * @param {boolean} one execute the handler once
+ * @return {kage.Model.prototype}
+ */
+kage.Model.prototype.on = function(types, callback, one) {
+    
+    types = this._normalize_types(types);
+    
+    for(var i = 0; i < types.length; ++i) {
+        var type = types[i];
+        if (!this._events.has(type)) {
+            this._events.add(type, new kage.util.Collection);
+        }
+        if(one === true) {
+            var fn = callback;
+            var _this = this;
+            callback = function() {
+                _this.off(type, fn);
+                fn.apply(this, arguments);
+            };
+        }
+        
+        if(this._events[type].indexOf(callback) === -1) {
+            this._events[type].push(callback);
+        }
+    }
 
     return this;
 };
 
 /**
+ * Adds an event handler that will be executed once
+ * @param {type} types
+ * @param {type} callback
+ * @return {kage.Model.prototype@call;on}
+ */
+kage.Model.prototype.one = function(types, callback) {
+    return this.on(types, callback, true);
+};
+
+
+/**
+ * Unbind an event handler
+ * @param {type} types handler type(s)
+ * @param {type} callback handler callback
+ * @return {kage.Model.prototype}
+ */
+kage.Model.prototype.off = function(types, callback) {
+    types = this._normalize_types(types);
+    for(var i = 0; i < types.length; ++i) {
+        var type = types[i];
+        
+        if(this._events.has(type)) {
+            var index = this._events[type].indexOf(callback);
+            if(index !== -1) {
+                this._events[type].remove(index);
+            }
+        }
+    }
+    
+    return this;
+};
+
+/**
  * triggers an event from the object's event map
- * @method on
+ * 
  * @param {string} type the event name
+ * @patam {data} data object to be passed to the handler
  * @return {Model}
  */
-kage.Model.prototype.trigger = function(type) {
+kage.Model.prototype.trigger = function(type, data) {
     if (this._events.has(type)) {
         var _this = this;
+        var event = {
+            type: type,
+            timeStamp: Date.now(),
+            target: this
+        };
         this._events[type].each(function(item) {
             if (typeof item === 'function') {
-                item.call(_this);
+                item.call(_this, event, data);
             }
         });
     }
@@ -898,7 +999,7 @@ kage.Model.prototype.trigger = function(type) {
 
 /**
  * converts the object to json string
- * @method to_json
+ * 
  * @return {string}
  */
 kage.Model.prototype.to_json = function() {
@@ -942,7 +1043,7 @@ kage.View.Cache = new kage.util.HashMap();
 
 /**
  * Clears the template cache
- * @method clear_cache
+ * 
  * @static
  */
 kage.View.clear_cache = function() {
@@ -951,7 +1052,7 @@ kage.View.clear_cache = function() {
 
 /**
  * Creates an instance of View
- * @method make
+ * 
  * @static
  * @param {string} template_id
  * @param {object} opt optional option parameter
@@ -967,7 +1068,7 @@ kage.View.make = function(opt) {
 
 /**
  * Compiles a template to javascript code
- * @method Compile
+ * 
  * @static
  * @param {string} html The template code
  * @return {function} compiled template
@@ -1003,7 +1104,7 @@ kage.View.Compile = function(template_source) {
 
 /**
  * Renders the compiled template to html
- * @method render
+ * 
  * @param {object} variables variables to pass to the template
  * @return {Component}
  */
@@ -1022,7 +1123,7 @@ kage.View.prototype.render = function(variables) {
 
 /**
  * Compiles a template resource dependant on the view options
- * @method _create_template_resource
+ * 
  * @static
  * @return {object}
  */
@@ -1059,7 +1160,7 @@ kage.View.prototype._compile_template_resource = function() {
 
 /**
  * Loads a template from the Cache or from a remote file, compiles it and adds it to the Cache
- * @method _load_resource
+ * 
  * @return {function} compiled template
  */
 kage.View.prototype._load_resource = function(resource) {
@@ -1086,24 +1187,26 @@ kage.Section = kage.Class({
         kage.Section._super(this, [tag]);
         
         var _this = this;
-        this.on('domInserted', function(event) {
-            event.stopPropagation();
-            if(typeof(_this.on_init) === 'function') {
-                _this.on_init(event);
+        
+        this.on('domInsert', function(event) {
+            if(typeof(_this.on_dom_insert) === 'function') {
+                _this.on_dom_insert(event);
             }
+            _this.off(event);
         });
     }
 });
 
 /**
- * This method is executed when the element has been inserted in the dom
- * @type {function}
+ * A method that will be executed when an object is appended to the dom
+ * @param {type} event
+ * @returns {undefined}
  */
-kage.Section.prototype.on_init;
+kage.Section.prototype.on_dom_insert = function(event) {};
 
 /**
  * Loads view in the section object's context
- * @method View
+ * 
  * @param {string} template_id
  * @param {string} url
  */

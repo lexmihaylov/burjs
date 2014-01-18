@@ -1,11 +1,11 @@
 /** 
- * Adds a domInsert event to jquery dom insertion methods 
+ * Adds a domInsert event to dom insertion methods 
  */
 
 (function($) {
     /**
     * If the object already has an instance of a class it will retun it
-    * @method kage_object
+    * 
     * @return {object}
     */
     $.fn.kage_object = function() {
@@ -43,34 +43,62 @@
      * @param {type} item
      * @return {undefined}
      */
-    var dom_events_modifyer = function(item) {
-        if (item.trigger) {
-            item.trigger('domInserted');
+    var on_after_insert = function(item) {
+        if (item.triggerHandler) {
+            if(item.closest('body').length > 0) {
+                item.triggerHandler('domInsert');
+                item.find('*').each(function() {
+                    $(this).triggerHandler('domInsert');
+                });
+            }
         }
     };
     
     /**
-     * modifys a dom insertion jquery method
+     * Triggers an event before the element has been inserted
+     * @param {type} item
+     * @returns {undefined}
+     */
+    var on_before_insert = function(item) {
+        if(item.triggerHandler) {
+            if(item.closest('body').length === 0) {
+                item.triggerHandler('beforeDomInsert');
+                item.find('*').each(function() {
+                    $(this).triggerHandler('beforeDomInsert');
+                });
+            }
+        }
+    };
+    
+    /**
+     * modifys a dom insertion method
      * @param {type} method
      * @return {unresolved}
      */
-    var on_after_insert = function(method) {
+    var dom_events_modifyer = function(method) {
         return function() {
-            var result = parent_methods[method].apply(this, arguments);
+            var args = Array.prototype.splice.call(arguments,0),
+                result = undefined,
+                i = 0;
         
-            var args = Array.prototype.splice.call(arguments,0);
-            for(var i =0; i < args.length; i++) {
-                dom_events_modifyer(args[i]);
+            for(i = 0; i < args.length; i++) {
+                on_before_insert(args[i]);
+            }
+            
+            result = parent_methods[method].apply(this, args);
+            
+            for(i = 0; i < args.length; i++) {
+                on_after_insert(args[i]);
             }
 
             return result;
         };
     };
     
-    $.fn.append = on_after_insert('append');
-    $.fn.prepend = on_after_insert('prepend');
-    $.fn.after = on_after_insert('after');
-    $.fn.before = on_after_insert('before');
+    $.fn.append = dom_events_modifyer('append');
+    $.fn.prepend = dom_events_modifyer('prepend');
+    $.fn.after = dom_events_modifyer('after');
+    $.fn.before = dom_events_modifyer('before');
     
 })(jQuery);
 

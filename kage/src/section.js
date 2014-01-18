@@ -9,24 +9,26 @@ kage.Section = kage.Class({
         kage.Section._super(this, [tag]);
         
         var _this = this;
-        this.on('domInserted', function(event) {
-            event.stopPropagation();
-            if(typeof(_this.on_init) === 'function') {
-                _this.on_init(event);
+        
+        this.on('domInsert', function(event) {
+            if(typeof(_this.on_dom_insert) === 'function') {
+                _this.on_dom_insert(event);
             }
+            _this.off(event);
         });
     }
 });
 
 /**
- * This method is executed when the element has been inserted in the dom
- * @type {function}
+ * A method that will be executed when an object is appended to the dom
+ * @param {type} event
+ * @returns {undefined}
  */
-kage.Section.prototype.on_init;
+kage.Section.prototype.on_dom_insert = function(event) {};
 
 /**
  * Loads view in the section object's context
- * @method View
+ * 
  * @param {string} template_id
  * @param {string} url
  */

@@ -33,7 +33,7 @@ kage.View.Cache = new kage.util.HashMap();
 
 /**
  * Clears the template cache
- * @method clear_cache
+ * 
  * @static
  */
 kage.View.clear_cache = function() {
@@ -42,7 +42,7 @@ kage.View.clear_cache = function() {
 
 /**
  * Creates an instance of View
- * @method make
+ * 
  * @static
  * @param {string} template_id
  * @param {object} opt optional option parameter
@@ -58,7 +58,7 @@ kage.View.make = function(opt) {
 
 /**
  * Compiles a template to javascript code
- * @method Compile
+ * 
  * @static
  * @param {string} html The template code
  * @return {function} compiled template
@@ -94,7 +94,7 @@ kage.View.Compile = function(template_source) {
 
 /**
  * Renders the compiled template to html
- * @method render
+ * 
  * @param {object} variables variables to pass to the template
  * @return {Component}
  */
@@ -113,7 +113,7 @@ kage.View.prototype.render = function(variables) {
 
 /**
  * Compiles a template resource dependant on the view options
- * @method _create_template_resource
+ * 
  * @static
  * @return {object}
  */
@@ -150,7 +150,7 @@ kage.View.prototype._compile_template_resource = function() {
 
 /**
  * Loads a template from the Cache or from a remote file, compiles it and adds it to the Cache
- * @method _load_resource
+ * 
  * @return {function} compiled template
  */
 kage.View.prototype._load_resource = function(resource) {

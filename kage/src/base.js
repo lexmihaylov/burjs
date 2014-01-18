@@ -1,6 +1,6 @@
 /**
  * A library for creating an MVC onepage web applications.
- * The library is build on top of jquery and depends on requirejs
+ * The library is built for use with jquery and depends on requirejs
  * @namespace kage
  */
 var kage = {
@@ -62,17 +62,20 @@ var kage = {
      * @return {Object}
      */
     init: function() {
+        if(!$.fn.jquery) {
+            throw new Error("jQuery is not loaded but it's required by kage.js");
+        }
         if(!window.ApplicationConfig) {
             throw new Error('ApplicationConfig object is required.');
         }
         
         if (!window.KAGE_GLOBALS) {
             window.KAGE_GLOBALS = {
-                window: new jQuery(window),
-                dom: new jQuery('html')
+                window: $(window),
+                dom: $('html')
             };
 
-            window.KAGE_GLOBALS.dom.body = new jQuery('body');
+            window.KAGE_GLOBALS.dom.body = $('body');
         }
         // load references to shared objects
         kage.window = window.KAGE_GLOBALS.window;
