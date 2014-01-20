@@ -267,7 +267,7 @@ kage.util.Collection = kage.Class({
 kage.util.Collection.prototype.each = function(fn) {
 
     for (var i = 0; i < this.length; i++) {
-        var result = fn.call(fn_construction, this[i], i);
+        var result = fn(this[i], i);
 
         if (result === false) {
             break;
@@ -344,7 +344,7 @@ kage.util.HashMap.prototype.has = function(key) {
 kage.util.HashMap.prototype.each = function(fn) {
     for (var i in this) {
         if (this.hasOwnProperty(i)) {
-            var result = fn.call(fn_construction, this[i], i);
+            var result = fn(this[i], i);
 
             if (result === false) {
                 break;
