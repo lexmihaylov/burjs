@@ -534,24 +534,16 @@ kage.util.Collection = kage.Class({
 });
 
 /**
- * Iterates through the collection. To break from the loop, use 'this._break();'
+ * Iterates through the collection. To break from the loop, use 'return false'
  * 
  * @param {function} fn callback
  */
 kage.util.Collection.prototype.each = function(fn) {
 
-    // helper construction for manging the for loop
-    var fn_construction = {
-        _status: true,
-        _break: function() {
-            this._status = false;
-        }
-    };
-
     for (var i = 0; i < this.length; i++) {
-        fn.call(fn_construction, this[i], i);
+        var result = fn.call(fn_construction, this[i], i);
 
-        if (!fn_construction._status) {
+        if (result === false) {
             break;
         }
     }
@@ -619,23 +611,16 @@ kage.util.HashMap.prototype.has = function(key) {
 };
 
 /**
- * Iterates through the hash map. To break from the look use this._break() inside the callback.
+ * Iterates through the hash map. To break from the look use 'return false;' inside the callback.
  * 
  * @param {function} fn callback
  */
 kage.util.HashMap.prototype.each = function(fn) {
-    var fn_construction = {
-        _status: true,
-        _break: function() {
-            this._status = false;
-        }
-    };
-
     for (var i in this) {
         if (this.hasOwnProperty(i)) {
-            fn.call(fn_construction, this[i], i);
+            var result = fn.call(fn_construction, this[i], i);
 
-            if (!fn_construction._status) {
+            if (result === false) {
                 break;
             }
         }
@@ -666,7 +651,8 @@ kage.util.HashMap.prototype.key_of = function(val) {
     this.each(function(value, key) {
         if (value === val) {
             ret_key = key;
-            this._break();
+            
+            return false;
         }
     });
 
