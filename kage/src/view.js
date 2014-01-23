@@ -108,7 +108,7 @@ kage.View.prototype.render = function(variables) {
         html = template(variables);
     }
 
-    return new kage.Component(html);
+    return html;
 };
 
 /**
