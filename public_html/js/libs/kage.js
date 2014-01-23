@@ -984,6 +984,16 @@ kage.Model.prototype.trigger = function(type, data) {
 };
 
 /**
+ * An alias for trigger method
+ * @param {type} type
+ * @param {type} data
+ * @returns {kage.Model}
+ */
+kage.Model.prototype.triggerHandler = function(type, data) {
+    return this.trigger(type, data);
+};
+
+/**
  * converts the object to json string
  * 
  * @return {string}
@@ -1105,6 +1115,14 @@ kage.View.prototype.render = function(variables) {
     }
 
     return new kage.Component(html);
+};
+
+/**
+ * Loads a template and adds it to the view cache
+ * @returns {function} compiled template
+ */
+kage.View.prototype.cache = function() {
+    return this._compile_template_resource();
 };
 
 /**

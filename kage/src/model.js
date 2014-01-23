@@ -162,6 +162,16 @@ kage.Model.prototype.trigger = function(type, data) {
 };
 
 /**
+ * An alias for trigger method
+ * @param {type} type
+ * @param {type} data
+ * @returns {kage.Model}
+ */
+kage.Model.prototype.triggerHandler = function(type, data) {
+    return this.trigger(type, data);
+};
+
+/**
  * converts the object to json string
  * 
  * @return {string}

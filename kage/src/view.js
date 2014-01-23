@@ -112,6 +112,14 @@ kage.View.prototype.render = function(variables) {
 };
 
 /**
+ * Loads a template and adds it to the view cache
+ * @returns {function} compiled template
+ */
+kage.View.prototype.cache = function() {
+    return this._compile_template_resource();
+};
+
+/**
  * Compiles a template resource dependant on the view options
  * 
  * @static
