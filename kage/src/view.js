@@ -3,12 +3,12 @@
  * @class View
  * @param {string} template_id the template filename without the extension
  * @param {object} opt optional option parameter
- `opt: {
- url: '<some_url>',
- view: '<template_id>',
- string: '<template_string>'
- context: <some context object>
- }`
+ * `opt: {
+ *      url: '<some_url>',
+ *      view: '<template_id>',
+ *      string: '<template_string>',
+ *      context: <some context object>
+ * }`
  */
 kage.View = kage.Class({
     _construct: function(opt) {
@@ -112,7 +112,7 @@ kage.View.prototype.render = function(variables) {
 };
 
 /**
- * Loads a template and adds it to the view cache
+ * Don't render the template, just add it to the view cache
  * @returns {function} compiled template
  */
 kage.View.prototype.cache = function() {
@@ -126,8 +126,26 @@ kage.View.prototype.cache = function() {
  * @return {object}
  */
 kage.View.prototype._compile_template_resource = function() {
+    var data = this._build_resource_from_options();
+
+    var template_source = null;
+    if (!data.cache) {
+        template_source = kage.View.Compile(data.resource);
+    } else {
+        template_source = this._load_resource(data.resource);
+    }
+
+
+    return template_source;
+};
+
+/**
+ * Builds a resource object
+ * @returns {object}
+ */
+kage.View.prototype._build_resource_from_options = function() {
     var resource = null;
-    var no_cache = false;
+    var cache = true;
     
     var urlArgs = '';
     if (ApplicationConfig && ApplicationConfig.url_args) {
@@ -140,20 +158,15 @@ kage.View.prototype._compile_template_resource = function() {
         resource = this._opt.url + urlArgs;
     } else if (this._opt.string) {
         resource = this._opt.string;
-        no_cache = true; // do not cache compilation output
+        cache = false; // do not cache compilation output
     } else {
-        throw new Error('Cant create template resource from view options.');
+        throw new Error('Can\'t create template resource from view options.');
     }
-
-    var template_source = null;
-    if (no_cache) {
-        template_source = kage.View.Compile(resource);
-    } else {
-        template_source = this._load_resource(resource);
-    }
-
-
-    return template_source;
+    
+    return {
+        resource: resource,
+        cache: cache
+    };
 };
 
 /**
@@ -164,7 +177,7 @@ kage.View.prototype._compile_template_resource = function() {
 kage.View.prototype._load_resource = function(resource) {
     var template = null;
     if (kage.View.Cache.has(resource)) {
-        template = kage.View.Cache[resource]
+        template = kage.View.Cache[resource];
     } else {
         var html = kage.util.Http.Get(resource);
         template = kage.View.Compile(html);
@@ -174,3 +187,122 @@ kage.View.prototype._load_resource = function(resource) {
     return template;
 };
 
+/**
+ * Preloads a list of templates asynchroniously and adds them to the view cache
+ * @param {object} opt 
+ * opt = {
+ *      views: [...],
+ *      urls: [...],
+ *      progress: function(percent) { ... },
+ *      done: function() { ... } 
+ * }
+ * @returns {undefined}
+ */
+kage.View.Prefetch = function(opt) {
+    if(typeof(opt) === 'object') {
+        var list = [], 
+            callbacks = {}, 
+            i = 0;
+    
+        if(opt.views && (opt.views instanceof Array)) {
+            for(i = 0; i < opt.views.length; ++i) {
+                list.push({
+                    view: opt.views[i]
+                });
+            }
+        }
+        
+        if(opt.urls && (opt.urls instanceof Array)) {
+            for(i = 0; i < opt.urls.length; ++i) {
+                list.push({
+                    url: opt.urls[i]
+                });
+            }
+        }
+        
+        if(typeof(opt.progress) === 'function') {
+            callbacks.progress = opt.progress;
+        }
+        
+        if(typeof(opt.done) === 'function') {
+            callbacks.done = opt.done;
+        }
+        
+        kage.View.Prefetch._prefetch_from_array(list, callbacks);
+    }
+};
+
+/**
+ * Preloads a array of urls or views
+ * @param {'view'|'url'} type view option
+ * @param {type} list list of urls or viewss
+ * @param {type} opt object containing the callbacks
+ * @returns {undefined}
+ */
+kage.View.Prefetch._prefetch_from_array = function(list, callbacks) {
+    var load_count = 0;
+    if(list.length === 0) {
+        if(typeof(callbacks.progress) === 'function') {
+            callbacks.progress(100);
+        }
+        
+        if(typeof(callbacks.done) === 'function') {
+            callbacks.done();
+        }
+        
+        return;
+    }
+    
+    for(var i = 0; i < list.length; ++i) {
+        var view = kage.View.make(list[i]);
+        var data = view._build_resource_from_options();
+        
+        if(data.cache) {
+            var progress_change = function() {
+                load_count++;
+                
+                if(typeof(callbacks.progress) === 'function') {
+                    var percent = (load_count/list.length) * 100;
+                    callbacks.progress(percent);
+                }
+                
+                if(load_count === list.length) {
+                    if(typeof(callbacks.done) === 'function') {
+                        callbacks.done();
+                    }
+                }
+            };
+            
+            kage.View._fetch_template(data.resource, progress_change);
+        }
+    }
+};
+
+/**
+ * Creates an http request that retrieves the template source
+ * @param {type} resource
+ * @param {type} callback
+ * @returns {undefined}
+ */
+kage.View._fetch_template = function(resource, callback) {
+    new kage.util.Http(resource, true).
+        on_success(function(template) {
+            kage.View.Prefetch._compile_and_cache(resource, template);
+            callback();
+        }).
+        on_fail(function() {
+            console.log("Error fetching template: '" + resource + "'.");
+            callback();
+        }).
+        get();
+};
+
+/**
+ * Compiles a template and adds it to the view cache for future use
+ * @param {type} resource
+ * @param {type} template
+ * @returns {undefined}
+ */
+kage.View.Prefetch._compile_and_cache = function(resource, template) {
+    kage.View.Cache[resource] = kage.View.Compile(template);
+};
