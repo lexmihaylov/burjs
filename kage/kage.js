@@ -1159,7 +1159,7 @@ kage.View.prototype._build_resource_from_options = function() {
     }
     
     if (this._opt.view) {
-        resource = kage.Config.template_dir + this._opt.view + '.html' + urlArgs;
+        resource = kage.Config.template_dir + this._opt.view + '.ejs' + urlArgs;
     } else if (this._opt.url) {
         resource = this._opt.url + urlArgs;
     } else if (this._opt.string) {
