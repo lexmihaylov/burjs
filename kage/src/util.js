@@ -138,7 +138,7 @@ kage.util.AsyncTask.prototype.start = function() {
  * @param {bool} async default is false
  */
 kage.util.Http = kage.Class({
-    _construct: function(url, async) {
+    _construct: function(url, async, data_type) {
         // by default the http requests are synchronious
         if (async) {
             this._async = async;
@@ -149,8 +149,13 @@ kage.util.Http = kage.Class({
         // $.ajax settings object
         this._ajax_opt = {
             url: url,
-            async: async
+            async: async,
+            dataType: 'html'
         };
+        
+        if(data_type) {
+            this._ajax_opt.dataType = data_type;
+        }
     }
 });
 
@@ -167,6 +172,9 @@ kage.util.Http.Get = function(url, data) {
     new kage.util.Http(url, false)
             .on_success(function(result) {
                 response = result;
+            })
+            .on_fail(function() {
+                throw new Error('Failed fetching: ' + url);
             })
             .get(data);
 
@@ -185,6 +193,9 @@ kage.util.Http.Post = function(url, data) {
     new kage.util.Http(url, false)
             .on_success(function(result) {
                 response = result;
+            })
+            .on_fail(function() {
+                throw new Error('Failed fetching: ' + url);
             })
             .post(data);
 
