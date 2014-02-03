@@ -6,9 +6,10 @@ define(['kage','QUnit'], function(kage, QUnit) {
 
             equal(cookie, 'Test', 'read/write cookies successfull');
             
-            //kage.util.cookie.destroy('TestCookie');
+            kage.util.cookie.destroy('TestCookie');
             
-            //equal(kage.util.cookie.get('TestCookie'), null, 'cookie deletion successfull');
+            
+            equal(kage.util.cookie.get('TestCookie'), null, 'cookie deletion successfull');
         });
     };
 });

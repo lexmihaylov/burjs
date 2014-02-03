@@ -342,7 +342,7 @@ kage.util.cookie.get = function(name) {
  * @return {mixed} the value of the cookie or null if the cookie does not exist
  */
 kage.util.cookie.destroy = function(name) {
-    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    kage.util.cookie.set(name, null, {expires: -1});
 };
 
 
