@@ -28,6 +28,12 @@ define(['kage','QUnit'], function(kage, QUnit) {
             });
             
             equal(iterator, 2, 'breakout of .each successfull');
+            
+            var ext = [4,5,6];
+            
+            collection.extend(ext);
+            
+            equal(collection.length, 6, '<collection>.extend successfull');
         });
     };
 });
