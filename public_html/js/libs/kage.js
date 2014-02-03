@@ -414,10 +414,8 @@ kage.util.AsyncTask.prototype.start = function() {
 kage.util.Http = kage.Class({
     _construct: function(url, async, data_type) {
         // by default the http requests are synchronious
-        if (async) {
-            this._async = async;
-        } else {
-            this._async = false;
+        if (!async) {
+            async = false;
         }
 
         // $.ajax settings object
