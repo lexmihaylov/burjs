@@ -36,7 +36,9 @@ require(['QUnit', 'blanket'], function(QUnit, blanket) {
         'unit_tests/async_task_tests',
         'unit_tests/http_tests',
         'unit_tests/collection_tests',
-        'unit_tests/hash_map_tests'
+        'unit_tests/hash_map_tests',
+        'unit_tests/component_tests',
+        'unit_tests/model_tests'
     ], function() {
         // load and start qunit
         QUnit.load();

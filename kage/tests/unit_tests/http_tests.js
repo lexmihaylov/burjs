@@ -5,7 +5,7 @@ define(['kage', 'QUnit'], function(kage, QUnit) {
         var http = new kage.util.Http('resources/http.json', true);
 
         http.on_success(function(data) {
-            equal(typeof (data), 'string', 'http request successfull');
+            equal(typeof (data), 'string', 'http request successful');
             start();
         });
 
@@ -16,7 +16,7 @@ define(['kage', 'QUnit'], function(kage, QUnit) {
         var http = new kage.util.Http('resources/http.json', true, 'json');
 
         http.on_success(function(data) {
-            equal(typeof (data), 'object', 'http request successfull (retrieved object)');
+            equal(typeof (data), 'object', 'http request successful (retrieved object)');
             start();
         });
 
@@ -30,7 +30,7 @@ define(['kage', 'QUnit'], function(kage, QUnit) {
             response = data;
         }).get();
 
-        equal(response, 'http_req', 'sync http request successfull');
+        equal(response, 'http_req', 'sync http request successful');
     });
 
     test('kage.util.Http(fail)', function() {

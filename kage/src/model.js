@@ -12,48 +12,54 @@ kage.Model = kage.Class({
 });
 
 /**
- * Used to define static methods for initializing models
+ * Creates a new model an initializes it's properties
  * @static
  * 
- * @param {function} child_class the child model class
+ * @param {object} parameters object attributes
+ * @return {Model} the newly created model
  */
-kage.Model.Define = function(child_class) {
+kage.Model.create = function(parameters, model_class) {
+    if(!model_class) {
+        model_class = kage.Model;
+    }
+    
+    if(typeof(model_class) !== 'function') {
+        throw new Error('model_class has to be a class constructor');
+    }
+    
+    var model = new model_class();
+    if(!$.isPlainObject(parameters)) {
+        throw new Error('Input should be a javascript object');
+    }
 
-    /**
-     * Creates a new model an initializes it's properties
-     * @static
-     * 
-     * @param {object} parameters object attributes
-     * @return {Model} the newly created model
-     */
-    child_class.create = function(parameters) {
-        var model = new child_class();
-
-        for (var i in parameters) {
-            if (parameters.hasOwnProperty(i)) {
-                model[i] = parameters[i];
-            }
+    for (var i in parameters) {
+        if (parameters.hasOwnProperty(i)) {
+            model[i] = parameters[i];
         }
+    }
 
-        return model;
-    };
+    return model;
+};
 
-    /**
-     * Creates a collection of models with initialized properties
-     * @static
-     * 
-     * @param {Array} array array of parameteres
-     * @return {Collection} a collection of models
-     */
-    child_class.create_from_array = function(array) {
-        var model_collection = new kage.util.Collection();
+/**
+ * Creates a collection of models with initialized properties
+ * @static
+ * 
+ * @param {Array} array array of parameteres
+ * @return {Collection} a collection of models
+ */
+kage.Model.create_from_array = function(array, model_class) {
+    if(!$.isArray(array)) {
+        throw new Error('Input should be an array');
+    }
 
-        for (var i = 0; i < array.length; i++) {
-            model_collection.push(child_class.create(array[i]));
-        }
+    var model_collection = new kage.util.Collection();
 
-        return model_collection;
-    };
+    for (var i = 0; i < array.length; i++) {
+        model_collection.push(kage.Model.create(array[i], model_class));
+    }
+
+    return model_collection;
 };
 
 kage.Model.prototype._normalize_types = function(types) {
@@ -63,7 +69,7 @@ kage.Model.prototype._normalize_types = function(types) {
         } else {
             types = $.map(types.split(','), $.trim);
         }
-    } else if(!types instanceof Array) {
+    } else if(!(types instanceof Array)) {
         throw new Error("'types' can be a String or Array.");
     }
     
@@ -90,13 +96,13 @@ kage.Model.prototype.on = function(types, callback, one) {
             var fn = callback;
             var _this = this;
             callback = function() {
-                _this.off(type, fn);
+                _this.off(type, callback);
                 fn.apply(this, arguments);
             };
         }
         
-        if(this._events[type].indexOf(callback) === -1) {
-            this._events[type].push(callback);
+        if(this._events.get(type).indexOf(callback) === -1) {
+            this._events.get(type).push(callback);
         }
     }
 
@@ -126,9 +132,9 @@ kage.Model.prototype.off = function(types, callback) {
         var type = types[i];
         
         if(this._events.has(type)) {
-            var index = this._events[type].indexOf(callback);
+            var index = this._events.get(type).indexOf(callback);
             if(index !== -1) {
-                this._events[type].remove(index);
+                this._events.get(type).remove(index);
             }
         }
     }
@@ -151,7 +157,7 @@ kage.Model.prototype.trigger = function(type, data) {
             timeStamp: Date.now(),
             target: this
         };
-        this._events[type].each(function(item) {
+        this._events.get(type).each(function(item) {
             if (typeof item === 'function') {
                 item.call(_this, event, data);
             }
@@ -170,15 +176,4 @@ kage.Model.prototype.trigger = function(type, data) {
 kage.Model.prototype.triggerHandler = function(type, data) {
     return this.trigger(type, data);
 };
-
-/**
- * converts the object to json string
- * 
- * @return {string}
- */
-kage.Model.prototype.to_json = function() {
-    JSON.stringify(this);
-};
-
-
 

@@ -346,7 +346,7 @@ kage.util.HashMap = kage.Class({
     _construct: function(map) {
         this._map = {};
         if (map) {
-            if(typeof(map) !== 'object') {
+            if(!$.isPlainObject(map)) {
                 throw new Error('map has to be a javascript object');
             }
             
@@ -451,7 +451,7 @@ kage.util.HashMap.prototype.remove = function(key) {
  * @param {object|HashMap} object
  */
 kage.util.HashMap.prototype.extend = function(object) {
-    if (typeof object === 'object') {
+    if ($.isPlainObject(object)) {
         for (var i in object) {
             if (object.hasOwnProperty(i)) {
                 this._map[i] = object[i];

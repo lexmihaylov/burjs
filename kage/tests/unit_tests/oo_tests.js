@@ -21,14 +21,14 @@ define(['kage', 'QUnit'], function(kage, QUnit) {
             return this;
         };
 
-        equal(typeof (Parent), 'function', 'class definition successfull');
-        equal(typeof (Parent.prototype.get_name), 'function', 'method definition successfull');
+        equal(typeof (Parent), 'function', 'class definition successful');
+        equal(typeof (Parent.prototype.get_name), 'function', 'method definition successful');
 
         var parent = new Parent('MyName');
-        equal(parent.name, 'MyName', 'instance variable definition successfull');
+        equal(parent.name, 'MyName', 'instance variable definition successful');
 
-        equal(parent.get_name(), 'MyName', 'getter call successfull');
-        equal(parent.set_name('NewName').name, 'NewName', 'setter call successfull');
+        equal(parent.get_name(), 'MyName', 'getter call successful');
+        equal(parent.set_name('NewName').name, 'NewName', 'setter call successful');
 
         var Child = kage.Class({
             extends: Parent,
@@ -45,16 +45,16 @@ define(['kage', 'QUnit'], function(kage, QUnit) {
             return this;
         };
 
-        equal(typeof (Child), 'function', 'child class definition successfull');
+        equal(typeof (Child), 'function', 'child class definition successful');
 
         var child = new Child('ChildName');
 
-        equal(typeof (child), 'object', 'creating instance of child class successfull');
+        equal(typeof (child), 'object', 'creating instance of child class successful');
         ok(child instanceof Parent, 'child instance is also an instace of parent class');
         equal(child.name, 'ChildName', 'super constructor call success full');
 
-        equal(typeof (child.get_name), 'function', 'parent prototype extending successfull');
-        equal(child.set_name('My').name, 'My_ChildClass', 'method overriding with parent method call successfull');
+        equal(typeof (child.get_name), 'function', 'parent prototype extending successful');
+        equal(child.set_name('My').name, 'My_ChildClass', 'method overriding with parent method call successful');
         
         
         
