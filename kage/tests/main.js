@@ -35,20 +35,9 @@ require(['QUnit', 'blanket'], function(QUnit, blanket) {
         'unit_tests/cookies_tests',
         'unit_tests/async_task_tests',
         'unit_tests/http_tests',
-        'unit_tests/collection_tests'
-    ], function(
-        OOTests,
-        Cookies,
-        AsyncTask,
-        Http,
-        Collection
-    ) {
-        // run tests
-        OOTests();
-        Cookies();
-        AsyncTask();
-        Http();
-        Collection();
+        'unit_tests/collection_tests',
+        'unit_tests/hash_map_tests'
+    ], function() {
         // load and start qunit
         QUnit.load();
         QUnit.start();

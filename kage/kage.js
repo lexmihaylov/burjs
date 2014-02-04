@@ -559,6 +559,24 @@ kage.util.Collection.prototype.each = function(fn) {
 };
 
 /**
+ * Checks if the collection has an element with a given index
+ * @param {type} index
+ * @returns {Boolean}
+ */
+kage.util.Collection.prototype.has = function(index) {
+    return index in this;
+};
+
+/**
+ * Checks if the collecion contains a value
+ * @param {type} value
+ * @returns {Boolean}
+ */
+kage.util.Collection.prototype.contains = function(value) {
+    return (this.indexOf(value) !== -1);
+};
+
+/**
  * Removes an item from the collection
  * 
  * @param {int} index item index
@@ -600,10 +618,15 @@ kage.util.Collection.prototype.to_json = function() {
  */
 kage.util.HashMap = kage.Class({
     _construct: function(map) {
+        this._map = {};
         if (map) {
+            if(typeof(map) !== 'object') {
+                throw new Error('map has to be a javascript object');
+            }
+            
             for (var i in map) {
                 if (map.hasOwnProperty(i)) {
-                    this[i] = map[i];
+                    this._map[i] = map[i];
                 }
             }
         }
@@ -616,7 +639,7 @@ kage.util.HashMap = kage.Class({
  * @return {boolean} 
  */
 kage.util.HashMap.prototype.has = function(key) {
-    return key in this;
+    return key in this._map;
 };
 
 /**
@@ -625,9 +648,9 @@ kage.util.HashMap.prototype.has = function(key) {
  * @param {function} fn callback
  */
 kage.util.HashMap.prototype.each = function(fn) {
-    for (var i in this) {
-        if (this.hasOwnProperty(i)) {
-            var result = fn(this[i], i);
+    for (var i in this._map) {
+        if (this._map.hasOwnProperty(i)) {
+            var result = fn(this._map[i], i);
 
             if (result === false) {
                 break;
@@ -645,8 +668,17 @@ kage.util.HashMap.prototype.each = function(fn) {
  * @param {string} value 
  */
 kage.util.HashMap.prototype.add = function(key, value) {
-    this[key] = value;
+    this._map[key] = value;
     return this;
+};
+
+/**
+ * Get an item by key
+ * @param {type} key
+ * @returns {mixed}
+ */
+kage.util.HashMap.prototype.get = function(key) {
+    return this._map[key];
 };
 
 /**
@@ -669,11 +701,20 @@ kage.util.HashMap.prototype.key_of = function(val) {
 };
 
 /**
+ * Checks if the hash map contains a given value
+ * @param {type} value
+ * @returns {Boolean}
+ */
+kage.util.HashMap.prototype.contains = function(value) {
+    return (this.key_of(value) !== null);
+};
+
+/**
  * Removes an element from the hash map
  * @param {string} key
  */
 kage.util.HashMap.prototype.remove = function(key) {
-    delete(this[key]);
+    delete(this._map[key]);
 
     return this;
 };
@@ -687,14 +728,29 @@ kage.util.HashMap.prototype.extend = function(object) {
     if (typeof object === 'object') {
         for (var i in object) {
             if (object.hasOwnProperty(i)) {
-                this[i] = object[i];
+                this._map[i] = object[i];
             }
         }
     } else {
-        throw "extend requires an object, but " + typeof (object) + "was given.";
+        throw new Error("extend requires an object, but " + typeof (object) + "was given.");
     }
 
     return this;
+};
+
+/**
+ * Returns the size of the hash map
+ * @returns {Number}
+ */
+kage.util.HashMap.prototype.size = function() {
+    var counter = 0;
+    for(var i in this._map) {
+        if(this._map.hasOwnProperty(i)) {
+            counter ++;
+        }
+    }
+    
+    return counter;
 };
 
 /**
@@ -703,7 +759,7 @@ kage.util.HashMap.prototype.extend = function(object) {
  * @return {string} 
  */
 kage.util.HashMap.prototype.to_json = function() {
-    return JSON.stringify(this);
+    return JSON.stringify(this._map);
 };
 
 /** 
