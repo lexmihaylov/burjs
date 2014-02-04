@@ -34,6 +34,8 @@ define(['kage','QUnit'], function(kage, QUnit) {
             collection.extend(ext);
             
             equal(collection.length, 6, '<collection>.extend successfull');
+            
+            equal(typeof($.parseJSON(collection.to_json())), 'object', 'JSON conversion successfull');
         });
     };
 });
