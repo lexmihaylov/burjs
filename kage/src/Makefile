@@ -1,8 +1,17 @@
 BUILD_FILE = ../kage.js
 
+SOURCES = license.js \
+        wrap_begin.js \
+        base.js \
+        class.js \
+        util.js \
+        jquery_modifyers.js \
+        component.js \
+        model.js \
+        view.js \
+        section.js \
+        wrap_end.js
+
 all:
 	echo > $(BUILD_FILE); \
-	cat license.js > $(BUILD_FILE); \
-	echo "define(['libs/jquery'], function () { \n\n" >> $(BUILD_FILE); \
-	cat base.js class.js util.js jquery_modifyers.js component.js model.js view.js section.js module_export.js >> $(BUILD_FILE); \
-	echo "});\n" >> $(BUILD_FILE);
+	cat $(SOURCES) >> $(BUILD_FILE);

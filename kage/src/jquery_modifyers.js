@@ -100,5 +100,5 @@
     $.fn.after = dom_events_modifyer('after');
     $.fn.before = dom_events_modifyer('before');
     
-})(jQuery);
+})($);
 

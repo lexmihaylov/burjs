@@ -7,7 +7,8 @@ requirejs.config({
     paths: {
         'kage': '../kage',
         'QUnit': 'libs/qunit',
-        'blanket': 'libs/blanket'
+        'blanket': 'libs/blanket',
+        'jquery': 'libs/jquery'
     },
     shim: {
         QUnit: {
@@ -29,7 +30,6 @@ requirejs.config({
 });
 
 require(['QUnit', 'blanket'], function(QUnit, blanket) {
-
     require([
         'unit_tests/oo_tests',
         'unit_tests/cookies_tests',

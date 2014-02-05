@@ -148,8 +148,8 @@ kage.View.prototype._build_resource_from_options = function() {
     var cache = true;
     
     var urlArgs = '';
-    if (ApplicationConfig && ApplicationConfig.url_args) {
-        urlArgs = '?' + ApplicationConfig.url_args;
+    if (kage.config('url_args')) {
+        urlArgs = '?' + kage.config('url_args');
     }
     
     if (this._opt.view) {

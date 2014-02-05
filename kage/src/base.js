@@ -21,70 +21,77 @@ var kage = {
     /**
      * Libaray configurations
      */
-    Config: {
+    _Config: {
         /**
          * Application directory (ex: js/app/)
          */
-        app_dir: null,
+        app_dir: 'js/app/',
         /**
          * View directory
          */
-        view_dir: 'views/',
+        view_dir: 'js/app/views/',
         /**
          * Model directory
          */
-        model_dir: 'models/',
+        model_dir: 'js/app/models/',
         /**
          * Section directory
          */
-        section_dir: 'sections/',
+        section_dir: 'js/app/sections/',
         /**
          * Template directory
          */
-        template_dir: 'templates/'
+        template_dir: 'js/app/templates/'
     },
     /**
      * _set_config
      * Setups the application paths
      */
-    _set_config: function() {
-        var app_dir = kage.Config.app_dir,
-                i;
-        for (i in kage.Config) {
+    _set_app_dir: function(app_dir) {
+        kage._Config['app_dir'];
+        for (var i in kage._Config) {
             if (i !== 'app_dir') {
-                kage.Config[i] = app_dir + kage.Config[i];
+                kage._Config[i] = app_dir + kage._Config[i];
             }
         }
     },
+    
     /**
-     * init
      * Initializes the module
      * @return {Object}
      */
-    init: function() {
-        if(!$.fn.jquery) {
-            throw new Error("jQuery is not loaded but it's required by kage.js");
-        }
-        if(!window.ApplicationConfig) {
-            throw new Error('ApplicationConfig object is required.');
-        }
+    _init: function() {
+        kage.window = $(window);
+        kage.dom = $('html');
+        kage.dom.body = $('body');
         
-        if (!window.KAGE_GLOBALS) {
-            window.KAGE_GLOBALS = {
-                window: $(window),
-                dom: $('html')
-            };
-
-            window.KAGE_GLOBALS.dom.body = $('body');
+        return kage;
+    },
+    
+    /**
+     * Gives access to the libraries configuration variable
+     * @param {type} attr
+     * @param {type} value
+     * @returns {kage|Object|kage._Config}
+     */
+    config: function(attr, value) {
+        
+        if($.isPlainObject(attr)) {
+            kage._Config = $.extend(true, kage._Config, attr);
+            return kage;
+        } else if(typeof(attr) === 'string'){
+            if(!value) {
+                return kage._Config[attr];
+            } else {
+                kage._Config[attr] = value;
+                
+                return kage;
+            }
+        } else if(!attr) {
+            return kage._Config;
+        } else {
+            return null;
         }
-        // load references to shared objects
-        kage.window = window.KAGE_GLOBALS.window;
-        kage.dom = window.KAGE_GLOBALS.dom;
-
-        kage.Config.app_dir = ApplicationConfig.base_url + 'app/';
-        kage._set_config();
-
-        return this;
     }
 };
 

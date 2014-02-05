@@ -1,0 +1,3 @@
+return kage._init();
+
+});
