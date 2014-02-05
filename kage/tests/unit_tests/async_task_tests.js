@@ -1,4 +1,4 @@
-define(['kage.loader', 'QUnit'], function(kage, QUnit) {
+define(['kage', 'QUnit'], function(kage, QUnit) {
     module('kage.util');
     asyncTest('kage.util.AsyncTask', function() {
         var done = false;

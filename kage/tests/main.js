@@ -1,8 +1,7 @@
 requirejs.config({
-    //urlArgs: Date.now(),
+    urlArgs: Date.now(),
     paths: {
         'kage': '../kage',
-        'kage.loader': 'kage.loader',
         'QUnit': 'libs/qunit',
         'blanket': 'libs/blanket',
         'jquery': 'libs/jquery'
@@ -26,20 +25,29 @@ requirejs.config({
     }
 });
 
-require(['QUnit', 'blanket'], function(QUnit) {
-    require([
-        'unit_tests/oo_tests',
-        'unit_tests/cookies_tests',
-        'unit_tests/async_task_tests',
-        'unit_tests/http_tests',
-        'unit_tests/collection_tests',
-        'unit_tests/hash_map_tests',
-        'unit_tests/component_tests',
-        'unit_tests/model_tests'
-    ], function() {
-        // load and start qunit
-        QUnit.load();
-        QUnit.start();
+require(['QUnit','blanket'], function(QUnit) {
+    
+    require(['kage'], function(kage) {
+        kage.config({
+            view_args: Date.now()
+        });
+        
+        require([
+            'unit_tests/oo_tests',
+            'unit_tests/cookies_tests',
+            'unit_tests/async_task_tests',
+            'unit_tests/http_tests',
+            'unit_tests/collection_tests',
+            'unit_tests/hash_map_tests',
+            'unit_tests/component_tests',
+            'unit_tests/model_tests',
+            'unit_tests/view_tests',
+            'unit_tests/section_tests'
+        ], function() {
+            // load and start qunit
+            QUnit.load();
+            QUnit.start();
+        });
     });
     
 });

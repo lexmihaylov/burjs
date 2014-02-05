@@ -1244,12 +1244,12 @@ kage.View.prototype._build_resource_from_options = function() {
     var cache = true;
     
     var urlArgs = '';
-    if (kage.config('url_args')) {
-        urlArgs = '?' + kage.config('url_args');
+    if (kage.config('view_args')) {
+        urlArgs = '?' + kage.config('view_args');
     }
     
     if (this._opt.view) {
-        resource = kage.Config.template_dir + this._opt.view + '.ejs' + urlArgs;
+        resource = kage.config('template_dir') + this._opt.view + '.ejs' + urlArgs;
     } else if (this._opt.url) {
         resource = this._opt.url + urlArgs;
     } else if (this._opt.string) {
@@ -1273,11 +1273,11 @@ kage.View.prototype._build_resource_from_options = function() {
 kage.View.prototype._load_resource = function(resource) {
     var template = null;
     if (kage.View.Cache.has(resource)) {
-        template = kage.View.Cache[resource];
+        template = kage.View.Cache.get(resource);
     } else {
         var html = kage.util.Http.Get(resource);
         template = kage.View.Compile(html);
-        kage.View.Cache[resource] = template;
+        kage.View.Cache.add(resource, template);
     }
 
     return template;
@@ -1400,7 +1400,7 @@ kage.View._fetch_template = function(resource, callback) {
  * @returns {undefined}
  */
 kage.View.Prefetch._compile_and_cache = function(resource, template) {
-    kage.View.Cache[resource] = kage.View.Compile(template);
+    kage.View.Cache.add(resource, kage.View.Compile(template));
 };
 /**
  * Provides functionality for creating UI sections
@@ -1463,7 +1463,7 @@ kage.Section.prototype.computed_style = function(property) {
  * @return {string} computed width
  */
 kage.Section.prototype.computed_width = function() {
-    return parseFloat(this.computedStyle('width'));
+    return parseFloat(this.computed_style('width'));
 };
 
 /**
@@ -1471,7 +1471,7 @@ kage.Section.prototype.computed_width = function() {
  * @return {string}
  */
 kage.Section.prototype.computed_height = function() {
-    return parseFloat(this.computedStyle('height'));
+    return parseFloat(this.computed_style('height'));
 };
 
 /**

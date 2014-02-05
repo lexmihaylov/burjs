@@ -1,4 +1,4 @@
-define(['kage.loader', 'QUnit'], function(kage, QUnit) {
+define(['kage', 'QUnit'], function(kage, QUnit) {
     module('kage');
     test('kage.Class', function() {
         var Parent = kage.Class({

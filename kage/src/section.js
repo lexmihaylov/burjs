@@ -59,7 +59,7 @@ kage.Section.prototype.computed_style = function(property) {
  * @return {string} computed width
  */
 kage.Section.prototype.computed_width = function() {
-    return parseFloat(this.computedStyle('width'));
+    return parseFloat(this.computed_style('width'));
 };
 
 /**
@@ -67,7 +67,7 @@ kage.Section.prototype.computed_width = function() {
  * @return {string}
  */
 kage.Section.prototype.computed_height = function() {
-    return parseFloat(this.computedStyle('height'));
+    return parseFloat(this.computed_style('height'));
 };
 
 /**
