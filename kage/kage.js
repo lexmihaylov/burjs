@@ -28,7 +28,7 @@
 
 (function(root, factory) {
     if(typeof(define) === 'function' && define.amd) {
-        define('kage', ['jquery'], factory);
+        define(['jquery'], factory);
     } else if(typeof(root) === 'object' && typeof(root.document) === 'object') {
         // check if jquery dependency is met
         if (typeof (root.$) !== 'function' ||
