@@ -1,4 +1,4 @@
-define(['kage', 'QUnit'], function(kage, QUnit) {
+define(['kage.loader', 'QUnit'], function(kage, QUnit) {
     module('kage');
     test('kage.Component', function() {
         throws(function() {

@@ -1,4 +1,4 @@
-define(['kage', 'QUnit'], function(kage, QUnit) {
+define(['kage.loader', 'QUnit'], function(kage, QUnit) {
     module('kage.util');
     test('kage.util.Collection', function() {
         var collection = new kage.util.Collection(1, 2, 3);

@@ -1,11 +1,8 @@
-var ApplicationConfig = {
-    
-};
-
 requirejs.config({
     //urlArgs: Date.now(),
     paths: {
         'kage': '../kage',
+        'kage.loader': 'kage.loader',
         'QUnit': 'libs/qunit',
         'blanket': 'libs/blanket',
         'jquery': 'libs/jquery'
@@ -23,13 +20,13 @@ requirejs.config({
             deps: ['QUnit'],
             init: function() {
                 //blanket.options('debug', true);
-                blanket.options('filter', 'kage');
+                blanket.options('filter', '../kage');
             }
         }
     }
 });
 
-require(['QUnit', 'blanket'], function(QUnit, blanket) {
+require(['QUnit', 'blanket'], function(QUnit) {
     require([
         'unit_tests/oo_tests',
         'unit_tests/cookies_tests',

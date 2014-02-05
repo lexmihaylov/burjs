@@ -92,7 +92,7 @@ var kage = {
      * Setups the application paths
      */
     _set_app_dir: function(app_dir) {
-        kage._Config['app_dir'];
+        kage._Config.app_dir = app_dir;
         for (var i in kage._Config) {
             if (i !== 'app_dir') {
                 kage._Config[i] = app_dir + kage._Config[i];
@@ -121,13 +121,22 @@ var kage = {
     config: function(attr, value) {
         
         if($.isPlainObject(attr)) {
+            if(attr.app_dir) {
+                kage._set_app_dir(attr.app_dir);
+            }
+            
             kage._Config = $.extend(true, kage._Config, attr);
+            
             return kage;
         } else if(typeof(attr) === 'string'){
             if(!value) {
                 return kage._Config[attr];
             } else {
-                kage._Config[attr] = value;
+                if(attr === 'app_dir') {
+                    kage._set_app_dir(value);
+                } else {
+                    kage._Config[attr] = value;
+                }
                 
                 return kage;
             }

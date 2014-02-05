@@ -1,4 +1,4 @@
-define(['kage', 'QUnit'], function(kage, QUnit) {
+define(['kage.loader', 'QUnit'], function(kage, QUnit) {
     module('kage.util');
     test('kage.util.cookie', function() {
         kage.util.cookie.set('TestCookie', 'Test', {expires: 100});
