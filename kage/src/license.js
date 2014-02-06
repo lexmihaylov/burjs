@@ -1,7 +1,7 @@
 /**
 * Project kage
 * @version 0.1.0
-* @author Alexander Mihaylov (a.mihaylov@dynamicfunction.eu)
+* @author Alexander Mihaylov (lex.mihaylov@gmail.com)
 * @license http://opensource.org/licenses/MIT MIT License (MIT)
 *
 * @Copyright (C) 2013 by Alexander Mihaylov
