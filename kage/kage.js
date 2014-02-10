@@ -2,7 +2,7 @@
 /**
 * Project kage
 * @version 0.1.0
-* @author Alexander Mihaylov (a.mihaylov@dynamicfunction.eu)
+* @author Alexander Mihaylov (lex.mihaylov@gmail.com)
 * @license http://opensource.org/licenses/MIT MIT License (MIT)
 *
 * @Copyright (C) 2013 by Alexander Mihaylov
@@ -62,6 +62,12 @@ var kage = {
      * with extended functionality
      */
     dom: null,
+    
+    /**
+     * Checks if the library needs to initialize
+     * @type Boolean
+     */
+    _is_initialized: false,
     /**
      * Libaray configurations
      */
@@ -105,9 +111,12 @@ var kage = {
      * @return {Object}
      */
     _init: function() {
-        kage.window = $(window);
-        kage.dom = $('html');
-        kage.dom.body = $('body');
+        if(!kage._is_initialized) {
+            kage.window = $(window);
+            kage.dom = $('html');
+            kage.dom.body = $('body');
+            kage._is_initialized = true;
+        }
         
         return kage;
     },
@@ -797,14 +806,6 @@ kage.util.HashMap.prototype.to_json = function() {
  */
 
 (function($) {
-    /**
-    * If the object already has an instance of a class it will retun it
-    * 
-    * @return {object}
-    */
-    $.fn.kage_object = function() {
-        return $(this).data('__KAGAMI__');
-    };
     
     var parent_methods = {
         // inset inside methods
@@ -910,8 +911,6 @@ kage.Component = kage.Class({
         this.constructor = $; // jquery uses it's constructor internaly in some methods
         
         this.init(object); // init the object
-        
-        this.data('__KAGAMI__', this); // adds the class instance to the dom's data object
     }
 });
 

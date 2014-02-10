@@ -3,14 +3,6 @@
  */
 
 (function($) {
-    /**
-    * If the object already has an instance of a class it will retun it
-    * 
-    * @return {object}
-    */
-    $.fn.kage_object = function() {
-        return $(this).data('__KAGAMI__');
-    };
     
     var parent_methods = {
         // inset inside methods

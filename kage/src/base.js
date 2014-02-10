@@ -18,6 +18,12 @@ var kage = {
      * with extended functionality
      */
     dom: null,
+    
+    /**
+     * Checks if the library needs to initialize
+     * @type Boolean
+     */
+    _is_initialized: false,
     /**
      * Libaray configurations
      */
@@ -61,9 +67,12 @@ var kage = {
      * @return {Object}
      */
     _init: function() {
-        kage.window = $(window);
-        kage.dom = $('html');
-        kage.dom.body = $('body');
+        if(!kage._is_initialized) {
+            kage.window = $(window);
+            kage.dom = $('html');
+            kage.dom.body = $('body');
+            kage._is_initialized = true;
+        }
         
         return kage;
     },
