@@ -83,7 +83,7 @@ kage.Model.prototype._normalize_types = function(types) {
  * @param {boolean} one execute the handler once
  * @return {kage.Model.prototype}
  */
-kage.Model.prototype.on = function(types, callback, one) {
+kage.Model.prototype.on = function(types, callback, /* INTENAL */ one) {
     
     types = this._normalize_types(types);
     

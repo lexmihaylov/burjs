@@ -6,6 +6,7 @@ SOURCES = license.js \
         class.js \
         util.js \
         jquery_modifyers.js \
+        events_extension.js \
         component.js \
         model.js \
         view.js \
