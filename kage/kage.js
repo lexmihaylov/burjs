@@ -1077,9 +1077,19 @@ kage.util.HashMap.prototype.to_json = function() {
         }
     };
 
+    var returnFalse = function() {
+        return false;
+    };
+    
     $.fn.listenTo = function(other, types, fn, selector, data) {
         if (!(other instanceof $)) {
             throw new TypeError("jQuery object expected.");
+        }
+        
+        if(fn === false) {
+            fn = returnFalse;
+        } else if(!fn) {
+            return this;
         }
 
         return this.each(function() {
@@ -1101,6 +1111,12 @@ kage.util.HashMap.prototype.to_json = function() {
 
         if (other && !(other instanceof $)) {
             throw new TypeError("jQuery object expected.");
+        }
+        
+        if(fn === false) {
+            fn = returnFalse;
+        } else if(!fn) {
+            return this;
         }
 
         return this.each(function() {
