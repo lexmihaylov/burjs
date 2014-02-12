@@ -14,21 +14,18 @@
          * @param {type} object
          * @param {type} type
          * @param {type} fn
-         * @param {type} selector
-         * @param {type} data
          * @returns {EventAssocList}
          */
-        add: function(object, type, fn, selector, data) {
-            if (this.key(object, type, fn, selector, data) === -1) {
+        add: function(object, type, fn) {
+            if (this.key(object, type, fn) === -1) {
                 this.list.push({
                     object: object,
                     type: type,
-                    selector: selector,
                     handler: fn
                 });  
             }
             
-            object.on(type, selector, data, fn);
+            object.on(type, fn);
             
             return this;
         },
@@ -50,8 +47,8 @@
          * @param {type} selector
          * @returns {object}
          */
-        find: function(object, type, fn, selector) {
-            var index = this.key(object, type, fn, selector);
+        find: function(object, type, fn) {
+            var index = this.key(object, type, fn);
 
             return this.get(index);
         },
@@ -64,12 +61,11 @@
          * @param {type} selector
          * @returns {Number}
          */
-        key: function(object, type, fn, selector) {
+        key: function(object, type, fn) {
             var i = 0;
             for (; i < this.length(); i++) {
                 var item = this.list[i];
-                if (item.object.is(object) &&
-                        item.selector === selector &&
+                if (item.object === object &&
                         item.type === type &&
                         item.handler === fn) {
                     return i;
@@ -97,7 +93,7 @@
             if (index !== -1) {
                 var event = this.get(index);
 
-                event.object.off(event.type, event.selector, event.handler);
+                event.object.off(event.type, event.handler);
 
                 this.list.splice(index, 1);
             }
@@ -113,7 +109,7 @@
          * @param {type} [selector]
          * @returns {EventAssocList}
          */
-        remove: function(object, type, fn, selector) {
+        remove: function(object, type, fn) {
             var i, length = this.list.length;
             // .remove() - removes all items
             if(!object) {
@@ -123,7 +119,7 @@
             // .remove(object) - removes all items that match the object
             if (object && !type) {
                 for (i = length - 1; i >= 0; i--) {
-                    if (this.list[i].object.is(object)) {
+                    if (this.list[i].object === object) {
                         this.removeItem(i);
                     }
                 }
@@ -135,7 +131,7 @@
             // object and event type
             if(object && type && !fn) {
                 for (i = length - 1; i >= 0; i--) {
-                    if (this.list[i].object.is(object) &&
+                    if (this.list[i].object === object &&
                         this.list[i].type === type) {
                     
                         this.removeItem(i);
@@ -148,7 +144,7 @@
             
             // .remove(object, type, fn,[selector]) - removes the item that 
             // matches the input
-            return this.removeItem(this.key(object, type, fn, selector));
+            return this.removeItem(this.key(object, type, fn));
         },
         
         /**
@@ -299,10 +295,10 @@
          * @param {type} data
          * @returns {undefined}
          */
-        add: function(owner, other, types, fn, selector, data) {
+        add: function(owner, other, types, fn) {
             var list = EventAssocData.get(owner);
             if (list) {
-                list.add(other, types, fn, selector, data);
+                list.add(other, types, fn);
             }
         },
         
@@ -315,14 +311,14 @@
          * @param {type} selector
          * @returns {undefined}
          */
-        remove: function(owner, other, types, fn, selector) {
+        remove: function(owner, other, types, fn) {
             if(!EventAssocData.has(owner)) {
                 return;
             }
             
             var list = EventAssocData.get(owner);
             if(list) {
-                list.remove(other, types, fn, selector);
+                list.remove(other, types, fn);
             }
         }
     };
@@ -338,8 +334,12 @@
      * @param {funcion} fn
      * @returns {jQuery}
      */
-    $.fn.listenTo = function(other, types, fn, selector, data) {
-        if (!(other instanceof $)) {
+    $.fn.listenTo = function(other, types, fn) {
+        if (
+            !other.on ||
+            !other.one ||
+            !other.off
+        ) {
             throw new TypeError("jQuery object expected.");
         }
         
@@ -350,7 +350,7 @@
         }
 
         return this.each(function() {
-            EventAssoc.add(this, other, types, fn, selector, data);
+            EventAssoc.add(this, other, types, fn);
         });
     };
     
@@ -361,14 +361,14 @@
      * @param {function} fn
      * @returns {jQuery}
      */
-    $.fn.listenToOnce = function(other, types, fn, selector, data) {
+    $.fn.listenToOnce = function(other, types, fn) {
         var _this = this;
         callback = function() {
-            _this.stopListening(other, types, callback, selector);
+            _this.stopListening(other, types, callback);
             return fn.apply(this, arguments);
         };
 
-        return this.listenTo(other, types, callback, selector, data);
+        return this.listenTo(other, types, callback);
     };
     
     /**
@@ -378,9 +378,13 @@
      * @param {function} [fn]
      * @returns {jQuery}
      */
-    $.fn.stopListening = function(other, types, fn, selector) {
+    $.fn.stopListening = function(other, types, fn) {
 
-        if (other && !(other instanceof $)) {
+        if (other && (
+            !other.on ||
+            !other.one ||
+            !other.off
+        )) {
             throw new TypeError("jQuery object expected.");
         }
         
@@ -389,7 +393,7 @@
         }
 
         return this.each(function() {
-            EventAssoc.remove(this, other, types, fn, selector);
+            EventAssoc.remove(this, other, types, fn);
         });
     };
     
