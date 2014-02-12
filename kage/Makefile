@@ -1,3 +1,5 @@
 all:
 	cd src; \
-	make; 
+	make; \
+        cd ..; \
+        cat kage.js > ../public_html/js/libs/kage.js;

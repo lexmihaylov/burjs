@@ -899,11 +899,24 @@ kage.util.HashMap.prototype.to_json = function() {
 
 
 (function($) {
+    /**
+     * A list of event associations
+     * @class EventAssocList
+     * @returns {EventAssocList}
+     */
     var EventAssocList = function() {
         this.list = [];
     };
-    
     EventAssocList.prototype = {
+        /**
+         * Add an event association to the list and bind the event
+         * @param {type} object
+         * @param {type} type
+         * @param {type} fn
+         * @param {type} selector
+         * @param {type} data
+         * @returns {EventAssocList}
+         */
         add: function(object, type, fn, selector, data) {
             if (this.key(object, type, fn, selector, data) === -1) {
                 this.list.push({
@@ -918,19 +931,43 @@ kage.util.HashMap.prototype.to_json = function() {
             
             return this;
         },
+        
+        /**
+         * Get an item by index
+         * @param {number} index
+         * @returns {Array}
+         */
         get: function(index) {
             return this.list[index];
         },
+        
+        /**
+         * Find a element from the list
+         * @param {type} object
+         * @param {type} type
+         * @param {type} fn
+         * @param {type} selector
+         * @returns {object}
+         */
         find: function(object, type, fn, selector) {
             var index = this.key(object, type, fn, selector);
 
             return this.get(index);
         },
+        
+        /**
+         * Get the index of an object in the list
+         * @param {type} object
+         * @param {type} type
+         * @param {type} fn
+         * @param {type} selector
+         * @returns {Number}
+         */
         key: function(object, type, fn, selector) {
             var i = 0;
             for (; i < this.length(); i++) {
                 var item = this.list[i];
-                if (item.object === object &&
+                if (item.object.is(object) &&
                         item.selector === selector &&
                         item.type === type &&
                         item.handler === fn) {
@@ -940,9 +977,21 @@ kage.util.HashMap.prototype.to_json = function() {
 
             return -1;
         },
+        
+        /**
+         * Get the number of items in the list
+         * @returns {number}
+         */
         length: function() {
             return this.list.length;
         },
+        
+        /**
+         * Deletes an item associated with an index, and unbinds the 
+         * corresponding event
+         * @param {type} index
+         * @returns {EventAssocList}
+         */
         removeItem: function(index) {
             if (index !== -1) {
                 var event = this.get(index);
@@ -954,28 +1003,58 @@ kage.util.HashMap.prototype.to_json = function() {
             
             return this;
         },
+        
+        /**
+         * Remove all the items that match the input parameters
+         * @param {type} [object]
+         * @param {type} [type]
+         * @param {type} [fn]
+         * @param {type} [selector]
+         * @returns {EventAssocList}
+         */
         remove: function(object, type, fn, selector) {
+            var i, length = this.list.length;
+            // .remove() - removes all items
             if(!object) {
                 return this.removeAll();
             }
             
-            if (!type) {
-                var length = this.list.length,
-                    i = length - 1;
-                for (; i >= 0; i--) {
-                    if (this.list[i].object === object) {
+            // .remove(object) - removes all items that match the object
+            if (object && !type) {
+                for (i = length - 1; i >= 0; i--) {
+                    if (this.list[i].object.is(object)) {
                         this.removeItem(i);
                     }
-
+                }
+                
+                return this;
+            }
+            
+            // .remove(object, type) - removes all items that match the 
+            // object and event type
+            if(object && type && !fn) {
+                for (i = length - 1; i >= 0; i--) {
+                    if (this.list[i].object.is(object) &&
+                        this.list[i].type === type) {
+                    
+                        this.removeItem(i);
+                    }
                 }
                 
                 return this;
             }
             
             
-
+            // .remove(object, type, fn,[selector]) - removes the item that 
+            // matches the input
             return this.removeItem(this.key(object, type, fn, selector));
         },
+        
+        /**
+         * Removes all the intems in the list and unbinds all of the 
+         * corresponing events
+         * @returns {EventAssocList}
+         */
         removeAll: function() {
             var i = this.list.length - 1;
             for (; i >= 0; i--) {
@@ -986,14 +1065,43 @@ kage.util.HashMap.prototype.to_json = function() {
         }
     };
 
+    /**
+     * Data structure that holds element ids and a list of external events
+     * @static
+     * @class EventAssocData
+     * @type {Object}
+     */
     var EventAssocData = {
+        /**
+         * @property {number} assoc_index autoincrementing value used as index for element
+         */
         assoc_index: 1,
+        
+        /**
+         * @property {object} data data structure
+         */
         data: {},
+        
+        /**
+         * @property {string} property element property name in wich the element index will be saved
+         */
         property: '__event_assoc_data__',
+        
+        /**
+         * Checks if object is a valid
+         * @param {type} object
+         * @returns {Boolean}
+         */
         accepts: function(object) {
             return object.nodeType ?
                     object.nodeType === 1 || object.nodeType === 9 : true;
         },
+        
+        /**
+         * Gets or creates a key and returns it
+         * @param {object} object
+         * @returns {Number}
+         */
         key: function(object) {
             if (!EventAssocData.accepts(object)) {
                 return 0;
@@ -1025,6 +1133,12 @@ kage.util.HashMap.prototype.to_json = function() {
 
             return key;
         },
+        
+        /**
+         * checks if an element exists in the data structure
+         * @param {object} object
+         * @returns {Boolean}
+         */
         has: function(object) {
             var key = object[EventAssocData.property];
             if(key) {
@@ -1033,6 +1147,12 @@ kage.util.HashMap.prototype.to_json = function() {
             
             return false;
         },
+        
+        /**
+         * Get event associations corresponding to a given object
+         * @param {object} object
+         * @returns {object}
+         */
         get: function(object) {
             var key = EventAssocData.key(object),
                     data = EventAssocData.data[key];
@@ -1040,6 +1160,11 @@ kage.util.HashMap.prototype.to_json = function() {
             return data;
         },
         
+        /**
+         * Removes an item from the data struct
+         * @param {object} object
+         * @returns {undefined}
+         */
         remove: function(object) {
             if(!EventAssocData.has(object)) {
                 return;
@@ -1056,15 +1181,39 @@ kage.util.HashMap.prototype.to_json = function() {
         }
     };
     
+    /**
+     * Class that gives fast access to the event association data structure
+     * @class EventAssoc
+     * @static
+     * @type {Object}
+     */
     var EventAssoc = {
+        /**
+         * Adds an item
+         * @param {type} owner
+         * @param {type} other
+         * @param {type} types
+         * @param {type} fn
+         * @param {type} selector
+         * @param {type} data
+         * @returns {undefined}
+         */
         add: function(owner, other, types, fn, selector, data) {
             var list = EventAssocData.get(owner);
             if (list) {
                 list.add(other, types, fn, selector, data);
             }
-            
         },
         
+        /**
+         * Removes an item
+         * @param {type} owner
+         * @param {type} other
+         * @param {type} types
+         * @param {type} fn
+         * @param {type} selector
+         * @returns {undefined}
+         */
         remove: function(owner, other, types, fn, selector) {
             if(!EventAssocData.has(owner)) {
                 return;
@@ -1081,6 +1230,13 @@ kage.util.HashMap.prototype.to_json = function() {
         return false;
     };
     
+    /**
+     * Start listening to an external jquery object
+     * @param {jQuery} other
+     * @param {string|object} types
+     * @param {funcion} fn
+     * @returns {jQuery}
+     */
     $.fn.listenTo = function(other, types, fn, selector, data) {
         if (!(other instanceof $)) {
             throw new TypeError("jQuery object expected.");
@@ -1096,7 +1252,14 @@ kage.util.HashMap.prototype.to_json = function() {
             EventAssoc.add(this, other, types, fn, selector, data);
         });
     };
-
+    
+    /**
+     * Start listening to an external jquery object (ONCE)
+     * @param {jQuery} other
+     * @param {string|object} types
+     * @param {function} fn
+     * @returns {jQuery}
+     */
     $.fn.listenToOnce = function(other, types, fn, selector, data) {
         var _this = this;
         callback = function() {
@@ -1106,7 +1269,14 @@ kage.util.HashMap.prototype.to_json = function() {
 
         return this.listenTo(other, types, callback, selector, data);
     };
-
+    
+    /**
+     * Stop listening to an external jquery object
+     * @param {jQuery} [other]
+     * @param {string|object} [types]
+     * @param {function} [fn]
+     * @returns {jQuery}
+     */
     $.fn.stopListening = function(other, types, fn, selector) {
 
         if (other && !(other instanceof $)) {
@@ -1115,8 +1285,6 @@ kage.util.HashMap.prototype.to_json = function() {
         
         if(fn === false) {
             fn = returnFalse;
-        } else if(!fn) {
-            return this;
         }
 
         return this.each(function() {
@@ -1124,6 +1292,10 @@ kage.util.HashMap.prototype.to_json = function() {
         });
     };
     
+    /**
+     * Get all the event associations connected to the current jQuery object
+     * @returns {null|Array}
+     */
     $.fn.externalListeners = function() {
         var data = [];
         this.each(function() {
@@ -1132,10 +1304,17 @@ kage.util.HashMap.prototype.to_json = function() {
             }
         });
         
-        return data;
+        if(data.length > 0) {
+            return data;
+        }
+        
+        return null;
     };
 
     // override cleanData method to clear existing event associations
+    // cleans all event associations
+    // unbinds all the external events
+    // this will be executed when you use remove() or empty()
     var cleanData = $.cleanData;
 
     $.cleanData = function(elems) {
