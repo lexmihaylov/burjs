@@ -5,8 +5,8 @@ SOURCES = license.js \
         base.js \
         class.js \
         util.js \
-        jquery_modifyers.js \
-        events_extension.js \
+        dom_insert_extension.js \
+        external_listener_extension.js \
         component.js \
         model.js \
         view.js \
