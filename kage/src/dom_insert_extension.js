@@ -4,7 +4,7 @@
 
 (function($) {
     
-    var parent_methods = {
+    var parentMethods = {
         // inset inside methods
         /*
          * append
@@ -35,7 +35,7 @@
      * @param {type} item
      * @return {undefined}
      */
-    var on_after_insert = function(item) {
+    var onAfterInsert = function(item) {
         if (item.triggerHandler) {
             if(item.closest('body').length > 0) {
                 item.triggerHandler('domInsert');
@@ -51,7 +51,7 @@
      * @param {type} item
      * @returns {undefined}
      */
-    var on_before_insert = function(item) {
+    var onBeforeInsert = function(item) {
         if(item.triggerHandler) {
             if(item.closest('body').length === 0) {
                 item.triggerHandler('beforeDomInsert');
@@ -67,30 +67,30 @@
      * @param {type} method
      * @return {unresolved}
      */
-    var dom_events_modifyer = function(method) {
+    var domEventsModifyer = function(method) {
         return function() {
             var args = Array.prototype.splice.call(arguments,0),
                 result = undefined,
                 i = 0;
         
             for(i = 0; i < args.length; i++) {
-                on_before_insert(args[i]);
+                onBeforeInsert(args[i]);
             }
             
-            result = parent_methods[method].apply(this, args);
+            result = parentMethods[method].apply(this, args);
             
             for(i = 0; i < args.length; i++) {
-                on_after_insert(args[i]);
+                onAfterInsert(args[i]);
             }
 
             return result;
         };
     };
     
-    $.fn.append = dom_events_modifyer('append');
-    $.fn.prepend = dom_events_modifyer('prepend');
-    $.fn.after = dom_events_modifyer('after');
-    $.fn.before = dom_events_modifyer('before');
+    $.fn.append = domEventsModifyer('append');
+    $.fn.prepend = domEventsModifyer('prepend');
+    $.fn.after = domEventsModifyer('after');
+    $.fn.before = domEventsModifyer('before');
     
 })($);
 

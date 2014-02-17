@@ -11,8 +11,8 @@ kage.Section = kage.Class({
         var _this = this;
         
         this.on('domInsert', function(event) {
-            if(typeof(_this.on_dom_insert) === 'function') {
-                _this.on_dom_insert(event);
+            if(typeof(_this.onDomInsert) === 'function') {
+                _this.onDomInsert(event);
             }
             _this.off(event);
         });
@@ -24,13 +24,12 @@ kage.Section = kage.Class({
  * @param {type} event
  * @returns {undefined}
  */
-kage.Section.prototype.on_dom_insert = function(event) {};
+kage.Section.prototype.onDomInsert = function(event) {};
 
 /**
  * Loads view in the section object's context
  * 
- * @param {string} template_id
- * @param {string} url
+ * @param {object} opt
  */
 kage.Section.prototype.View = function(opt) {
     if (!opt) {
@@ -49,7 +48,7 @@ kage.Section.prototype.View = function(opt) {
  * @param {string} property a css property
  * @return {mixed} the computed value of the property
  */
-kage.Section.prototype.computed_style = function(property) {
+kage.Section.prototype.computedStyle = function(property) {
     return window
             .getComputedStyle(this.get(0)).getPropertyValue(property);
 };
@@ -58,29 +57,29 @@ kage.Section.prototype.computed_style = function(property) {
  * Get the computed width
  * @return {string} computed width
  */
-kage.Section.prototype.computed_width = function() {
-    return parseFloat(this.computed_style('width'));
+kage.Section.prototype.computedWidth = function() {
+    return parseFloat(this.computedStyle('width'));
 };
 
 /**
  * Get the computed height
  * @return {string}
  */
-kage.Section.prototype.computed_height = function() {
-    return parseFloat(this.computed_style('height'));
+kage.Section.prototype.computedHeight = function() {
+    return parseFloat(this.computedStyle('height'));
 };
 
 /**
  * Sets the sections width to its parents dimensions
- * @param {boolean} include_margins
+ * @param {boolean} includeMargins
  */
-kage.Section.prototype.fill_vertical = function(include_margins) {
-    if (!include_margins) {
-        include_margins = true;
+kage.Section.prototype.fillVertical = function(includeMargins) {
+    if (!includeMargins) {
+        includeMargins = true;
     }
     var parent = this.parent();
     var parentHeight = parent.height();
-    var paddingAndBorders = this.outerHeight(include_margins) - this.height();
+    var paddingAndBorders = this.outerHeight(includeMargins) - this.height();
 
     this.height(parentHeight - paddingAndBorders);
 
@@ -89,16 +88,16 @@ kage.Section.prototype.fill_vertical = function(include_margins) {
 
 /**
  * Sets the sections height to its parents dimensions
- * @param {boolean} include_margins
+ * @param {boolean} includeMargins
  */
-kage.Section.prototype.fill_horizontal = function(include_margins) {
-    if (!include_margins) {
-        include_margins = true;
+kage.Section.prototype.fillHorizontal = function(includeMargins) {
+    if (!includeMargins) {
+        includeMargins = true;
     }
 
     var parent = this.parent();
     var parentWidth = parent.width();
-    var paddingAndBorders = this.outerWidth(include_margins) - this.width();
+    var paddingAndBorders = this.outerWidth(includeMargins) - this.width();
 
     this.width(parentWidth - paddingAndBorders);
 
@@ -108,9 +107,9 @@ kage.Section.prototype.fill_horizontal = function(include_margins) {
 /**
  * Sets the sections width and height to its parents dimensions
  */
-kage.Section.prototype.fill_both = function() {
-    this.fill_horizontal().
-            fill_vertical();
+kage.Section.prototype.fillBoth = function() {
+    this.fillHorizontal().
+            fillVertical();
 
     return this;
 };
@@ -118,7 +117,7 @@ kage.Section.prototype.fill_both = function() {
 /**
  * Centers the section verticaly
  */
-kage.Section.prototype.center_vertical = function() {
+kage.Section.prototype.centerVertical = function() {
     this.css('top', '50%');
     this.css('margin-top', -(this.outerHeight() / 2));
 
@@ -133,7 +132,7 @@ kage.Section.prototype.center_vertical = function() {
 /**
  * Centers the section horizontaly
  */
-kage.Section.prototype.center_hotizontal = function() {
+kage.Section.prototype.centerHorizontal = function() {
     this.css('left', '50%');
     this.css('margin-left', -(this.outerWidth() / 2));
 
@@ -148,9 +147,9 @@ kage.Section.prototype.center_hotizontal = function() {
 /**
  * Centers the section horizontaly an verticaly
  */
-kage.Section.prototype.center_both = function() {
-    this.center_hotizontal().
-            center_vertical();
+kage.Section.prototype.centerBoth = function() {
+    this.centerHorizontal().
+            centerVertical();
 
     return this;
 };

@@ -1,0 +1,26 @@
+{
+    "name": "kagejs",
+    "preferGlobal": true,
+    "version": "0.1.0",
+    "bin": {
+        "kagejs": "./kage.js"
+    },
+    "keywords": [
+        "cli",
+        "jquery",
+        "requirejs",
+        "webapp",
+        "kage.js"
+    ],
+    "description": "Generator for building web apps with kage.js",
+    "author": "Alexander Mihaylov <lex.mihaylov@gmail.com>",
+    "dependencies": {
+        "wrench": "1.5.x"
+    },
+    "bundledDependencies": [
+        "wrench"
+    ],
+    
+    "license": "MIT",
+    "engine": "node >= 0.10.22"
+}

@@ -4,7 +4,7 @@ define(['kage', 'QUnit'], function(kage, QUnit) {
     asyncTest('kage.util.Http(simple)', function() {
         var http = new kage.util.Http('resources/http.json', true);
 
-        http.on_success(function(data) {
+        http.onSuccess(function(data) {
             equal(typeof (data), 'string', 'http request successful');
             start();
         });
@@ -15,7 +15,7 @@ define(['kage', 'QUnit'], function(kage, QUnit) {
     asyncTest('kage.util.Http(json)', function() {
         var http = new kage.util.Http('resources/http.json', true, 'json');
 
-        http.on_success(function(data) {
+        http.onSuccess(function(data) {
             equal(typeof (data), 'object', 'http request successful (retrieved object)');
             start();
         });
@@ -26,7 +26,7 @@ define(['kage', 'QUnit'], function(kage, QUnit) {
     test('kage.util.Http(sync)', function() {
         var http = new kage.util.Http('resources/http.html');
         var response = null;
-        http.on_success(function(data) {
+        http.onSuccess(function(data) {
             response = data;
         }).get();
 
@@ -39,15 +39,15 @@ define(['kage', 'QUnit'], function(kage, QUnit) {
         var success = true;
         var fail = false;
 
-        http.on_success(function() {
+        http.onSuccess(function() {
             success = false;
         });
-        http.on_fail(function(data) {
+        http.onFail(function(data) {
             fail = true;
         });
         http.get();
 
-        ok(success, 'on_success callback was NOT executed');
-        ok(fail, 'on_fail callback was executed');
+        ok(success, 'onSuccess callback was NOT executed');
+        ok(fail, 'onFail callback was executed');
     });
 });

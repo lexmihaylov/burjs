@@ -67,7 +67,7 @@ var kage = {
      * Checks if the library needs to initialize
      * @type Boolean
      */
-    _is_initialized: false,
+    _isInitialized: false,
     /**
      * Libaray configurations
      */
@@ -75,33 +75,33 @@ var kage = {
         /**
          * Application directory (ex: js/app/)
          */
-        app_dir: 'js/app/',
+        appDir: 'js/app/',
         /**
          * View directory
          */
-        view_dir: 'js/app/views/',
+        viewDir: 'js/app/views/',
         /**
          * Model directory
          */
-        model_dir: 'js/app/models/',
+        modelDir: 'js/app/models/',
         /**
          * Section directory
          */
-        section_dir: 'js/app/sections/',
+        sectionDir: 'js/app/sections/',
         /**
          * Template directory
          */
-        template_dir: 'js/app/templates/'
+        templateDir: 'js/app/templates/'
     },
     /**
      * _set_config
      * Setups the application paths
      */
-    _set_app_dir: function(app_dir) {
-        kage._Config.app_dir = app_dir;
+    _setAppDir: function(appDir) {
+        kage._Config.appDir = appDir;
         for (var i in kage._Config) {
-            if (i !== 'app_dir') {
-                kage._Config[i] = app_dir + kage._Config[i];
+            if (i !== 'appDir') {
+                kage._Config[i] = appDir + kage._Config[i];
             }
         }
     },
@@ -111,11 +111,11 @@ var kage = {
      * @return {Object}
      */
     _init: function() {
-        if(!kage._is_initialized) {
+        if(!kage._isInitialized) {
             kage.window = $(window);
             kage.dom = $('html');
             kage.dom.body = $('body');
-            kage._is_initialized = true;
+            kage._isInitialized = true;
         }
         
         return kage;
@@ -130,8 +130,8 @@ var kage = {
     config: function(attr, value) {
         
         if($.isPlainObject(attr)) {
-            if(attr.app_dir) {
-                kage._set_app_dir(attr.app_dir);
+            if(attr.appDir) {
+                kage._setAppDir(attr.appDir);
             }
             
             kage._Config = $.extend(true, kage._Config, attr);
@@ -141,8 +141,8 @@ var kage = {
             if(!value) {
                 return kage._Config[attr];
             } else {
-                if(attr === 'app_dir') {
-                    kage._set_app_dir(value);
+                if(attr === 'appDir') {
+                    kage._setAppDir(value);
                 } else {
                     kage._Config[attr] = value;
                 }
@@ -166,21 +166,21 @@ var kage = {
 kage.Class = function(definition) {
     // load class helper functions
     // define simple constructor
-    var class_definition = function() {};
-    class_definition.prototype._construct = class_definition;
+    var classDefinition = function() {};
+    classDefinition.prototype._construct = classDefinition;
 
     if (definition) {
 
         // set construnctor if it exists in definition
         if (definition._construct) {
-            class_definition.prototype._construct = 
-                class_definition = 
+            classDefinition.prototype._construct = 
+                classDefinition = 
                     definition._construct;
         }
 
         // extend a class if it's set in the definition
         if (definition.extends) {
-            kage.Class._inherits(class_definition, definition.extends);
+            kage.Class._inherits(classDefinition, definition.extends);
 
         }
 
@@ -189,10 +189,10 @@ kage.Class = function(definition) {
             if (definition.implements instanceof Array) {
                 var i;
                 for (i = 0; i < definition.implements.length; i++) {
-                    kage.Class._extend_prototype_of(class_definition, definition.implements[i]);
+                    kage.Class._extendPrototypeOf(classDefinition, definition.implements[i]);
                 }
             } else if (typeof definition.imlements === 'object') {
-                kage.Class._extend_prototype_of(class_definition, definition.implements);
+                kage.Class._extendPrototypeOf(classDefinition, definition.implements);
             } else {
                 throw new Error("error implementing object methods");
             }
@@ -200,12 +200,12 @@ kage.Class = function(definition) {
 
         // set the prototype object of the class
         if (definition.prototype) {
-            kage.Class._extend_prototype_of(class_definition, definition.prototype);
+            kage.Class._extendPrototypeOf(classDefinition, definition.prototype);
         }
 
         if (definition.static) {
             for (i in definition.static) {
-                class_definition[i] = definition.static[i];
+                classDefinition[i] = definition.static[i];
             }
         }
     }
@@ -215,13 +215,13 @@ kage.Class = function(definition) {
      * 
      * @return {function} the class' constructor
      */
-    class_definition.prototype._self = function() {
-        return class_definition;
+    classDefinition.prototype._self = function() {
+        return classDefinition;
     };
 
     if(definition.extends) {
         // variable to use in the closure
-        var super_class = definition.extends;
+        var superClass = definition.extends;
         
         /**
          * Provides easy access to the parent class' prototype
@@ -229,7 +229,7 @@ kage.Class = function(definition) {
          * @static
          * @return {mixed} result of the execution if there is any
          */
-        class_definition._super = function(context, method, argv) {
+        classDefinition._super = function(context, method, argv) {
             var result;
             
             if(!context) {
@@ -253,15 +253,15 @@ kage.Class = function(definition) {
             
             if (method) {
                 // execute a method from the parent prototype
-                if(super_class.prototype[method] &&
-                        typeof(super_class.prototype[method]) === 'function') {
-                    result = super_class.prototype[method].apply(_this, argv);
+                if(superClass.prototype[method] &&
+                        typeof(superClass.prototype[method]) === 'function') {
+                    result = superClass.prototype[method].apply(_this, argv);
                 } else {
                     throw new Error("Parent class does not have a method named '" + method + "'.");
                 }
             } else {
                 // if no method is set, then we execute the parent constructor
-                result = super_class.apply(_this, argv);
+                result = superClass.apply(_this, argv);
             }
 
             return result;
@@ -269,46 +269,46 @@ kage.Class = function(definition) {
     }
 
     // return the new class
-    return class_definition;
+    return classDefinition;
 };
 
 /**
  * <p>Creates a new class and inherits a parent class</p>
  * <p><b>Note: when calling a super function use: [ParentClass].prototype.[method].call(this, arguments)</b></p>
  * 
- * @param {object} child_class the class that will inherit the parent class
- * @param {object} base_class the class that this class will inherit
+ * @param {object} childClass the class that will inherit the parent class
+ * @param {object} baseClass the class that this class will inherit
  * @private
  * @static
  */
-kage.Class._inherits = function(child_class, base_class) {
+kage.Class._inherits = function(childClass, baseClass) {
     // inherit parent's methods
     var std_class = function() {
     };
-    std_class.prototype = base_class.prototype;
-    child_class.prototype = new std_class();
+    std_class.prototype = baseClass.prototype;
+    childClass.prototype = new std_class();
     // set the constructor
-    child_class.prototype._construct = 
-        child_class.prototype.constructor = 
-            child_class;
+    childClass.prototype._construct = 
+        childClass.prototype.constructor = 
+            childClass;
     // return the new class
-    return child_class;
+    return childClass;
 };
 
 /**
  * Copies methods form an object to the class prototype
  * 
- * @param {object} child_class the class that will inherit the methods
+ * @param {object} childClass the class that will inherit the methods
  * @param {object} methods the object that contains the methods
  * @private
  * @static
  */
-kage.Class._extend_prototype_of = function(child_class, methods) {
+kage.Class._extendPrototypeOf = function(childClass, methods) {
     for (var i in methods) {
-        child_class.prototype[i] = methods[i];
+        childClass.prototype[i] = methods[i];
     }
 
-    return child_class;
+    return childClass;
 };
 
 /**
@@ -394,8 +394,8 @@ kage.util.AsyncTask = kage.Class({
     _construct: function(task) {
         if (task && typeof task === 'function') {
             this._task = task;
-            this._on_start = null;
-            this._on_finish = null;
+            this._onStart = null;
+            this._onFinish = null;
         } else {
             throw "Task has to be a function, but '" + typeof (task) + "' given.";
         }
@@ -407,8 +407,8 @@ kage.util.AsyncTask = kage.Class({
  * 
  * @param {function} fn callback
  */
-kage.util.AsyncTask.prototype.on_start = function(fn) {
-    this._on_start = fn;
+kage.util.AsyncTask.prototype.onStart = function(fn) {
+    this._onStart = fn;
     return this;
 };
 
@@ -417,8 +417,8 @@ kage.util.AsyncTask.prototype.on_start = function(fn) {
  * 
  * @param {function} fn callback
  */
-kage.util.AsyncTask.prototype.on_finish = function(fn) {
-    this._on_finish = fn;
+kage.util.AsyncTask.prototype.onFinish = function(fn) {
+    this._onFinish = fn;
     return this;
 };
 
@@ -429,14 +429,14 @@ kage.util.AsyncTask.prototype.on_finish = function(fn) {
 kage.util.AsyncTask.prototype.start = function() {
     var _this = this;
     window.setTimeout(function() {
-        if (typeof _this._on_start === 'function') {
-            _this._on_start();
+        if (typeof _this._onStart === 'function') {
+            _this._onStart();
         }
 
         var data = _this._task();
 
-        if (typeof _this._on_finish === 'function') {
-            _this._on_finish(data);
+        if (typeof _this._onFinish === 'function') {
+            _this._onFinish(data);
         }
     }, 0);
 
@@ -451,21 +451,21 @@ kage.util.AsyncTask.prototype.start = function() {
  * @param {bool} async default is false
  */
 kage.util.Http = kage.Class({
-    _construct: function(url, async, data_type) {
+    _construct: function(url, async, dataType) {
         // by default the http requests are synchronious
         if (!async) {
             async = false;
         }
 
         // $.ajax settings object
-        this._ajax_opt = {
+        this._ajaxOpt = {
             url: url,
             async: async,
             dataType: 'html'
         };
         
-        if(data_type) {
-            this._ajax_opt.dataType = data_type;
+        if(dataType) {
+            this._ajaxOpt.dataType = dataType;
         }
     }
 });
@@ -481,10 +481,10 @@ kage.util.Http.Get = function(url, data) {
     var response = null;
 
     new kage.util.Http(url, false)
-            .on_success(function(result) {
+            .onSuccess(function(result) {
                 response = result;
             })
-            .on_fail(function() {
+            .onFail(function() {
                 throw new Error('Failed fetching: ' + url);
             })
             .get(data);
@@ -502,10 +502,10 @@ kage.util.Http.Get = function(url, data) {
 kage.util.Http.Post = function(url, data) {
     var response = null;
     new kage.util.Http(url, false)
-            .on_success(function(result) {
+            .onSuccess(function(result) {
                 response = result;
             })
-            .on_fail(function() {
+            .onFail(function() {
                 throw new Error('Failed fetching: ' + url);
             })
             .post(data);
@@ -518,8 +518,8 @@ kage.util.Http.Post = function(url, data) {
  * 
  * @param {function} fn
  */
-kage.util.Http.prototype.on_success = function(fn) {
-    this._ajax_opt.success = fn;
+kage.util.Http.prototype.onSuccess = function(fn) {
+    this._ajaxOpt.success = fn;
     return this;
 };
 
@@ -528,8 +528,8 @@ kage.util.Http.prototype.on_success = function(fn) {
  * 
  * @param {function} fn
  */
-kage.util.Http.prototype.on_fail = function(fn) {
-    this._ajax_opt.error = fn;
+kage.util.Http.prototype.onFail = function(fn) {
+    this._ajaxOpt.error = fn;
     return this;
 };
 
@@ -540,10 +540,10 @@ kage.util.Http.prototype.on_fail = function(fn) {
  * @param {object} data http parameters
  */
 kage.util.Http.prototype.exec = function(type, data) {
-    this._ajax_opt.type = type;
-    this._ajax_opt.data = data;
+    this._ajaxOpt.type = type;
+    this._ajaxOpt.data = data;
 
-    $.ajax(this._ajax_opt);
+    $.ajax(this._ajaxOpt);
     return this;
 };
 
@@ -646,7 +646,7 @@ kage.util.Collection.prototype.extend = function(array) {
  * 
  * @return {string}
  */
-kage.util.Collection.prototype.to_json = function() {
+kage.util.Collection.prototype.toJson = function() {
     return JSON.stringify(this);
 };
 
@@ -726,17 +726,17 @@ kage.util.HashMap.prototype.get = function(key) {
  * @param {mixed} val
  * @return {string}
  */
-kage.util.HashMap.prototype.key_of = function(val) {
-    var ret_key = null;
+kage.util.HashMap.prototype.keyOf = function(val) {
+    var retKey = null;
     this.each(function(value, key) {
         if (value === val) {
-            ret_key = key;
+            retKey = key;
             
             return false;
         }
     });
 
-    return ret_key;
+    return retKey;
 };
 
 /**
@@ -745,7 +745,7 @@ kage.util.HashMap.prototype.key_of = function(val) {
  * @returns {Boolean}
  */
 kage.util.HashMap.prototype.contains = function(value) {
-    return (this.key_of(value) !== null);
+    return (this.keyOf(value) !== null);
 };
 
 /**
@@ -797,7 +797,7 @@ kage.util.HashMap.prototype.size = function() {
  * 
  * @return {string} 
  */
-kage.util.HashMap.prototype.to_json = function() {
+kage.util.HashMap.prototype.toJson = function() {
     return JSON.stringify(this._map);
 };
 
@@ -807,7 +807,7 @@ kage.util.HashMap.prototype.to_json = function() {
 
 (function($) {
     
-    var parent_methods = {
+    var parentMethods = {
         // inset inside methods
         /*
          * append
@@ -838,7 +838,7 @@ kage.util.HashMap.prototype.to_json = function() {
      * @param {type} item
      * @return {undefined}
      */
-    var on_after_insert = function(item) {
+    var onAfterInsert = function(item) {
         if (item.triggerHandler) {
             if(item.closest('body').length > 0) {
                 item.triggerHandler('domInsert');
@@ -854,7 +854,7 @@ kage.util.HashMap.prototype.to_json = function() {
      * @param {type} item
      * @returns {undefined}
      */
-    var on_before_insert = function(item) {
+    var onBeforeInsert = function(item) {
         if(item.triggerHandler) {
             if(item.closest('body').length === 0) {
                 item.triggerHandler('beforeDomInsert');
@@ -870,30 +870,30 @@ kage.util.HashMap.prototype.to_json = function() {
      * @param {type} method
      * @return {unresolved}
      */
-    var dom_events_modifyer = function(method) {
+    var domEventsModifyer = function(method) {
         return function() {
             var args = Array.prototype.splice.call(arguments,0),
                 result = undefined,
                 i = 0;
         
             for(i = 0; i < args.length; i++) {
-                on_before_insert(args[i]);
+                onBeforeInsert(args[i]);
             }
             
-            result = parent_methods[method].apply(this, args);
+            result = parentMethods[method].apply(this, args);
             
             for(i = 0; i < args.length; i++) {
-                on_after_insert(args[i]);
+                onAfterInsert(args[i]);
             }
 
             return result;
         };
     };
     
-    $.fn.append = dom_events_modifyer('append');
-    $.fn.prepend = dom_events_modifyer('prepend');
-    $.fn.after = dom_events_modifyer('after');
-    $.fn.before = dom_events_modifyer('before');
+    $.fn.append = domEventsModifyer('append');
+    $.fn.prepend = domEventsModifyer('prepend');
+    $.fn.after = domEventsModifyer('after');
+    $.fn.before = domEventsModifyer('before');
     
 })($);
 
@@ -916,12 +916,24 @@ kage.util.HashMap.prototype.to_json = function() {
          * @returns {EventAssocList}
          */
         add: function(object, type, fn) {
+            if(object.length !== undefined) {
+                for(var i = 0; i < object.length; i++) {
+                    this.add(object[i], type, fn);
+                }
+                
+                return this;
+            }
+            
             if (this.key(object, type, fn) === -1) {
                 this.list.push({
                     object: object,
                     type: type,
                     handler: fn
                 });  
+            }
+            
+            if(!object.on) {
+                object = $(object);
             }
             
             object.on(type, fn);
@@ -991,8 +1003,13 @@ kage.util.HashMap.prototype.to_json = function() {
         removeItem: function(index) {
             if (index !== -1) {
                 var event = this.get(index);
-
-                event.object.off(event.type, event.handler);
+                var object = event.object;
+                
+                if(typeof(object.off) !== 'function') {
+                    object = $(object);
+                }
+                
+                object.off(event.type, event.handler);
 
                 this.list.splice(index, 1);
             }
@@ -1009,12 +1026,18 @@ kage.util.HashMap.prototype.to_json = function() {
          * @returns {EventAssocList}
          */
         remove: function(object, type, fn) {
-            var i, length = this.list.length;
+            var i;
             // .remove() - removes all items
             if(!object) {
                 return this.removeAll();
             }
+            if(object.length !== undefined) {
+                for(i = 0; i < object.length; i++) {
+                    this.remove(object[i], type, fn);
+                }
+            }
             
+            var length = this.list.length;
             // .remove(object) - removes all items that match the object
             if (object && !type) {
                 for (i = length - 1; i >= 0; i--) {
@@ -1069,9 +1092,9 @@ kage.util.HashMap.prototype.to_json = function() {
      */
     var EventAssocData = {
         /**
-         * @property {number} assoc_index autoincrementing value used as index for element
+         * @property {number} assocIndex autoincrementing value used as index for element
          */
-        assoc_index: 1,
+        assocIndex: 1,
         
         /**
          * @property {object} data data structure
@@ -1106,7 +1129,7 @@ kage.util.HashMap.prototype.to_json = function() {
             var key = object[EventAssocData.property];
             if (!key) {
                 var descriptior = {};
-                key = EventAssocData.assoc_index;
+                key = EventAssocData.assocIndex;
 
                 try {
                     descriptior[EventAssocData.property] = {
@@ -1120,7 +1143,7 @@ kage.util.HashMap.prototype.to_json = function() {
                     $.extend(object, descriptior);
                 }
 
-                EventAssocData.assoc_index++;
+                EventAssocData.assocIndex++;
             }
 
             if (!EventAssocData.data[key]) {
@@ -1239,7 +1262,7 @@ kage.util.HashMap.prototype.to_json = function() {
             !other.one ||
             !other.off
         ) {
-            throw new TypeError("jQuery object expected.");
+            other = $(other);
         }
         
         if(fn === false) {
@@ -1262,8 +1285,8 @@ kage.util.HashMap.prototype.to_json = function() {
      */
     $.fn.listenToOnce = function(other, types, fn) {
         var _this = this;
-        callback = function() {
-            _this.stopListening(other, types, callback);
+        callback = function(event) {
+            _this.stopListening(event);
             return fn.apply(this, arguments);
         };
 
@@ -1278,13 +1301,19 @@ kage.util.HashMap.prototype.to_json = function() {
      * @returns {jQuery}
      */
     $.fn.stopListening = function(other, types, fn) {
+        if(other.target && other.handleObj) {
+            return this.each(function() {
+                EventAssoc.remove(this, other.target, 
+                    other.handleObj.type, other.handleObj.handler);
+            });
+        }
 
         if (other && (
             !other.on ||
             !other.one ||
             !other.off
         )) {
-            throw new TypeError("jQuery object expected.");
+            other = $(other);
         }
         
         if(fn === false) {
@@ -1357,9 +1386,14 @@ kage.Component = kage.Class({
 kage.Model = kage.Class({
     _construct: function() {
         /**
-         * @var {HashMap<String, Array>} _events holds the event callbacks
+         * @property {HashMap<String, Array>} _events holds the event callbacks
          */
         this._events = new kage.util.HashMap();
+        
+        /**
+         * @property {Object} _data model data
+         */
+        this._data = {};
     }
 });
 
@@ -1384,11 +1418,7 @@ kage.Model.create = function(parameters, model_class) {
         throw new Error('Input should be a javascript object');
     }
 
-    for (var i in parameters) {
-        if (parameters.hasOwnProperty(i)) {
-            model[i] = parameters[i];
-        }
-    }
+    model.loadObject(parameters);
 
     return model;
 };
@@ -1400,7 +1430,7 @@ kage.Model.create = function(parameters, model_class) {
  * @param {Array} array array of parameteres
  * @return {Collection} a collection of models
  */
-kage.Model.create_from_array = function(array, model_class) {
+kage.Model.createFromArray = function(array, model_class) {
     if(!$.isArray(array)) {
         throw new Error('Input should be an array');
     }
@@ -1414,7 +1444,58 @@ kage.Model.create_from_array = function(array, model_class) {
     return model_collection;
 };
 
-kage.Model.prototype._normalize_types = function(types) {
+/**
+ * Fetches a json object from a url and create a collection of models
+ * @param {type} model_class
+ * @param {type} opt
+ */
+kage.Model.fetch = function(model_class, opt) {
+    if(typeof(model_class) === 'object') {
+        opt = model_class;
+        model_class = undefined;
+    }
+    
+    var success = opt.success;
+    
+    var load = function(response) {
+        var models = kage.Model.createFromArray(response, model_class);
+        
+        if(typeof(success) === 'object') {
+            success(models, response);
+        }
+    };
+    
+    opt.success = load;
+    $.ajax(opt);
+};
+
+/**
+ * Feches a json object from a url and creates a model object
+ * @param {type} model_class
+ * @param {type} opt
+ * @returns {undefined}
+ */
+kage.Model.fetchOne = function(model_class, opt) {
+    if(typeof(model_class) === 'object') {
+        opt = model_class;
+        model_class = undefined;
+    }
+    
+    var success = opt.success;
+    
+    var load = function(response) {
+        var model = skage.Model.create(response, model_class);
+        
+        if(typeof(success) === 'object') {
+            success(model, response);
+        }
+    };
+    
+    opt.success = load;
+    $.ajax(opt);
+};
+
+kage.Model.prototype._normalizeTypes = function(types) {
     if(typeof(types) === 'string') {
         if(types.indexOf(',') === -1) {
             types = [types];
@@ -1437,7 +1518,7 @@ kage.Model.prototype._normalize_types = function(types) {
  */
 kage.Model.prototype.on = function(types, callback, /* INTENAL */ one) {
     
-    types = this._normalize_types(types);
+    types = this._normalizeTypes(types);
     
     for(var i = 0; i < types.length; ++i) {
         var type = types[i];
@@ -1479,7 +1560,7 @@ kage.Model.prototype.one = function(types, callback) {
  * @return {kage.Model.prototype}
  */
 kage.Model.prototype.off = function(types, callback) {
-    types = this._normalize_types(types);
+    types = this._normalizeTypes(types);
     for(var i = 0; i < types.length; ++i) {
         var type = types[i];
         
@@ -1530,6 +1611,56 @@ kage.Model.prototype.triggerHandler = function(type, data) {
 };
 
 /**
+ * Set a model data property
+ * @param {string} property property name
+ * @param {mixed} value property value
+ * @returns {kage.Model}
+ */
+kage.Model.prototype.set = function(property, value) {
+    if(typeof(property) === 'object') {
+        return this.loadObject(property);
+    }
+    
+    this._data[property] = value;
+    
+    this.trigger('change:' + property);
+    this.trigger('change');
+    
+    return this;
+};
+
+/**
+ * Get a model data property
+ * @param {string} property
+ * @returns {mixed}
+ */
+kage.Model.prototype.get = function(property) {
+    return this._data[property];
+};
+
+/**
+ * Loads the moddel attributes from an object.
+ * @param {object} object
+ * @returns {kage.Model}
+ */
+kage.Model.prototype.loadObject = function(object) {
+    if(!$.isPlainObject(object)) {
+        throw new TypeError("Javascript object is required");
+    }
+    
+    for(var i in object) {
+        if(object.hasOwnProperty(i)) {
+            this._data[i] = object[i];
+            this.trigger('change:' + i);
+        }
+    }
+    
+    this.trigger('change');
+    
+    return this;
+};
+
+/**
  * Provides functionality for handling mustache templates
  * @class View
  * @param {string} template_id the template filename without the extension
@@ -1567,7 +1698,7 @@ kage.View.Cache = new kage.util.HashMap();
  * 
  * @static
  */
-kage.View.clear_cache = function() {
+kage.View.clearCache = function() {
     kage.View.Cache = new kage.util.HashMap();
 };
 
@@ -1575,7 +1706,6 @@ kage.View.clear_cache = function() {
  * Creates an instance of View
  * 
  * @static
- * @param {string} template_id
  * @param {object} opt optional option parameter
  `opt: {
  url: '<some url>'
@@ -1594,13 +1724,13 @@ kage.View.make = function(opt) {
  * @param {string} html The template code
  * @return {function} compiled template
  */
-kage.View.Compile = function(template_source) {
+kage.View.Compile = function(templateSource) {
     // John Resig - http://ejohn.org/ - MIT Licensed
-    if (!template_source) {
-        template_source = '';
+    if (!templateSource) {
+        templateSource = '';
     }
 
-    var template_func = new Function(
+    var templateFunc = new Function(
             "vars",
             (
                     "var p=[],print=function(){p.push.apply(p,arguments);};" +
@@ -1608,7 +1738,7 @@ kage.View.Compile = function(template_source) {
                     "if(!vars){vars={};}" +
                     "with(vars){p.push('" +
                     // Convert the template into pure JavaScript
-                    template_source
+                    templateSource
                     .replace(/[\r\t\n]/g, " ")
                     .split("<%").join("\t")
                     .replace(/((^|%>)[^\t]*)'/g, "$1\r")
@@ -1620,7 +1750,7 @@ kage.View.Compile = function(template_source) {
                     )
             );
 
-    return template_func;
+    return templateFunc;
 };
 
 /**
@@ -1630,7 +1760,7 @@ kage.View.Compile = function(template_source) {
  * @return {Component}
  */
 kage.View.prototype.render = function(variables) {
-    var template = this._compile_template_resource();
+    var template = this._compileTemplateResource();
     var html = null;
 
     if (this._opt.context && typeof (this._opt.context) === 'object') {
@@ -1647,7 +1777,7 @@ kage.View.prototype.render = function(variables) {
  * @returns {function} compiled template
  */
 kage.View.prototype.cache = function() {
-    return this._compile_template_resource();
+    return this._compileTemplateResource();
 };
 
 /**
@@ -1656,35 +1786,35 @@ kage.View.prototype.cache = function() {
  * @static
  * @return {object}
  */
-kage.View.prototype._compile_template_resource = function() {
-    var data = this._build_resource_from_options();
+kage.View.prototype._compileTemplateResource = function() {
+    var data = this._buildResourceFromOptions();
 
-    var template_source = null;
+    var templateSource = null;
     if (!data.cache) {
-        template_source = kage.View.Compile(data.resource);
+        templateSource = kage.View.Compile(data.resource);
     } else {
-        template_source = this._load_resource(data.resource);
+        templateSource = this._loadResource(data.resource);
     }
 
 
-    return template_source;
+    return templateSource;
 };
 
 /**
  * Builds a resource object
  * @returns {object}
  */
-kage.View.prototype._build_resource_from_options = function() {
+kage.View.prototype._buildResourceFromOptions = function() {
     var resource = null;
     var cache = true;
     
     var urlArgs = '';
-    if (kage.config('view_args')) {
-        urlArgs = '?' + kage.config('view_args');
+    if (kage.config('viewArgs')) {
+        urlArgs = '?' + kage.config('viewArgs');
     }
     
     if (this._opt.view) {
-        resource = kage.config('template_dir') + this._opt.view + '.ejs' + urlArgs;
+        resource = kage.config('templateDir') + this._opt.view + '.ejs' + urlArgs;
     } else if (this._opt.url) {
         resource = this._opt.url + urlArgs;
     } else if (this._opt.string) {
@@ -1705,7 +1835,7 @@ kage.View.prototype._build_resource_from_options = function() {
  * 
  * @return {function} compiled template
  */
-kage.View.prototype._load_resource = function(resource) {
+kage.View.prototype._loadResource = function(resource) {
     var template = null;
     if (kage.View.Cache.has(resource)) {
         template = kage.View.Cache.get(resource);
@@ -1759,7 +1889,7 @@ kage.View.Prefetch = function(opt) {
             callbacks.done = opt.done;
         }
         
-        kage.View.Prefetch._prefetch_from_array(list, callbacks);
+        kage.View.Prefetch._prefetchFromArray(list, callbacks);
     }
 };
 
@@ -1770,8 +1900,8 @@ kage.View.Prefetch = function(opt) {
  * @param {type} opt object containing the callbacks
  * @returns {undefined}
  */
-kage.View.Prefetch._prefetch_from_array = function(list, callbacks) {
-    var load_count = 0;
+kage.View.Prefetch._prefetchFromArray = function(list, callbacks) {
+    var loadCount = 0;
     if(list.length === 0) {
         if(typeof(callbacks.progress) === 'function') {
             callbacks.progress(100);
@@ -1786,25 +1916,25 @@ kage.View.Prefetch._prefetch_from_array = function(list, callbacks) {
     
     for(var i = 0; i < list.length; ++i) {
         var view = kage.View.make(list[i]);
-        var data = view._build_resource_from_options();
+        var data = view._buildResourceFromOptions();
         
         if(data.cache) {
-            var progress_change = function() {
-                load_count++;
+            var progressChange = function() {
+                loadCount++;
                 
                 if(typeof(callbacks.progress) === 'function') {
-                    var percent = (load_count/list.length) * 100;
+                    var percent = (loadCount/list.length) * 100;
                     callbacks.progress(percent);
                 }
                 
-                if(load_count === list.length) {
+                if(loadCount === list.length) {
                     if(typeof(callbacks.done) === 'function') {
                         callbacks.done();
                     }
                 }
             };
             
-            kage.View._fetch_template(data.resource, progress_change);
+            kage.View._fetchTemplate(data.resource, progressChange);
         }
     }
 };
@@ -1815,13 +1945,13 @@ kage.View.Prefetch._prefetch_from_array = function(list, callbacks) {
  * @param {type} callback
  * @returns {undefined}
  */
-kage.View._fetch_template = function(resource, callback) {
+kage.View._fetchTemplate = function(resource, callback) {
     new kage.util.Http(resource, true).
-        on_success(function(template) {
-            kage.View.Prefetch._compile_and_cache(resource, template);
+        onSuccess(function(template) {
+            kage.View.Prefetch._compileAndCache(resource, template);
             callback();
         }).
-        on_fail(function() {
+        onFail(function() {
             console.log("Error fetching template: '" + resource + "'.");
             callback();
         }).
@@ -1834,7 +1964,7 @@ kage.View._fetch_template = function(resource, callback) {
  * @param {type} template
  * @returns {undefined}
  */
-kage.View.Prefetch._compile_and_cache = function(resource, template) {
+kage.View.Prefetch._compileAndCache = function(resource, template) {
     kage.View.Cache.add(resource, kage.View.Compile(template));
 };
 /**
@@ -1850,8 +1980,8 @@ kage.Section = kage.Class({
         var _this = this;
         
         this.on('domInsert', function(event) {
-            if(typeof(_this.on_dom_insert) === 'function') {
-                _this.on_dom_insert(event);
+            if(typeof(_this.onDomInsert) === 'function') {
+                _this.onDomInsert(event);
             }
             _this.off(event);
         });
@@ -1863,13 +1993,12 @@ kage.Section = kage.Class({
  * @param {type} event
  * @returns {undefined}
  */
-kage.Section.prototype.on_dom_insert = function(event) {};
+kage.Section.prototype.onDomInsert = function(event) {};
 
 /**
  * Loads view in the section object's context
  * 
- * @param {string} template_id
- * @param {string} url
+ * @param {object} opt
  */
 kage.Section.prototype.View = function(opt) {
     if (!opt) {
@@ -1888,7 +2017,7 @@ kage.Section.prototype.View = function(opt) {
  * @param {string} property a css property
  * @return {mixed} the computed value of the property
  */
-kage.Section.prototype.computed_style = function(property) {
+kage.Section.prototype.computedStyle = function(property) {
     return window
             .getComputedStyle(this.get(0)).getPropertyValue(property);
 };
@@ -1897,29 +2026,29 @@ kage.Section.prototype.computed_style = function(property) {
  * Get the computed width
  * @return {string} computed width
  */
-kage.Section.prototype.computed_width = function() {
-    return parseFloat(this.computed_style('width'));
+kage.Section.prototype.computedWidth = function() {
+    return parseFloat(this.computedStyle('width'));
 };
 
 /**
  * Get the computed height
  * @return {string}
  */
-kage.Section.prototype.computed_height = function() {
-    return parseFloat(this.computed_style('height'));
+kage.Section.prototype.computedHeight = function() {
+    return parseFloat(this.computedStyle('height'));
 };
 
 /**
  * Sets the sections width to its parents dimensions
- * @param {boolean} include_margins
+ * @param {boolean} includeMargins
  */
-kage.Section.prototype.fill_vertical = function(include_margins) {
-    if (!include_margins) {
-        include_margins = true;
+kage.Section.prototype.fillVertical = function(includeMargins) {
+    if (!includeMargins) {
+        includeMargins = true;
     }
     var parent = this.parent();
     var parentHeight = parent.height();
-    var paddingAndBorders = this.outerHeight(include_margins) - this.height();
+    var paddingAndBorders = this.outerHeight(includeMargins) - this.height();
 
     this.height(parentHeight - paddingAndBorders);
 
@@ -1928,16 +2057,16 @@ kage.Section.prototype.fill_vertical = function(include_margins) {
 
 /**
  * Sets the sections height to its parents dimensions
- * @param {boolean} include_margins
+ * @param {boolean} includeMargins
  */
-kage.Section.prototype.fill_horizontal = function(include_margins) {
-    if (!include_margins) {
-        include_margins = true;
+kage.Section.prototype.fillHorizontal = function(includeMargins) {
+    if (!includeMargins) {
+        includeMargins = true;
     }
 
     var parent = this.parent();
     var parentWidth = parent.width();
-    var paddingAndBorders = this.outerWidth(include_margins) - this.width();
+    var paddingAndBorders = this.outerWidth(includeMargins) - this.width();
 
     this.width(parentWidth - paddingAndBorders);
 
@@ -1947,9 +2076,9 @@ kage.Section.prototype.fill_horizontal = function(include_margins) {
 /**
  * Sets the sections width and height to its parents dimensions
  */
-kage.Section.prototype.fill_both = function() {
-    this.fill_horizontal().
-            fill_vertical();
+kage.Section.prototype.fillBoth = function() {
+    this.fillHorizontal().
+            fillVertical();
 
     return this;
 };
@@ -1957,7 +2086,7 @@ kage.Section.prototype.fill_both = function() {
 /**
  * Centers the section verticaly
  */
-kage.Section.prototype.center_vertical = function() {
+kage.Section.prototype.centerVertical = function() {
     this.css('top', '50%');
     this.css('margin-top', -(this.outerHeight() / 2));
 
@@ -1972,7 +2101,7 @@ kage.Section.prototype.center_vertical = function() {
 /**
  * Centers the section horizontaly
  */
-kage.Section.prototype.center_hotizontal = function() {
+kage.Section.prototype.centerHorizontal = function() {
     this.css('left', '50%');
     this.css('margin-left', -(this.outerWidth() / 2));
 
@@ -1987,9 +2116,9 @@ kage.Section.prototype.center_hotizontal = function() {
 /**
  * Centers the section horizontaly an verticaly
  */
-kage.Section.prototype.center_both = function() {
-    this.center_hotizontal().
-            center_vertical();
+kage.Section.prototype.centerBoth = function() {
+    this.centerHorizontal().
+            centerVertical();
 
     return this;
 };

@@ -17,12 +17,24 @@
          * @returns {EventAssocList}
          */
         add: function(object, type, fn) {
+            if(object.length !== undefined) {
+                for(var i = 0; i < object.length; i++) {
+                    this.add(object[i], type, fn);
+                }
+                
+                return this;
+            }
+            
             if (this.key(object, type, fn) === -1) {
                 this.list.push({
                     object: object,
                     type: type,
                     handler: fn
                 });  
+            }
+            
+            if(!object.on) {
+                object = $(object);
             }
             
             object.on(type, fn);
@@ -92,8 +104,13 @@
         removeItem: function(index) {
             if (index !== -1) {
                 var event = this.get(index);
-
-                event.object.off(event.type, event.handler);
+                var object = event.object;
+                
+                if(typeof(object.off) !== 'function') {
+                    object = $(object);
+                }
+                
+                object.off(event.type, event.handler);
 
                 this.list.splice(index, 1);
             }
@@ -110,12 +127,18 @@
          * @returns {EventAssocList}
          */
         remove: function(object, type, fn) {
-            var i, length = this.list.length;
+            var i;
             // .remove() - removes all items
             if(!object) {
                 return this.removeAll();
             }
+            if(object.length !== undefined) {
+                for(i = 0; i < object.length; i++) {
+                    this.remove(object[i], type, fn);
+                }
+            }
             
+            var length = this.list.length;
             // .remove(object) - removes all items that match the object
             if (object && !type) {
                 for (i = length - 1; i >= 0; i--) {
@@ -170,9 +193,9 @@
      */
     var EventAssocData = {
         /**
-         * @property {number} assoc_index autoincrementing value used as index for element
+         * @property {number} assocIndex autoincrementing value used as index for element
          */
-        assoc_index: 1,
+        assocIndex: 1,
         
         /**
          * @property {object} data data structure
@@ -207,7 +230,7 @@
             var key = object[EventAssocData.property];
             if (!key) {
                 var descriptior = {};
-                key = EventAssocData.assoc_index;
+                key = EventAssocData.assocIndex;
 
                 try {
                     descriptior[EventAssocData.property] = {
@@ -221,7 +244,7 @@
                     $.extend(object, descriptior);
                 }
 
-                EventAssocData.assoc_index++;
+                EventAssocData.assocIndex++;
             }
 
             if (!EventAssocData.data[key]) {
@@ -340,7 +363,7 @@
             !other.one ||
             !other.off
         ) {
-            throw new TypeError("jQuery object expected.");
+            other = $(other);
         }
         
         if(fn === false) {
@@ -363,8 +386,8 @@
      */
     $.fn.listenToOnce = function(other, types, fn) {
         var _this = this;
-        callback = function() {
-            _this.stopListening(other, types, callback);
+        callback = function(event) {
+            _this.stopListening(event);
             return fn.apply(this, arguments);
         };
 
@@ -379,13 +402,19 @@
      * @returns {jQuery}
      */
     $.fn.stopListening = function(other, types, fn) {
+        if(other.target && other.handleObj) {
+            return this.each(function() {
+                EventAssoc.remove(this, other.target, 
+                    other.handleObj.type, other.handleObj.handler);
+            });
+        }
 
         if (other && (
             !other.on ||
             !other.one ||
             !other.off
         )) {
-            throw new TypeError("jQuery object expected.");
+            other = $(other);
         }
         
         if(fn === false) {

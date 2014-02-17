@@ -20,16 +20,16 @@ define(['kage', 'QUnit'], function(kage, QUnit) {
         var model1 = kage.Model.create({model_var: 1}, kage.Model);
         var is_valid_model = false;
         
-        if((model1 instanceof kage.Model) && model1.model_var === 1) {
+        if((model1 instanceof kage.Model) && model1.get('model_var') === 1) {
             is_valid_model = true;
         }
         ok(is_valid_model, 'kage.Model.create({model_var: 1}) creates a valid model');
         
         is_valid_model = false;
-        var model_collection = kage.Model.create_from_array([{model_var: 1}], kage.Model);
+        var model_collection = kage.Model.createFromArray([{model_var: 1}], kage.Model);
         
         if(model_collection instanceof kage.util.Collection &&
-                model_collection[0].model_var === 1) {
+                model_collection[0].get('model_var') === 1) {
             is_valid_model = true;
         }
         
@@ -65,26 +65,26 @@ define(['kage', 'QUnit'], function(kage, QUnit) {
         
         equal(one_counter, 1, 'one() handlers should be executed only once');
         
-        var types = model._normalize_types('event1, event2');
+        var types = model._normalizeTypes('event1, event2');
         var types_ok = false;
         
         if($.isArray(types) && types[0] === 'event1' && types[1] === 'event2') {
             types_ok = true;
         }
         
-        ok(types_ok, "_normalize_types('event1, event2') => ['event1', 'event2']");
+        ok(types_ok, "_normalizeTypes('event1, event2') => ['event1', 'event2']");
         
-        types = model._normalize_types(['event1', 'event2']);
+        types = model._normalizeTypes(['event1', 'event2']);
         types_ok = false;
         
         if($.isArray(types) && types[0] === 'event1' && types[1] === 'event2') {
             types_ok = true;
         }
         
-        ok(types_ok, "_normalize_types(['event1', 'event2']) => ['event1', 'event2']");
+        ok(types_ok, "_normalizeTypes(['event1', 'event2']) => ['event1', 'event2']");
         
         throws(function() {
-            model._normalize_types(null);
-        }, Error, "_normalize_types(null) throws an exception");
+            model._normalizeTypes(null);
+        }, Error, "_normalizeTypes(null) throws an exception");
     });
 });

@@ -5,9 +5,14 @@
 kage.Model = kage.Class({
     _construct: function() {
         /**
-         * @var {HashMap<String, Array>} _events holds the event callbacks
+         * @property {HashMap<String, Array>} _events holds the event callbacks
          */
         this._events = new kage.util.HashMap();
+        
+        /**
+         * @property {Object} _data model data
+         */
+        this._data = {};
     }
 });
 
@@ -32,11 +37,7 @@ kage.Model.create = function(parameters, model_class) {
         throw new Error('Input should be a javascript object');
     }
 
-    for (var i in parameters) {
-        if (parameters.hasOwnProperty(i)) {
-            model[i] = parameters[i];
-        }
-    }
+    model.loadObject(parameters);
 
     return model;
 };
@@ -48,7 +49,7 @@ kage.Model.create = function(parameters, model_class) {
  * @param {Array} array array of parameteres
  * @return {Collection} a collection of models
  */
-kage.Model.create_from_array = function(array, model_class) {
+kage.Model.createFromArray = function(array, model_class) {
     if(!$.isArray(array)) {
         throw new Error('Input should be an array');
     }
@@ -62,7 +63,58 @@ kage.Model.create_from_array = function(array, model_class) {
     return model_collection;
 };
 
-kage.Model.prototype._normalize_types = function(types) {
+/**
+ * Fetches a json object from a url and create a collection of models
+ * @param {type} model_class
+ * @param {type} opt
+ */
+kage.Model.fetch = function(model_class, opt) {
+    if(typeof(model_class) === 'object') {
+        opt = model_class;
+        model_class = undefined;
+    }
+    
+    var success = opt.success;
+    
+    var load = function(response) {
+        var models = kage.Model.createFromArray(response, model_class);
+        
+        if(typeof(success) === 'object') {
+            success(models, response);
+        }
+    };
+    
+    opt.success = load;
+    $.ajax(opt);
+};
+
+/**
+ * Feches a json object from a url and creates a model object
+ * @param {type} model_class
+ * @param {type} opt
+ * @returns {undefined}
+ */
+kage.Model.fetchOne = function(model_class, opt) {
+    if(typeof(model_class) === 'object') {
+        opt = model_class;
+        model_class = undefined;
+    }
+    
+    var success = opt.success;
+    
+    var load = function(response) {
+        var model = skage.Model.create(response, model_class);
+        
+        if(typeof(success) === 'object') {
+            success(model, response);
+        }
+    };
+    
+    opt.success = load;
+    $.ajax(opt);
+};
+
+kage.Model.prototype._normalizeTypes = function(types) {
     if(typeof(types) === 'string') {
         if(types.indexOf(',') === -1) {
             types = [types];
@@ -85,7 +137,7 @@ kage.Model.prototype._normalize_types = function(types) {
  */
 kage.Model.prototype.on = function(types, callback, /* INTENAL */ one) {
     
-    types = this._normalize_types(types);
+    types = this._normalizeTypes(types);
     
     for(var i = 0; i < types.length; ++i) {
         var type = types[i];
@@ -127,7 +179,7 @@ kage.Model.prototype.one = function(types, callback) {
  * @return {kage.Model.prototype}
  */
 kage.Model.prototype.off = function(types, callback) {
-    types = this._normalize_types(types);
+    types = this._normalizeTypes(types);
     for(var i = 0; i < types.length; ++i) {
         var type = types[i];
         
@@ -175,5 +227,55 @@ kage.Model.prototype.trigger = function(type, data) {
  */
 kage.Model.prototype.triggerHandler = function(type, data) {
     return this.trigger(type, data);
+};
+
+/**
+ * Set a model data property
+ * @param {string} property property name
+ * @param {mixed} value property value
+ * @returns {kage.Model}
+ */
+kage.Model.prototype.set = function(property, value) {
+    if(typeof(property) === 'object') {
+        return this.loadObject(property);
+    }
+    
+    this._data[property] = value;
+    
+    this.trigger('change:' + property);
+    this.trigger('change');
+    
+    return this;
+};
+
+/**
+ * Get a model data property
+ * @param {string} property
+ * @returns {mixed}
+ */
+kage.Model.prototype.get = function(property) {
+    return this._data[property];
+};
+
+/**
+ * Loads the moddel attributes from an object.
+ * @param {object} object
+ * @returns {kage.Model}
+ */
+kage.Model.prototype.loadObject = function(object) {
+    if(!$.isPlainObject(object)) {
+        throw new TypeError("Javascript object is required");
+    }
+    
+    for(var i in object) {
+        if(object.hasOwnProperty(i)) {
+            this._data[i] = object[i];
+            this.trigger('change:' + i);
+        }
+    }
+    
+    this.trigger('change');
+    
+    return this;
 };
 

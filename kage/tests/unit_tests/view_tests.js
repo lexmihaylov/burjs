@@ -20,7 +20,7 @@ define(['kage', 'QUnit'], function(kage, QUnit) {
     
     test('kage.View.render', function() {
         kage.config({
-            template_dir: 'resources/templates/'
+            templateDir: 'resources/templates/'
         });
         
         equal(
@@ -50,28 +50,28 @@ define(['kage', 'QUnit'], function(kage, QUnit) {
     
     test('kage.View.Cache', function() {
         kage.config({
-            template_dir: 'resources/templates/'
+            templateDir: 'resources/templates/'
         });
         
         kage.View.make({view: 'view'}).render({v: 'test'});
         
         equal(
-            typeof(kage.View.Cache.get(kage.config('template_dir') + 'view.ejs?'+kage.config('view_args'))),
+            typeof(kage.View.Cache.get(kage.config('templateDir') + 'view.ejs?'+kage.config('viewArgs'))),
             'function', 
             'View cache works'
         );
 
-        kage.View.clear_cache();
+        kage.View.clearCache();
         
-        equal(kage.View.Cache.size(), 0, 'kage.View.clear_cache() success');
+        equal(kage.View.Cache.size(), 0, 'kage.View.clearCache() success');
     });
     
     asyncTest('kage.View.Prefetch', function() {
         kage.config({
-            template_dir: 'resources/templates/'
+            templateDir: 'resources/templates/'
         });
         
-        kage.View.clear_cache();
+        kage.View.clearCache();
         
         var progress = [];
         kage.View.Prefetch({

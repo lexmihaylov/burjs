@@ -23,7 +23,7 @@ var kage = {
      * Checks if the library needs to initialize
      * @type Boolean
      */
-    _is_initialized: false,
+    _isInitialized: false,
     /**
      * Libaray configurations
      */
@@ -31,33 +31,33 @@ var kage = {
         /**
          * Application directory (ex: js/app/)
          */
-        app_dir: 'js/app/',
+        appDir: 'js/app/',
         /**
          * View directory
          */
-        view_dir: 'js/app/views/',
+        viewDir: 'js/app/views/',
         /**
          * Model directory
          */
-        model_dir: 'js/app/models/',
+        modelDir: 'js/app/models/',
         /**
          * Section directory
          */
-        section_dir: 'js/app/sections/',
+        sectionDir: 'js/app/sections/',
         /**
          * Template directory
          */
-        template_dir: 'js/app/templates/'
+        templateDir: 'js/app/templates/'
     },
     /**
      * _set_config
      * Setups the application paths
      */
-    _set_app_dir: function(app_dir) {
-        kage._Config.app_dir = app_dir;
+    _setAppDir: function(appDir) {
+        kage._Config.appDir = appDir;
         for (var i in kage._Config) {
-            if (i !== 'app_dir') {
-                kage._Config[i] = app_dir + kage._Config[i];
+            if (i !== 'appDir') {
+                kage._Config[i] = appDir + kage._Config[i];
             }
         }
     },
@@ -67,11 +67,11 @@ var kage = {
      * @return {Object}
      */
     _init: function() {
-        if(!kage._is_initialized) {
+        if(!kage._isInitialized) {
             kage.window = $(window);
             kage.dom = $('html');
             kage.dom.body = $('body');
-            kage._is_initialized = true;
+            kage._isInitialized = true;
         }
         
         return kage;
@@ -86,8 +86,8 @@ var kage = {
     config: function(attr, value) {
         
         if($.isPlainObject(attr)) {
-            if(attr.app_dir) {
-                kage._set_app_dir(attr.app_dir);
+            if(attr.appDir) {
+                kage._setAppDir(attr.appDir);
             }
             
             kage._Config = $.extend(true, kage._Config, attr);
@@ -97,8 +97,8 @@ var kage = {
             if(!value) {
                 return kage._Config[attr];
             } else {
-                if(attr === 'app_dir') {
-                    kage._set_app_dir(value);
+                if(attr === 'appDir') {
+                    kage._setAppDir(value);
                 } else {
                     kage._Config[attr] = value;
                 }

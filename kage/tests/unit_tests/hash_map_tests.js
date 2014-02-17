@@ -29,6 +29,6 @@ define(['kage','QUnit'], function(kage, QUnit) {
         map.extend({four: 4, five: 5});
         equal(map.size(), 5, 'extend({four: 4, five: 5}) successful');
         
-        equal(typeof($.parseJSON(map.to_json())), 'object', 'to_json successful');
+        equal(typeof($.parseJSON(map.toJson())), 'object', 'toJson successful');
     });
 });

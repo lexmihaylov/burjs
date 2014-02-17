@@ -6,15 +6,15 @@ define(['kage', 'QUnit'], function(kage, QUnit) {
         ok((new kage.Section('<ul/>')) instanceof kage.Section, 'new kage.Section("<ul/>") creates an instance');
     });
     
-    test('kage.Section on_dom_insert', function() {
+    test('kage.Section onDomInsert', function() {
         var section = new kage.Section();
         var success = false;
-        section.on_dom_insert = function() {
+        section.onDomInsert = function() {
             success = true;
         };
         
         section.appendTo('body').remove();
-        ok(success, 'on_dom_insert successfully called on(\'domInsert\')');
+        ok(success, 'onDomInsert successfully called on(\'domInsert\')');
     });
     
     test('this.View method test', function() {
@@ -24,9 +24,9 @@ define(['kage', 'QUnit'], function(kage, QUnit) {
     test('kage.Section style methods', function() {
         var section = new kage.Section('<div style="width: 100px; height: 200px; position: absolute"/>');
         section.appendTo('body');
-        equal(section.computed_width(), 100, 'getting computed styles success');
+        equal(section.computedWidth(), 100, 'getting computed styles success');
         
-        section.center_both();
+        section.centerBoth();
         
         var position_success = false;
         if(parseInt(section.css('margin-left')) === -50 &&
@@ -40,7 +40,7 @@ define(['kage', 'QUnit'], function(kage, QUnit) {
         
         section.attr('style', 'width: 100px; height: 200px; position: absolute');
         
-        section.fill_both();
+        section.fillBoth();
         
         var filling_success = false;
         if(section.width() === kage.dom.body.width() &&

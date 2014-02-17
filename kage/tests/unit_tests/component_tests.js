@@ -7,8 +7,5 @@ define(['kage', 'QUnit'], function(kage, QUnit) {
         
         var component = new kage.Component();
         equal(component.constructor, jQuery, 'inheriting jQuery successful');
-        
-        equal(component.kage_object(), component, 'has a reference of object provided by .data(__KAGAMI__)');
-        //equal()
     });
 });

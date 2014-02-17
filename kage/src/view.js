@@ -36,7 +36,7 @@ kage.View.Cache = new kage.util.HashMap();
  * 
  * @static
  */
-kage.View.clear_cache = function() {
+kage.View.clearCache = function() {
     kage.View.Cache = new kage.util.HashMap();
 };
 
@@ -44,7 +44,6 @@ kage.View.clear_cache = function() {
  * Creates an instance of View
  * 
  * @static
- * @param {string} template_id
  * @param {object} opt optional option parameter
  `opt: {
  url: '<some url>'
@@ -63,13 +62,13 @@ kage.View.make = function(opt) {
  * @param {string} html The template code
  * @return {function} compiled template
  */
-kage.View.Compile = function(template_source) {
+kage.View.Compile = function(templateSource) {
     // John Resig - http://ejohn.org/ - MIT Licensed
-    if (!template_source) {
-        template_source = '';
+    if (!templateSource) {
+        templateSource = '';
     }
 
-    var template_func = new Function(
+    var templateFunc = new Function(
             "vars",
             (
                     "var p=[],print=function(){p.push.apply(p,arguments);};" +
@@ -77,7 +76,7 @@ kage.View.Compile = function(template_source) {
                     "if(!vars){vars={};}" +
                     "with(vars){p.push('" +
                     // Convert the template into pure JavaScript
-                    template_source
+                    templateSource
                     .replace(/[\r\t\n]/g, " ")
                     .split("<%").join("\t")
                     .replace(/((^|%>)[^\t]*)'/g, "$1\r")
@@ -89,7 +88,7 @@ kage.View.Compile = function(template_source) {
                     )
             );
 
-    return template_func;
+    return templateFunc;
 };
 
 /**
@@ -99,7 +98,7 @@ kage.View.Compile = function(template_source) {
  * @return {Component}
  */
 kage.View.prototype.render = function(variables) {
-    var template = this._compile_template_resource();
+    var template = this._compileTemplateResource();
     var html = null;
 
     if (this._opt.context && typeof (this._opt.context) === 'object') {
@@ -116,7 +115,7 @@ kage.View.prototype.render = function(variables) {
  * @returns {function} compiled template
  */
 kage.View.prototype.cache = function() {
-    return this._compile_template_resource();
+    return this._compileTemplateResource();
 };
 
 /**
@@ -125,35 +124,35 @@ kage.View.prototype.cache = function() {
  * @static
  * @return {object}
  */
-kage.View.prototype._compile_template_resource = function() {
-    var data = this._build_resource_from_options();
+kage.View.prototype._compileTemplateResource = function() {
+    var data = this._buildResourceFromOptions();
 
-    var template_source = null;
+    var templateSource = null;
     if (!data.cache) {
-        template_source = kage.View.Compile(data.resource);
+        templateSource = kage.View.Compile(data.resource);
     } else {
-        template_source = this._load_resource(data.resource);
+        templateSource = this._loadResource(data.resource);
     }
 
 
-    return template_source;
+    return templateSource;
 };
 
 /**
  * Builds a resource object
  * @returns {object}
  */
-kage.View.prototype._build_resource_from_options = function() {
+kage.View.prototype._buildResourceFromOptions = function() {
     var resource = null;
     var cache = true;
     
     var urlArgs = '';
-    if (kage.config('view_args')) {
-        urlArgs = '?' + kage.config('view_args');
+    if (kage.config('viewArgs')) {
+        urlArgs = '?' + kage.config('viewArgs');
     }
     
     if (this._opt.view) {
-        resource = kage.config('template_dir') + this._opt.view + '.ejs' + urlArgs;
+        resource = kage.config('templateDir') + this._opt.view + '.ejs' + urlArgs;
     } else if (this._opt.url) {
         resource = this._opt.url + urlArgs;
     } else if (this._opt.string) {
@@ -174,7 +173,7 @@ kage.View.prototype._build_resource_from_options = function() {
  * 
  * @return {function} compiled template
  */
-kage.View.prototype._load_resource = function(resource) {
+kage.View.prototype._loadResource = function(resource) {
     var template = null;
     if (kage.View.Cache.has(resource)) {
         template = kage.View.Cache.get(resource);
@@ -228,7 +227,7 @@ kage.View.Prefetch = function(opt) {
             callbacks.done = opt.done;
         }
         
-        kage.View.Prefetch._prefetch_from_array(list, callbacks);
+        kage.View.Prefetch._prefetchFromArray(list, callbacks);
     }
 };
 
@@ -239,8 +238,8 @@ kage.View.Prefetch = function(opt) {
  * @param {type} opt object containing the callbacks
  * @returns {undefined}
  */
-kage.View.Prefetch._prefetch_from_array = function(list, callbacks) {
-    var load_count = 0;
+kage.View.Prefetch._prefetchFromArray = function(list, callbacks) {
+    var loadCount = 0;
     if(list.length === 0) {
         if(typeof(callbacks.progress) === 'function') {
             callbacks.progress(100);
@@ -255,25 +254,25 @@ kage.View.Prefetch._prefetch_from_array = function(list, callbacks) {
     
     for(var i = 0; i < list.length; ++i) {
         var view = kage.View.make(list[i]);
-        var data = view._build_resource_from_options();
+        var data = view._buildResourceFromOptions();
         
         if(data.cache) {
-            var progress_change = function() {
-                load_count++;
+            var progressChange = function() {
+                loadCount++;
                 
                 if(typeof(callbacks.progress) === 'function') {
-                    var percent = (load_count/list.length) * 100;
+                    var percent = (loadCount/list.length) * 100;
                     callbacks.progress(percent);
                 }
                 
-                if(load_count === list.length) {
+                if(loadCount === list.length) {
                     if(typeof(callbacks.done) === 'function') {
                         callbacks.done();
                     }
                 }
             };
             
-            kage.View._fetch_template(data.resource, progress_change);
+            kage.View._fetchTemplate(data.resource, progressChange);
         }
     }
 };
@@ -284,13 +283,13 @@ kage.View.Prefetch._prefetch_from_array = function(list, callbacks) {
  * @param {type} callback
  * @returns {undefined}
  */
-kage.View._fetch_template = function(resource, callback) {
+kage.View._fetchTemplate = function(resource, callback) {
     new kage.util.Http(resource, true).
-        on_success(function(template) {
-            kage.View.Prefetch._compile_and_cache(resource, template);
+        onSuccess(function(template) {
+            kage.View.Prefetch._compileAndCache(resource, template);
             callback();
         }).
-        on_fail(function() {
+        onFail(function() {
             console.log("Error fetching template: '" + resource + "'.");
             callback();
         }).
@@ -303,6 +302,6 @@ kage.View._fetch_template = function(resource, callback) {
  * @param {type} template
  * @returns {undefined}
  */
-kage.View.Prefetch._compile_and_cache = function(resource, template) {
+kage.View.Prefetch._compileAndCache = function(resource, template) {
     kage.View.Cache.add(resource, kage.View.Compile(template));
 };

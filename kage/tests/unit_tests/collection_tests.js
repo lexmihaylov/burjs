@@ -39,7 +39,7 @@ define(['kage', 'QUnit'], function(kage, QUnit) {
             collection.extend(null);
         }, 'if we pass something different than an array to .extend it should throw an exception');
 
-        equal(typeof ($.parseJSON(collection.to_json())), 'object', 'JSON conversion successful');
+        equal(typeof ($.parseJSON(collection.toJson())), 'object', 'JSON conversion successful');
         
         ok(collection.has(0), 'has(0) shold be true');
         ok(!collection.has(10), 'has(10) should be false');

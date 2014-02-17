@@ -81,8 +81,8 @@ kage.util.AsyncTask = kage.Class({
     _construct: function(task) {
         if (task && typeof task === 'function') {
             this._task = task;
-            this._on_start = null;
-            this._on_finish = null;
+            this._onStart = null;
+            this._onFinish = null;
         } else {
             throw "Task has to be a function, but '" + typeof (task) + "' given.";
         }
@@ -94,8 +94,8 @@ kage.util.AsyncTask = kage.Class({
  * 
  * @param {function} fn callback
  */
-kage.util.AsyncTask.prototype.on_start = function(fn) {
-    this._on_start = fn;
+kage.util.AsyncTask.prototype.onStart = function(fn) {
+    this._onStart = fn;
     return this;
 };
 
@@ -104,8 +104,8 @@ kage.util.AsyncTask.prototype.on_start = function(fn) {
  * 
  * @param {function} fn callback
  */
-kage.util.AsyncTask.prototype.on_finish = function(fn) {
-    this._on_finish = fn;
+kage.util.AsyncTask.prototype.onFinish = function(fn) {
+    this._onFinish = fn;
     return this;
 };
 
@@ -116,14 +116,14 @@ kage.util.AsyncTask.prototype.on_finish = function(fn) {
 kage.util.AsyncTask.prototype.start = function() {
     var _this = this;
     window.setTimeout(function() {
-        if (typeof _this._on_start === 'function') {
-            _this._on_start();
+        if (typeof _this._onStart === 'function') {
+            _this._onStart();
         }
 
         var data = _this._task();
 
-        if (typeof _this._on_finish === 'function') {
-            _this._on_finish(data);
+        if (typeof _this._onFinish === 'function') {
+            _this._onFinish(data);
         }
     }, 0);
 
@@ -138,21 +138,21 @@ kage.util.AsyncTask.prototype.start = function() {
  * @param {bool} async default is false
  */
 kage.util.Http = kage.Class({
-    _construct: function(url, async, data_type) {
+    _construct: function(url, async, dataType) {
         // by default the http requests are synchronious
         if (!async) {
             async = false;
         }
 
         // $.ajax settings object
-        this._ajax_opt = {
+        this._ajaxOpt = {
             url: url,
             async: async,
             dataType: 'html'
         };
         
-        if(data_type) {
-            this._ajax_opt.dataType = data_type;
+        if(dataType) {
+            this._ajaxOpt.dataType = dataType;
         }
     }
 });
@@ -168,10 +168,10 @@ kage.util.Http.Get = function(url, data) {
     var response = null;
 
     new kage.util.Http(url, false)
-            .on_success(function(result) {
+            .onSuccess(function(result) {
                 response = result;
             })
-            .on_fail(function() {
+            .onFail(function() {
                 throw new Error('Failed fetching: ' + url);
             })
             .get(data);
@@ -189,10 +189,10 @@ kage.util.Http.Get = function(url, data) {
 kage.util.Http.Post = function(url, data) {
     var response = null;
     new kage.util.Http(url, false)
-            .on_success(function(result) {
+            .onSuccess(function(result) {
                 response = result;
             })
-            .on_fail(function() {
+            .onFail(function() {
                 throw new Error('Failed fetching: ' + url);
             })
             .post(data);
@@ -205,8 +205,8 @@ kage.util.Http.Post = function(url, data) {
  * 
  * @param {function} fn
  */
-kage.util.Http.prototype.on_success = function(fn) {
-    this._ajax_opt.success = fn;
+kage.util.Http.prototype.onSuccess = function(fn) {
+    this._ajaxOpt.success = fn;
     return this;
 };
 
@@ -215,8 +215,8 @@ kage.util.Http.prototype.on_success = function(fn) {
  * 
  * @param {function} fn
  */
-kage.util.Http.prototype.on_fail = function(fn) {
-    this._ajax_opt.error = fn;
+kage.util.Http.prototype.onFail = function(fn) {
+    this._ajaxOpt.error = fn;
     return this;
 };
 
@@ -227,10 +227,10 @@ kage.util.Http.prototype.on_fail = function(fn) {
  * @param {object} data http parameters
  */
 kage.util.Http.prototype.exec = function(type, data) {
-    this._ajax_opt.type = type;
-    this._ajax_opt.data = data;
+    this._ajaxOpt.type = type;
+    this._ajaxOpt.data = data;
 
-    $.ajax(this._ajax_opt);
+    $.ajax(this._ajaxOpt);
     return this;
 };
 
@@ -333,7 +333,7 @@ kage.util.Collection.prototype.extend = function(array) {
  * 
  * @return {string}
  */
-kage.util.Collection.prototype.to_json = function() {
+kage.util.Collection.prototype.toJson = function() {
     return JSON.stringify(this);
 };
 
@@ -413,17 +413,17 @@ kage.util.HashMap.prototype.get = function(key) {
  * @param {mixed} val
  * @return {string}
  */
-kage.util.HashMap.prototype.key_of = function(val) {
-    var ret_key = null;
+kage.util.HashMap.prototype.keyOf = function(val) {
+    var retKey = null;
     this.each(function(value, key) {
         if (value === val) {
-            ret_key = key;
+            retKey = key;
             
             return false;
         }
     });
 
-    return ret_key;
+    return retKey;
 };
 
 /**
@@ -432,7 +432,7 @@ kage.util.HashMap.prototype.key_of = function(val) {
  * @returns {Boolean}
  */
 kage.util.HashMap.prototype.contains = function(value) {
-    return (this.key_of(value) !== null);
+    return (this.keyOf(value) !== null);
 };
 
 /**
@@ -484,7 +484,7 @@ kage.util.HashMap.prototype.size = function() {
  * 
  * @return {string} 
  */
-kage.util.HashMap.prototype.to_json = function() {
+kage.util.HashMap.prototype.toJson = function() {
     return JSON.stringify(this._map);
 };
 

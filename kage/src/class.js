@@ -7,21 +7,21 @@
 kage.Class = function(definition) {
     // load class helper functions
     // define simple constructor
-    var class_definition = function() {};
-    class_definition.prototype._construct = class_definition;
+    var classDefinition = function() {};
+    classDefinition.prototype._construct = classDefinition;
 
     if (definition) {
 
         // set construnctor if it exists in definition
         if (definition._construct) {
-            class_definition.prototype._construct = 
-                class_definition = 
+            classDefinition.prototype._construct = 
+                classDefinition = 
                     definition._construct;
         }
 
         // extend a class if it's set in the definition
         if (definition.extends) {
-            kage.Class._inherits(class_definition, definition.extends);
+            kage.Class._inherits(classDefinition, definition.extends);
 
         }
 
@@ -30,10 +30,10 @@ kage.Class = function(definition) {
             if (definition.implements instanceof Array) {
                 var i;
                 for (i = 0; i < definition.implements.length; i++) {
-                    kage.Class._extend_prototype_of(class_definition, definition.implements[i]);
+                    kage.Class._extendPrototypeOf(classDefinition, definition.implements[i]);
                 }
             } else if (typeof definition.imlements === 'object') {
-                kage.Class._extend_prototype_of(class_definition, definition.implements);
+                kage.Class._extendPrototypeOf(classDefinition, definition.implements);
             } else {
                 throw new Error("error implementing object methods");
             }
@@ -41,12 +41,12 @@ kage.Class = function(definition) {
 
         // set the prototype object of the class
         if (definition.prototype) {
-            kage.Class._extend_prototype_of(class_definition, definition.prototype);
+            kage.Class._extendPrototypeOf(classDefinition, definition.prototype);
         }
 
         if (definition.static) {
             for (i in definition.static) {
-                class_definition[i] = definition.static[i];
+                classDefinition[i] = definition.static[i];
             }
         }
     }
@@ -56,13 +56,13 @@ kage.Class = function(definition) {
      * 
      * @return {function} the class' constructor
      */
-    class_definition.prototype._self = function() {
-        return class_definition;
+    classDefinition.prototype._self = function() {
+        return classDefinition;
     };
 
     if(definition.extends) {
         // variable to use in the closure
-        var super_class = definition.extends;
+        var superClass = definition.extends;
         
         /**
          * Provides easy access to the parent class' prototype
@@ -70,7 +70,7 @@ kage.Class = function(definition) {
          * @static
          * @return {mixed} result of the execution if there is any
          */
-        class_definition._super = function(context, method, argv) {
+        classDefinition._super = function(context, method, argv) {
             var result;
             
             if(!context) {
@@ -94,15 +94,15 @@ kage.Class = function(definition) {
             
             if (method) {
                 // execute a method from the parent prototype
-                if(super_class.prototype[method] &&
-                        typeof(super_class.prototype[method]) === 'function') {
-                    result = super_class.prototype[method].apply(_this, argv);
+                if(superClass.prototype[method] &&
+                        typeof(superClass.prototype[method]) === 'function') {
+                    result = superClass.prototype[method].apply(_this, argv);
                 } else {
                     throw new Error("Parent class does not have a method named '" + method + "'.");
                 }
             } else {
                 // if no method is set, then we execute the parent constructor
-                result = super_class.apply(_this, argv);
+                result = superClass.apply(_this, argv);
             }
 
             return result;
@@ -110,45 +110,45 @@ kage.Class = function(definition) {
     }
 
     // return the new class
-    return class_definition;
+    return classDefinition;
 };
 
 /**
  * <p>Creates a new class and inherits a parent class</p>
  * <p><b>Note: when calling a super function use: [ParentClass].prototype.[method].call(this, arguments)</b></p>
  * 
- * @param {object} child_class the class that will inherit the parent class
- * @param {object} base_class the class that this class will inherit
+ * @param {object} childClass the class that will inherit the parent class
+ * @param {object} baseClass the class that this class will inherit
  * @private
  * @static
  */
-kage.Class._inherits = function(child_class, base_class) {
+kage.Class._inherits = function(childClass, baseClass) {
     // inherit parent's methods
     var std_class = function() {
     };
-    std_class.prototype = base_class.prototype;
-    child_class.prototype = new std_class();
+    std_class.prototype = baseClass.prototype;
+    childClass.prototype = new std_class();
     // set the constructor
-    child_class.prototype._construct = 
-        child_class.prototype.constructor = 
-            child_class;
+    childClass.prototype._construct = 
+        childClass.prototype.constructor = 
+            childClass;
     // return the new class
-    return child_class;
+    return childClass;
 };
 
 /**
  * Copies methods form an object to the class prototype
  * 
- * @param {object} child_class the class that will inherit the methods
+ * @param {object} childClass the class that will inherit the methods
  * @param {object} methods the object that contains the methods
  * @private
  * @static
  */
-kage.Class._extend_prototype_of = function(child_class, methods) {
+kage.Class._extendPrototypeOf = function(childClass, methods) {
     for (var i in methods) {
-        child_class.prototype[i] = methods[i];
+        childClass.prototype[i] = methods[i];
     }
 
-    return child_class;
+    return childClass;
 };
 

@@ -29,7 +29,7 @@ require(['QUnit','blanket'], function(QUnit) {
     
     require(['kage'], function(kage) {
         kage.config({
-            view_args: Date.now()
+            viewArgs: Date.now()
         });
         
         require([

@@ -11,7 +11,5 @@ define(['libs/kage'], function(kage) {
         }
     });
 
-    kage.Model.Define(BaseModel);
-
     return BaseModel;
 });
