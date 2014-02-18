@@ -2,11 +2,11 @@
 var args = process.argv.splice(2);
 
 if(args.length < 1) {
-    console.log("\nUsage: kagejs [init|model|section|view] [<name>]\n");
+    console.log("\nUsage: kagejs [init|server|model|section|view] [<name>|<port>]\n");
     process.exit();
 }
 
-if(args[0] !== 'init' && args.length < 2) {
+if((args[0] !== 'init') && args.length < 2) {
     console.log("\nUsage: kagejs [model|section|view] <name>\n");
     process.exit();
 }
@@ -82,10 +82,11 @@ switch (args[0]) {
             forceDelete: true
         });
         
+        fs.mkdir(process.cwd() + '/build');
         fs.mkdir(process.cwd() + '/tests');
-        fs.mkdir(process.cwd() + '/config');
-        
-        console.log('Root/');
+        console.log('+-build/');
+        console.log('+-tests/');
+        console.log('+-public_html/');
         console.log('  |');
         console.log("  +--css/");
         console.log('  |');
@@ -129,6 +130,16 @@ switch (args[0]) {
         console.log('  |');
         console.log("  +--index.html");
         console.log('kage.js Project Generated.');
+        break;
+    case 'server':
+        var connect = require('connect');
+        var http = require('http');
+        var server = connect().
+                use(connect.static(process.cwd())).
+                use(connect.logger());
+        
+        http.createServer(server).
+                listen(args[1]);
         break;
     default:
         generate(args[0], args[1]);
