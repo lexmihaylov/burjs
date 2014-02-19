@@ -103,6 +103,34 @@ var generate = function(type, filename) {
     console.log(generatedFile + ' - Created');
 };
 
+var printProjectStructure = function() {
+    console.log('+-build/');
+    console.log('+-tests/');
+    console.log('+-public_html/');
+    console.log("| +--css/");
+    console.log("| +--js/");
+    console.log("| |  +--app/");
+    console.log("| |  |  +--helpers/");
+    console.log("| |  |  +--models/");
+    console.log("| |  |  |  +--BaseModel.js");
+    console.log("| |  |  +--sections/");
+    console.log("| |  |  |  +--BaseSection.js");
+    console.log("| |  |  |  +--Main.js");
+    console.log("| |  |  +--templates/");
+    console.log("| |  +--config/");
+    console.log("| |  |  +--application.js");
+    console.log("| |  +--libs/");
+    console.log("| |  |  +--jquery.js");
+    console.log("| |  |  +--kage.js");
+    console.log("| |  |  +--require.js");
+    console.log("| |  +--vendor/");
+    console.log("| |  +--main.js");
+    console.log("| +--resources/");
+    console.log("| +--scss/");
+    console.log("| +--index.html");
+    console.log("+--build.js");
+};
+
 switch (args[0]) {
     case 'init':
         var wrench = require('wrench');
@@ -127,51 +155,7 @@ switch (args[0]) {
         fs.writeFileSync('./build.js', buildTemplate);
         fs.writeFileSync('./.kage_project', '');
         
-        console.log('+-build/');
-        console.log('+-tests/');
-        console.log('+-public_html/');
-        console.log('  |');
-        console.log("  +--css/");
-        console.log('  |');
-        console.log("  +--js/");
-        console.log('  |  |');
-        console.log("  |  +--app/");
-        console.log('  |  |  |');
-        console.log("  |  |  +--helpers/");
-        console.log('  |  |  |');
-        console.log("  |  |  +--models/");
-        console.log('  |  |  |  |');
-        console.log("  |  |  |  +--BaseModel.js");
-        console.log('  |  |  |');
-        console.log("  |  |  +--sections/");
-        console.log('  |  |  |  |');
-        console.log("  |  |  |  +--BaseSection.js");
-        console.log('  |  |  |  |');
-        console.log("  |  |  |  +--Main.js");
-        console.log('  |  |  |');
-        console.log("  |  |  +--templates/");
-        console.log('  |  |');
-        console.log("  |  +--config/");
-        console.log('  |  |  |');
-        console.log("  |  |  +--application.js");
-        console.log('  |  |');
-        console.log("  |  +--libs/");
-        console.log('  |  |  |');
-        console.log("  |  |  +--jquery.js");
-        console.log('  |  |  |');
-        console.log("  |  |  +--kage.js");
-        console.log('  |  |  |');
-        console.log("  |  |  +--require.js");
-        console.log('  |  |');
-        console.log("  |  +--vendor/");
-        console.log('  |  |');
-        console.log("  |  +--main.js");
-        console.log('  |');
-        console.log("  +--resources/");
-        console.log('  |');
-        console.log("  +--scss/");
-        console.log('  |');
-        console.log("  +--index.html");
+        printProjectStructure();
         console.log('kage.js Project Generated.');
         break;
     case 'build':
