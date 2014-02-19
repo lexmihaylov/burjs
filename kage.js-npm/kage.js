@@ -188,6 +188,10 @@ switch (args[0]) {
         
         http.createServer(server).
                 listen(args[1]);
+        
+        console.log('Listening on port ' + args[1]);
+        console.log('Document root is ' + process.cwd());
+        console.log('Press Ctrl-C to quit');
         break;
     default:
         generate(args[0], args[1]);
