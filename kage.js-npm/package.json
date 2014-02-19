@@ -16,11 +16,13 @@
     "author": "Alexander Mihaylov <lex.mihaylov@gmail.com>",
     "dependencies": {
         "wrench": "1.5.x",
-        "connect": "2.11.x"
+        "connect": "2.11.x",
+        "requirejs": "2.1.x"
     },
     "bundledDependencies": [
         "wrench",
-        "connect"
+        "connect",
+        "requirejs"
     ],
     
     "license": "MIT",

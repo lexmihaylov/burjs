@@ -1,15 +1,29 @@
 #!/usr/bin/env node
 var args = process.argv.splice(2);
+var printUsage = function() {
+    console.log("Usage:");
+    console.log("\tkagejs [init|server|build|model|section|view] [<name>|<port>]\n");
+    console.log("\tkagejs init - create a project in the current directory");
+    console.log("\tkagejs server <port> - start listening for http requests " +
+           "using current directory as document root");
+   console.log("\tkagejs build [<build.js>] - builds the project by using r.js." +
+           " For more info: http://requirejs.org/docs/optimization.html");
+   console.log("\tkagejs model (<folder>/<ModelName>|<ModelName>) - "+
+           "generates a model in public_html/js/app/models.");
+   console.log("\tkagejs section (<folder>/<SectionName>|<SectionName>) - "+
+           "generates a section in public_html/js/app/sections.");
+   console.log("\tkagejs view (<folder>/<ViewName>|<ViewName>) - "+
+           "generates a view in public_html/js/app/templates.");
+};
 
-if(args.length < 1) {
-    console.log("\nUsage: kagejs [init|server|model|section|view] [<name>|<port>]\n");
-    process.exit();
-}
-
-if((args[0] !== 'init') && args.length < 2) {
-    console.log("\nUsage: kagejs [model|section|view] <name>\n");
-    process.exit();
-}
+var commands = [
+    'init',
+    'server',
+    'build',
+    'model',
+    'section',
+    'view'
+];
 
 var allowedTypes = {
     'model': {
@@ -30,9 +44,24 @@ var allowedTypes = {
     }
 };
 
+if(args.length < 1) {
+    printUsage();
+    process.exit();
+}
+
+if(commands.indexOf(args[0]) === -1) {
+    printUsage();
+    process.exit();
+}
+
+if((args[0] !== 'init' && args[0] !== 'build') && args.length < 2) {
+    printUsage();
+    process.exit();
+}
+
 var generate = function(type, filename) {
     if(!allowedTypes[type]) {
-        throw new TypeError("Undefined type: " + type);
+        console.error("Undefined type: " + type);
     }
     
     var fs = require('fs');
@@ -65,7 +94,8 @@ var generate = function(type, filename) {
     var generatedFile = filePath + fileName + extension;
     
     if(fs.existsSync(generatedFile)) {
-        throw new Error('File exists: ' + generatedFile);
+        console.error('File exists: ' + generatedFile);
+        proccess.exit();
     }
     
     fs.writeFileSync(generatedFile, template);
@@ -77,6 +107,12 @@ switch (args[0]) {
     case 'init':
         var wrench = require('wrench');
         var fs = require('fs');
+        
+        if(fs.existsSync('./.kage_project')) {
+            console.error('Already a kage.js project.');
+            process.exit();
+        }
+        
         wrench.copyDirSyncRecursive(__dirname + '/templates/project/', process.cwd()+'/public_html', 
         {
             forceDelete: true
@@ -84,6 +120,13 @@ switch (args[0]) {
         
         fs.mkdir(process.cwd() + '/build');
         fs.mkdir(process.cwd() + '/tests');
+        
+        var buildTemplate = fs.readFileSync(__dirname + '/templates/build.tpl',{
+            encoding: 'utf8'
+        });
+        fs.writeFileSync('./build.js', buildTemplate);
+        fs.writeFileSync('./.kage_project', '');
+        
         console.log('+-build/');
         console.log('+-tests/');
         console.log('+-public_html/');
@@ -130,6 +173,27 @@ switch (args[0]) {
         console.log('  |');
         console.log("  +--index.html");
         console.log('kage.js Project Generated.');
+        break;
+    case 'build':
+        var fs = require('fs');
+        var buildConfigFile = process.cwd() + '/build.js';
+        
+        if(args[1]) {
+            buildConfigFile = args[1];
+        }
+        
+        if(!fs.existsSync(buildConfigFile)) {
+            console.error("Build config file does not exist.");
+            process.exit();
+        }
+        
+        var config = fs.readFileSync(buildConfigFile, {
+            encoding: 'utf8'
+        });
+        
+        config = eval(config);
+        var rjs = require('requirejs');
+        rjs.optimize(config);
         break;
     case 'server':
         var connect = require('connect');
