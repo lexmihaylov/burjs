@@ -117,7 +117,9 @@ var kage = {
         
         kage.View.init({
            progress: deffered.notify,
-           done: deffered.resolve
+           done: deffered.resolve,
+           views: kage.config('templates').views,
+           urls: kage.config('templates').urls
         });
         
         return deffered.promise();

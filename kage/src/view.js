@@ -183,11 +183,12 @@ kage.View.prototype._loadResource = function(resource) {
     if (kage.View.Cache.has(resource)) {
         template = kage.View.Cache.get(resource);
     } else {
-        console.warn("Template is not loaded. Trying to load it synchronously."+
-                "Please add this template to the application configuration.");
-        var html = kage.util.Http.Get(resource);
-        template = kage.View.Compile(html);
-        kage.View.Cache.add(resource, template);
+        throw new Error("Unable to find template in cache. "+
+                "Please check if this template exists in the application config.");
+        // disable synchronous loading
+//        var html = kage.util.Http.Get(resource);
+//        template = kage.View.Compile(html);
+//        kage.View.Cache.add(resource, template);
     }
 
     return template;
@@ -210,10 +211,10 @@ kage.View.init = function(opt) {
             callbacks = {}, 
             i = 0;
     
-        if(kage.config('templates') && (kage.config('templates') instanceof Array)) {
-            for(i = 0; i < kage.config('templates').length; ++i) {
+        if(opt.views && (opt.views instanceof Array)) {
+            for(i = 0; i < opt.views.length; ++i) {
                 list.push({
-                    view: kage.config('templates')[i]
+                    view: opt.views[i]
                 });
             }
         }

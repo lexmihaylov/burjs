@@ -8,7 +8,11 @@ define(['libs/kage'], function(kage) {
         
         // list of application templates
         // templates will be automatically loaded asyncroniously
-        templates: []
+        templates: {
+            views: [],
+            urls: []
+        }
+        
     });
     
     return kage;
