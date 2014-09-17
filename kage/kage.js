@@ -161,7 +161,7 @@ var kage = {
         
         kage.View.init({
            progress: deffered.notify,
-           done: deffered.done
+           done: deffered.resolve
         });
         
         return deffered.promise();
@@ -1968,7 +1968,7 @@ kage.View.init._prefetchFromArray = function(list, callbacks) {
 kage.View._fetchTemplate = function(resource, callback) {
     new kage.util.Http(resource, true).
         onSuccess(function(template) {
-            kage.View.Prefetch._compileAndCache(resource, template);
+            kage.View.init._compileAndCache(resource, template);
             callback();
         }).
         onFail(function() {
