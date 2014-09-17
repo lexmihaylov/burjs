@@ -110,6 +110,17 @@ var kage = {
         } else {
             return null;
         }
+    },
+    
+    startApp: function() {
+        var deffered = $.Deferred();
+        
+        kage.View.init({
+           progress: deffered.notify,
+           done: deffered.done
+        });
+        
+        return deffered.promise();
     }
 };
 

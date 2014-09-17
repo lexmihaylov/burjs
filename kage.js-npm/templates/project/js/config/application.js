@@ -1,13 +1,14 @@
 define(['libs/kage'], function(kage) {
     kage.config({
-        base_dir: 'js/',
-        view_args: Date.now(),
-        css_path: 'css/',
-        image_path: 'css/images',
-        resource_path: 'resources/',
-        backend_url: 'backend/index.php',
-        // list of application views
-        prefetch_views: []
+        baseDir: 'js/',
+        urlArgs: Date.now(),
+        cssPath: 'css/',
+        imagePath: 'css/images',
+        resourcePath: 'resources/',
+        
+        // list of application templates
+        // templates will be automatically loaded asyncroniously
+        templates: []
     });
     
     return kage;

@@ -137,7 +137,7 @@ kage.Class._inherits = function(childClass, baseClass) {
 };
 
 /**
- * Copies methods form an object to the class prototype
+ * Copies methods from an object to the class prototype
  * 
  * @param {object} childClass the class that will inherit the methods
  * @param {object} methods the object that contains the methods

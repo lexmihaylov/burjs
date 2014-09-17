@@ -16,12 +16,16 @@ requirejs.config({
 });
 
 require([
-    'sections/Main',
+    'libs/kage',
     'config/application'
 ],
 // main application function (starter)
-function(Main) {
-    Main.init();
+function(kage) {
+    kage.startApp().progress(function() {
+                
+    }).done(function() {
+
+    });
 });
 
 

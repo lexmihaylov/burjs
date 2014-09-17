@@ -154,6 +154,17 @@ var kage = {
         } else {
             return null;
         }
+    },
+    
+    startApp: function() {
+        var deffered = $.Deferred();
+        
+        kage.View.init({
+           progress: deffered.notify,
+           done: deffered.done
+        });
+        
+        return deffered.promise();
     }
 };
 
@@ -296,7 +307,7 @@ kage.Class._inherits = function(childClass, baseClass) {
 };
 
 /**
- * Copies methods form an object to the class prototype
+ * Copies methods from an object to the class prototype
  * 
  * @param {object} childClass the class that will inherit the methods
  * @param {object} methods the object that contains the methods
@@ -1674,6 +1685,11 @@ kage.Model.prototype.loadObject = function(object) {
  */
 kage.View = kage.Class({
     _construct: function(opt) {
+        if(!kage.View.init._isReady) {
+            throw new Error("Views are not ready. Please call "+
+                    "kage.View.init({progress: ..., done: ...}) from your main class/function");
+        }
+        
         if (!opt) {
             throw new Error("Available options are: 'context','view', 'url' and 'string'.");
         } else if (!opt.view &&
@@ -1809,8 +1825,8 @@ kage.View.prototype._buildResourceFromOptions = function() {
     var cache = true;
     
     var urlArgs = '';
-    if (kage.config('viewArgs')) {
-        urlArgs = '?' + kage.config('viewArgs');
+    if (kage.config('urlArgs')) {
+        urlArgs = '?' + kage.config('urlArgs');
     }
     
     if (this._opt.view) {
@@ -1840,6 +1856,8 @@ kage.View.prototype._loadResource = function(resource) {
     if (kage.View.Cache.has(resource)) {
         template = kage.View.Cache.get(resource);
     } else {
+        console.warn("Template is not loaded. Trying to load it synchronously."+
+                "Please add this template to the application configuration.");
         var html = kage.util.Http.Get(resource);
         template = kage.View.Compile(html);
         kage.View.Cache.add(resource, template);
@@ -1859,16 +1877,16 @@ kage.View.prototype._loadResource = function(resource) {
  * }
  * @returns {undefined}
  */
-kage.View.Prefetch = function(opt) {
+kage.View.init = function(opt) {
     if(typeof(opt) === 'object') {
         var list = [], 
             callbacks = {}, 
             i = 0;
     
-        if(opt.views && (opt.views instanceof Array)) {
-            for(i = 0; i < opt.views.length; ++i) {
+        if(kage.config('templates') && (kage.config('templates') instanceof Array)) {
+            for(i = 0; i < kage.config('templates').length; ++i) {
                 list.push({
-                    view: opt.views[i]
+                    view: kage.config('templates')[i]
                 });
             }
         }
@@ -1887,9 +1905,11 @@ kage.View.Prefetch = function(opt) {
         
         if(typeof(opt.done) === 'function') {
             callbacks.done = opt.done;
+            
+            kage.View.init._isReady = true;
         }
         
-        kage.View.Prefetch._prefetchFromArray(list, callbacks);
+        kage.View.init._prefetchFromArray(list, callbacks);
     }
 };
 
@@ -1900,7 +1920,7 @@ kage.View.Prefetch = function(opt) {
  * @param {type} opt object containing the callbacks
  * @returns {undefined}
  */
-kage.View.Prefetch._prefetchFromArray = function(list, callbacks) {
+kage.View.init._prefetchFromArray = function(list, callbacks) {
     var loadCount = 0;
     if(list.length === 0) {
         if(typeof(callbacks.progress) === 'function') {
@@ -1964,9 +1984,11 @@ kage.View._fetchTemplate = function(resource, callback) {
  * @param {type} template
  * @returns {undefined}
  */
-kage.View.Prefetch._compileAndCache = function(resource, template) {
+kage.View.init._compileAndCache = function(resource, template) {
     kage.View.Cache.add(resource, kage.View.Compile(template));
 };
+
+kage.View.init._isReady = false;
 /**
  * Provides functionality for creating UI sections
  * @class Section
