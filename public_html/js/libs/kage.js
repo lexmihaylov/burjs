@@ -161,7 +161,7 @@ var kage = {
         
         kage.View.init({
            progress: deffered.notify,
-           done: deffered.done
+           done: deffered.resolve
         });
         
         return deffered.promise();
@@ -400,11 +400,13 @@ kage.util.cookie.destroy = function(name) {
  * creates a task that is appended to the event queue
  * @class AsyncTask
  * @param {function} task the task that will be executed async
+ * @param {int} timeout delay before task execution
  */
 kage.util.AsyncTask = kage.Class({
-    _construct: function(task) {
+    _construct: function(task, timeout) {
         if (task && typeof task === 'function') {
             this._task = task;
+            this._timeout = timeout || 0;
             this._onStart = null;
             this._onFinish = null;
         } else {
@@ -449,7 +451,7 @@ kage.util.AsyncTask.prototype.start = function() {
         if (typeof _this._onFinish === 'function') {
             _this._onFinish(data);
         }
-    }, 0);
+    }, this._timeout);
 
     return this;
 };
@@ -1968,7 +1970,7 @@ kage.View.init._prefetchFromArray = function(list, callbacks) {
 kage.View._fetchTemplate = function(resource, callback) {
     new kage.util.Http(resource, true).
         onSuccess(function(template) {
-            kage.View.Prefetch._compileAndCache(resource, template);
+            kage.View.init._compileAndCache(resource, template);
             callback();
         }).
         onFail(function() {
