@@ -112,6 +112,11 @@ var kage = {
         }
     },
     
+    /**
+     * Asyncronously loads and compiles all app templates 
+     * defined in the application config
+     * @returns {promise}
+     */
     startApp: function() {
         var deffered = $.Deferred();
         
