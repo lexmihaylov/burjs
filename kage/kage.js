@@ -1409,7 +1409,7 @@ kage.Model = kage.Class({
          * @property {HashMap<String, Array>} _events holds the event callbacks
          */
         this._events = new kage.util.HashMap();
-        
+
         /**
          * @property {Object} _data model data
          */
@@ -1420,7 +1420,7 @@ kage.Model = kage.Class({
 /**
  * Creates a new model an initializes it's properties
  * @static
- * 
+ *
  * @param {object} parameters object attributes
  * @return {Model} the newly created model
  */
@@ -1428,11 +1428,11 @@ kage.Model.create = function(parameters, model_class) {
     if(!model_class) {
         model_class = kage.Model;
     }
-    
+
     if(typeof(model_class) !== 'function') {
         throw new Error('model_class has to be a class constructor');
     }
-    
+
     var model = new model_class();
     if(!$.isPlainObject(parameters)) {
         throw new Error('Input should be a javascript object');
@@ -1446,7 +1446,7 @@ kage.Model.create = function(parameters, model_class) {
 /**
  * Creates a collection of models with initialized properties
  * @static
- * 
+ *
  * @param {Array} array array of parameteres
  * @return {Collection} a collection of models
  */
@@ -1474,17 +1474,17 @@ kage.Model.fetch = function(model_class, opt) {
         opt = model_class;
         model_class = undefined;
     }
-    
+
     var success = opt.success;
-    
+
     var load = function(response) {
         var models = kage.Model.createFromArray(response, model_class);
-        
-        if(typeof(success) === 'object') {
+
+        if(typeof(success) === 'function') {
             success(models, response);
         }
     };
-    
+
     opt.success = load;
     $.ajax(opt);
 };
@@ -1500,17 +1500,17 @@ kage.Model.fetchOne = function(model_class, opt) {
         opt = model_class;
         model_class = undefined;
     }
-    
+
     var success = opt.success;
-    
+
     var load = function(response) {
         var model = skage.Model.create(response, model_class);
-        
-        if(typeof(success) === 'object') {
+
+        if(typeof(success) === 'function') {
             success(model, response);
         }
     };
-    
+
     opt.success = load;
     $.ajax(opt);
 };
@@ -1525,7 +1525,7 @@ kage.Model.prototype._normalizeTypes = function(types) {
     } else if(!(types instanceof Array)) {
         throw new Error("'types' can be a String or Array.");
     }
-    
+
     return types;
 };
 
@@ -1537,9 +1537,9 @@ kage.Model.prototype._normalizeTypes = function(types) {
  * @return {kage.Model.prototype}
  */
 kage.Model.prototype.on = function(types, callback, /* INTENAL */ one) {
-    
+
     types = this._normalizeTypes(types);
-    
+
     for(var i = 0; i < types.length; ++i) {
         var type = types[i];
         if (!this._events.has(type)) {
@@ -1553,7 +1553,7 @@ kage.Model.prototype.on = function(types, callback, /* INTENAL */ one) {
                 fn.apply(this, arguments);
             };
         }
-        
+
         if(this._events.get(type).indexOf(callback) === -1) {
             this._events.get(type).push(callback);
         }
@@ -1583,7 +1583,7 @@ kage.Model.prototype.off = function(types, callback) {
     types = this._normalizeTypes(types);
     for(var i = 0; i < types.length; ++i) {
         var type = types[i];
-        
+
         if(this._events.has(type)) {
             var index = this._events.get(type).indexOf(callback);
             if(index !== -1) {
@@ -1591,13 +1591,13 @@ kage.Model.prototype.off = function(types, callback) {
             }
         }
     }
-    
+
     return this;
 };
 
 /**
  * triggers an event from the object's event map
- * 
+ *
  * @param {string} type the event name
  * @patam {data} data object to be passed to the handler
  * @return {Model}
@@ -1640,12 +1640,12 @@ kage.Model.prototype.set = function(property, value) {
     if(typeof(property) === 'object') {
         return this.loadObject(property);
     }
-    
+
     this._data[property] = value;
-    
-    this.trigger('change:' + property);
-    this.trigger('change');
-    
+
+    this.trigger('change:' + property, value);
+    this.trigger('change', {property: property, value: value});
+
     return this;
 };
 
@@ -1659,6 +1659,14 @@ kage.Model.prototype.get = function(property) {
 };
 
 /**
+ * Get all data attributes
+ * @returns {object}
+ */
+kage.Model.prototype.getAll = function() {
+    return this._data;
+};
+
+/**
  * Loads the moddel attributes from an object.
  * @param {object} object
  * @returns {kage.Model}
@@ -1667,16 +1675,16 @@ kage.Model.prototype.loadObject = function(object) {
     if(!$.isPlainObject(object)) {
         throw new TypeError("Javascript object is required");
     }
-    
+
     for(var i in object) {
         if(object.hasOwnProperty(i)) {
             this._data[i] = object[i];
             this.trigger('change:' + i);
         }
     }
-    
+
     this.trigger('change');
-    
+
     return this;
 };
 
@@ -2008,9 +2016,9 @@ kage.Section = kage.Class({
     extends: kage.Component,
     _construct: function(tag) {
         kage.Section._super(this, [tag]);
-        
+
         var _this = this;
-        
+
         this.on('domInsert', function(event) {
             if(typeof(_this.onDomInsert) === 'function') {
                 _this.onDomInsert(event);
@@ -2029,7 +2037,7 @@ kage.Section.prototype.onDomInsert = function(event) {};
 
 /**
  * Loads view in the section object's context
- * 
+ *
  * @param {object} opt
  */
 kage.Section.prototype.View = function(opt) {
@@ -2042,6 +2050,82 @@ kage.Section.prototype.View = function(opt) {
     }
 
     return kage.View.make(opt);
+};
+
+/**
+ * One way data binding between view and model
+ * @param model {kage.Model}
+ * @param bindAttr {string} (Optional)
+ * @returns {undefined}
+ */
+// TODO: test this method
+kage.Section.prototype.dataBindTo = function(model, bindAttr) {
+    if(!(model instanceof kage.Model)) {
+        throw new Error('Model has to be an instance of `kage.Model`.');
+    }
+
+    if(!bindAttr) {
+        bindAttr = 'model';
+    }
+
+    var modelAttr = model.getAll();
+    for(var i in modelAttr) {
+        this.on('change', '*[' + bindAttr + '="' + i + '"]', function() {
+            var tag = $(this);
+            model.getAll()[i] = tag.val();
+            model.trigger('save', {property: i, value: tag.val()});
+        });
+    }
+};
+
+/**
+ * One way data binding between model and view
+ * @param model {kage.Model}
+ * @param bindAttr {string} (Optional)
+ * @returns {undefined}
+ */
+// TODO: test this method
+kage.Section.prototype.dataBindFrom = function(model, bindAttr) {
+    if(!(model instanceof kage.Model)) {
+        throw new Error('Model has to be an instance of `kage.Model`.');
+    }
+
+    if(!bindAttr) {
+        bindAttr = 'model';
+    }
+
+    var _this = this;
+    this.listenTo(model, 'change', function(data) {
+        if(typeof(data) !== 'object') {
+            return;
+        }
+
+        var tags = _this.find('*[' + bindAttr + '="' + data.property + '"]');
+
+        tags.each(function() {
+            var tag = $(this);
+
+            switch(this.tagName.toLowerCase()) {
+                case 'textarea':
+                case 'input':
+                    if(tag.attr('type').toLowerCase() === 'radio') {
+                        if(tag.val() === data.value) {
+                            tag.attr('checked', true);
+                        }
+                        break;
+                    } else if(tag.attr('type').toLowerCase() === 'checkbox') {
+                        tag.attr('checked', Boolean(data.value));
+                        break;
+                    }
+                case 'select':
+                    tag.val(data.value);
+                    break;
+                default:
+                    tag.html(data.value);
+                    break;
+            }
+        });
+    });
 };
 
 /**
