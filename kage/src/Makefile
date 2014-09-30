@@ -5,6 +5,7 @@ SOURCES = license.js \
         base.js \
         class.js \
         util.js \
+        event_bus.js \
         dom_insert_extension.js \
         external_listener_extension.js \
         component.js \
