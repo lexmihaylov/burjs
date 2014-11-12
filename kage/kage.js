@@ -943,7 +943,12 @@ kage.EventBus.prototype.trigger = function (type, data) {
  */
 kage.EventBus.prototype.triggerHandler = function (type, data) {
     return this.trigger(type, data);
-};/** 
+};/**
+ * Creates a global event bus for communication between different components
+ * @var {kage.EventBus}
+ * @namespace kage
+ */
+kage.Antenna = new kage.EventBus();/** 
  * Adds a domInsert event to dom insertion methods 
  */
 
