@@ -7,7 +7,7 @@ function(kage, BaseModel) {
     var $(name) = kage.Class({
         extends: BaseModel,
         _construct: function() {
-            $(name)._super();
+            $(name)._super(this);
         }
     });
     

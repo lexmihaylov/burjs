@@ -467,122 +467,67 @@ kage.util.AsyncTask.prototype.start = function() {
 /**
  * caretes an http request to a given url
  * @class Http
+ * @param {Object} options
+ * @returns {Object} promise
+ */
+kage.util.Http = function(options) {
+    return $.ajax(options);
+};
+
+/**
+ * executes a post http request
  * @param {string} url
- * @param {bool} async default is false
+ * @param {Object} request data
+ * @returns {Object} promise
  */
-kage.util.Http = kage.Class({
-    _construct: function(url, async, dataType) {
-        // by default the http requests are synchronious
-        if (!async) {
-            async = false;
-        }
-
-        // $.ajax settings object
-        this._ajaxOpt = {
-            url: url,
-            async: async,
-            dataType: 'html'
-        };
-        
-        if(dataType) {
-            this._ajaxOpt.dataType = dataType;
-        }
-    }
-});
+kage.util.Http.post(url, data) {
+    return kage.util.Http({
+        type: 'POST',
+        url: url,
+        data: data
+    });
+};
 
 /**
- * executes a GET http request
- * @static
- * 
+ * executes a get http request
  * @param {string} url
- * @param {object} data http params
+ * @param {Object} request data
+ * @returns {Object} promise
  */
-kage.util.Http.Get = function(url, data) {
-    var response = null;
-
-    new kage.util.Http(url, false)
-            .onSuccess(function(result) {
-                response = result;
-            })
-            .onFail(function() {
-                throw new Error('Failed fetching: ' + url);
-            })
-            .get(data);
-
-    return response;
+kage.util.Http.get(url, data) {
+    return kage.util.Http({
+        type: 'GET',
+        url: url,
+        data: data
+    });
 };
 
 /**
- * executes a POST http request
- * @static
- * 
+ * executes a put http request
  * @param {string} url
- * @param {object} data http params
+ * @param {Object} request data
+ * @returns {Object} promise
  */
-kage.util.Http.Post = function(url, data) {
-    var response = null;
-    new kage.util.Http(url, false)
-            .onSuccess(function(result) {
-                response = result;
-            })
-            .onFail(function() {
-                throw new Error('Failed fetching: ' + url);
-            })
-            .post(data);
-
-    return response;
+kage.util.Http.put = function(url, data) {
+    return kage.util.Http({
+        type: 'PUT',
+        url: url,
+        data: data
+    });
 };
 
 /**
- * Adds a callback for successful execution of the http reguest
- * 
- * @param {function} fn
+ * executes a delete http request
+ * @param {string} url
+ * @param {Object} request data
+ * @returns {Object} promise
  */
-kage.util.Http.prototype.onSuccess = function(fn) {
-    this._ajaxOpt.success = fn;
-    return this;
-};
-
-/**
- * Adds a callback for failed http execution
- * 
- * @param {function} fn
- */
-kage.util.Http.prototype.onFail = function(fn) {
-    this._ajaxOpt.error = fn;
-    return this;
-};
-
-/**
- * executes the http request
- * 
- * @param {string} type type of the http request (GET or POST)
- * @param {object} data http parameters
- */
-kage.util.Http.prototype.exec = function(type, data) {
-    this._ajaxOpt.type = type;
-    this._ajaxOpt.data = data;
-
-    $.ajax(this._ajaxOpt);
-    return this;
-};
-
-/**
- * Executes a GET http request
- * 
- * @param {object} data http parameters
- */
-kage.util.Http.prototype.get = function(data) {
-    return this.exec('GET', data);
-};
-
-/**
- * Executes a POST http request
- * 
- * @param {object} data http parameters
- */
-kage.util.Http.prototype.post = function(data) {
-    return this.exec('POST', data);
+kage.util.Http.delete = function(url, data) {
+    return kage.util.Http({
+        type: 'DELETE',
+        url: url,
+        data: data
+    });
 };
 
 /**
@@ -948,568 +893,7 @@ kage.EventBus.prototype.triggerHandler = function (type, data) {
  * @var {kage.EventBus}
  * @namespace kage
  */
-kage.Antenna = new kage.EventBus();/** 
- * Adds a domInsert event to dom insertion methods 
- */
-
-(function($) {
-    
-    var parentMethods = {
-        // inset inside methods
-        /*
-         * append
-         * appendTo
-         * html
-         */
-        append: $.fn.append,
-        /*
-         * prepend
-         * prependTo
-         */
-        prepend: $.fn.prepend,
-        // insert outside methods
-        /*
-         * after
-         * insertAfter
-         */
-        after: $.fn.after,
-        /*
-         * before
-         * insertBefore
-         */
-        before: $.fn.before
-    };
-    
-    /**
-     * Triggers an event if item is a jquery object
-     * @param {type} item
-     * @return {undefined}
-     */
-    var onAfterInsert = function(item) {
-        if (item.triggerHandler) {
-            if(item.closest('body').length > 0) {
-                item.triggerHandler('domInsert');
-                item.find('*').each(function() {
-                    $(this).triggerHandler('domInsert');
-                });
-            }
-        }
-    };
-    
-    /**
-     * Triggers an event before the element has been inserted
-     * @param {type} item
-     * @returns {undefined}
-     */
-    var onBeforeInsert = function(item) {
-        if(item.triggerHandler) {
-            if(item.closest('body').length === 0) {
-                item.triggerHandler('beforeDomInsert');
-                item.find('*').each(function() {
-                    $(this).triggerHandler('beforeDomInsert');
-                });
-            }
-        }
-    };
-    
-    /**
-     * modifys a dom insertion method
-     * @param {type} method
-     * @return {unresolved}
-     */
-    var domEventsModifyer = function(method) {
-        return function() {
-            var args = Array.prototype.splice.call(arguments,0),
-                result = undefined,
-                i = 0;
-        
-            for(i = 0; i < args.length; i++) {
-                onBeforeInsert(args[i]);
-            }
-            
-            result = parentMethods[method].apply(this, args);
-            
-            for(i = 0; i < args.length; i++) {
-                onAfterInsert(args[i]);
-            }
-
-            return result;
-        };
-    };
-    
-    $.fn.append = domEventsModifyer('append');
-    $.fn.prepend = domEventsModifyer('prepend');
-    $.fn.after = domEventsModifyer('after');
-    $.fn.before = domEventsModifyer('before');
-    
-})($);
-
-
-(function($) {
-    /**
-     * A list of event associations
-     * @class EventAssocList
-     * @returns {EventAssocList}
-     */
-    var EventAssocList = function() {
-        this.list = [];
-    };
-    EventAssocList.prototype = {
-        /**
-         * Add an event association to the list and bind the event
-         * @param {type} object
-         * @param {type} type
-         * @param {type} fn
-         * @returns {EventAssocList}
-         */
-        add: function(object, type, fn) {
-            if(object.length !== undefined) {
-                for(var i = 0; i < object.length; i++) {
-                    this.add(object[i], type, fn);
-                }
-                
-                return this;
-            }
-            
-            if (this.key(object, type, fn) === -1) {
-                this.list.push({
-                    object: object,
-                    type: type,
-                    handler: fn
-                });  
-            }
-            
-            if(!object.on) {
-                object = $(object);
-            }
-            
-            object.on(type, fn);
-            
-            return this;
-        },
-        
-        /**
-         * Get an item by index
-         * @param {number} index
-         * @returns {Array}
-         */
-        get: function(index) {
-            return this.list[index];
-        },
-        
-        /**
-         * Find a element from the list
-         * @param {type} object
-         * @param {type} type
-         * @param {type} fn
-         * @param {type} selector
-         * @returns {object}
-         */
-        find: function(object, type, fn) {
-            var index = this.key(object, type, fn);
-
-            return this.get(index);
-        },
-        
-        /**
-         * Get the index of an object in the list
-         * @param {type} object
-         * @param {type} type
-         * @param {type} fn
-         * @param {type} selector
-         * @returns {Number}
-         */
-        key: function(object, type, fn) {
-            var i = 0;
-            for (; i < this.length(); i++) {
-                var item = this.list[i];
-                if (item.object === object &&
-                        item.type === type &&
-                        item.handler === fn) {
-                    return i;
-                }
-            }
-
-            return -1;
-        },
-        
-        /**
-         * Get the number of items in the list
-         * @returns {number}
-         */
-        length: function() {
-            return this.list.length;
-        },
-        
-        /**
-         * Deletes an item associated with an index, and unbinds the 
-         * corresponding event
-         * @param {type} index
-         * @returns {EventAssocList}
-         */
-        removeItem: function(index) {
-            if (index !== -1) {
-                var event = this.get(index);
-                var object = event.object;
-                
-                if(typeof(object.off) !== 'function') {
-                    object = $(object);
-                }
-                
-                object.off(event.type, event.handler);
-
-                this.list.splice(index, 1);
-            }
-            
-            return this;
-        },
-        
-        /**
-         * Remove all the items that match the input parameters
-         * @param {type} [object]
-         * @param {type} [type]
-         * @param {type} [fn]
-         * @param {type} [selector]
-         * @returns {EventAssocList}
-         */
-        remove: function(object, type, fn) {
-            var i;
-            // .remove() - removes all items
-            if(!object) {
-                return this.removeAll();
-            }
-            if(object.length !== undefined) {
-                for(i = 0; i < object.length; i++) {
-                    this.remove(object[i], type, fn);
-                }
-            }
-            
-            var length = this.list.length;
-            // .remove(object) - removes all items that match the object
-            if (object && !type) {
-                for (i = length - 1; i >= 0; i--) {
-                    if (this.list[i].object === object) {
-                        this.removeItem(i);
-                    }
-                }
-                
-                return this;
-            }
-            
-            // .remove(object, type) - removes all items that match the 
-            // object and event type
-            if(object && type && !fn) {
-                for (i = length - 1; i >= 0; i--) {
-                    if (this.list[i].object === object &&
-                        this.list[i].type === type) {
-                    
-                        this.removeItem(i);
-                    }
-                }
-                
-                return this;
-            }
-            
-            
-            // .remove(object, type, fn,[selector]) - removes the item that 
-            // matches the input
-            return this.removeItem(this.key(object, type, fn));
-        },
-        
-        /**
-         * Removes all the intems in the list and unbinds all of the 
-         * corresponing events
-         * @returns {EventAssocList}
-         */
-        removeAll: function() {
-            var i = this.list.length - 1;
-            for (; i >= 0; i--) {
-                this.removeItem(i);
-            }
-
-            return this;
-        }
-    };
-
-    /**
-     * Data structure that holds element ids and a list of external events
-     * @static
-     * @class EventAssocData
-     * @type {Object}
-     */
-    var EventAssocData = {
-        /**
-         * @property {number} assocIndex autoincrementing value used as index for element
-         */
-        assocIndex: 1,
-        
-        /**
-         * @property {object} data data structure
-         */
-        data: {},
-        
-        /**
-         * @property {string} property element property name in wich the element index will be saved
-         */
-        property: '__event_assoc_data__',
-        
-        /**
-         * Checks if object is a valid
-         * @param {type} object
-         * @returns {Boolean}
-         */
-        accepts: function(object) {
-            return object.nodeType ?
-                    object.nodeType === 1 || object.nodeType === 9 : true;
-        },
-        
-        /**
-         * Gets or creates a key and returns it
-         * @param {object} object
-         * @returns {Number}
-         */
-        key: function(object) {
-            if (!EventAssocData.accepts(object)) {
-                return 0;
-            }
-            
-            var key = object[EventAssocData.property];
-            if (!key) {
-                var descriptior = {};
-                key = EventAssocData.assocIndex;
-
-                try {
-                    descriptior[EventAssocData.property] = {
-                        value: key
-                    };
-
-                    Object.defineProperties(object, descriptior);
-                } catch (e) {
-                    descriptior[EventAssocData.property] = key;
-
-                    $.extend(object, descriptior);
-                }
-
-                EventAssocData.assocIndex++;
-            }
-
-            if (!EventAssocData.data[key]) {
-                EventAssocData.data[key] = new EventAssocList();
-            }
-
-            return key;
-        },
-        
-        /**
-         * checks if an element exists in the data structure
-         * @param {object} object
-         * @returns {Boolean}
-         */
-        has: function(object) {
-            var key = object[EventAssocData.property];
-            if(key) {
-                return key in EventAssocData.data;
-            }
-            
-            return false;
-        },
-        
-        /**
-         * Get event associations corresponding to a given object
-         * @param {object} object
-         * @returns {object}
-         */
-        get: function(object) {
-            var key = EventAssocData.key(object),
-                    data = EventAssocData.data[key];
-            
-            return data;
-        },
-        
-        /**
-         * Removes an item from the data struct
-         * @param {object} object
-         * @returns {undefined}
-         */
-        remove: function(object) {
-            if(!EventAssocData.has(object)) {
-                return;
-            }
-            
-            var key = EventAssocData.key(object),
-                data = EventAssocData.data[key];
-        
-            if(data) {
-                data.removeAll();
-            }
-            
-            delete(EventAssocData.data[key]);
-        }
-    };
-    
-    /**
-     * Class that gives fast access to the event association data structure
-     * @class EventAssoc
-     * @static
-     * @type {Object}
-     */
-    var EventAssoc = {
-        /**
-         * Adds an item
-         * @param {type} owner
-         * @param {type} other
-         * @param {type} types
-         * @param {type} fn
-         * @param {type} selector
-         * @param {type} data
-         * @returns {undefined}
-         */
-        add: function(owner, other, types, fn) {
-            var list = EventAssocData.get(owner);
-            if (list) {
-                list.add(other, types, fn);
-            }
-        },
-        
-        /**
-         * Removes an item
-         * @param {type} owner
-         * @param {type} other
-         * @param {type} types
-         * @param {type} fn
-         * @param {type} selector
-         * @returns {undefined}
-         */
-        remove: function(owner, other, types, fn) {
-            if(!EventAssocData.has(owner)) {
-                return;
-            }
-            
-            var list = EventAssocData.get(owner);
-            if(list) {
-                list.remove(other, types, fn);
-            }
-        }
-    };
-
-    var returnFalse = function() {
-        return false;
-    };
-    
-    /**
-     * Start listening to an external jquery object
-     * @param {jQuery} other
-     * @param {string|object} types
-     * @param {funcion} fn
-     * @returns {jQuery}
-     */
-    $.fn.listenTo = function(other, types, fn) {
-        if (
-            !other.on ||
-            !other.one ||
-            !other.off
-        ) {
-            other = $(other);
-        }
-        
-        if(fn === false) {
-            fn = returnFalse;
-        } else if(!fn) {
-            return this;
-        }
-
-        return this.each(function() {
-            EventAssoc.add(this, other, types, fn);
-        });
-    };
-    
-    /**
-     * Start listening to an external jquery object (ONCE)
-     * @param {jQuery} other
-     * @param {string|object} types
-     * @param {function} fn
-     * @returns {jQuery}
-     */
-    $.fn.listenToOnce = function(other, types, fn) {
-        var _this = this;
-        callback = function(event) {
-            _this.stopListening(event);
-            return fn.apply(this, arguments);
-        };
-
-        return this.listenTo(other, types, callback);
-    };
-    
-    /**
-     * Stop listening to an external jquery object
-     * @param {jQuery} [other]
-     * @param {string|object} [types]
-     * @param {function} [fn]
-     * @returns {jQuery}
-     */
-    $.fn.stopListening = function(other, types, fn) {
-        if(other.target && other.handleObj) {
-            return this.each(function() {
-                EventAssoc.remove(this, other.target, 
-                    other.handleObj.type, other.handleObj.handler);
-            });
-        }
-
-        if (other && (
-            !other.on ||
-            !other.one ||
-            !other.off
-        )) {
-            other = $(other);
-        }
-        
-        if(fn === false) {
-            fn = returnFalse;
-        }
-
-        return this.each(function() {
-            EventAssoc.remove(this, other, types, fn);
-        });
-    };
-    
-    /**
-     * Get all the event associations connected to the current jQuery object
-     * @returns {null|Array}
-     */
-    $.fn.externalListeners = function() {
-        var data = [];
-        this.each(function() {
-            if(EventAssocData.has(this)) {
-                data.push(EventAssocData.get(this));
-            }
-        });
-        
-        if(data.length > 0) {
-            return data;
-        }
-        
-        return null;
-    };
-
-    // override cleanData method to clear existing event associations
-    // cleans all event associations
-    // unbinds all the external events
-    // this will be executed when you use remove() or empty()
-    var cleanData = $.cleanData;
-
-    $.cleanData = function(elems) {
-        var i = 0;
-        for (; i < elems.length; i++) {
-            if (elems[i] !== undefined &&
-                EventAssocData.has(elems[i])) {
-                EventAssocData.remove(elems[i]);
-            }
-        }
-        return cleanData(elems);
-    };
-})($);
-
-/**
+kage.Antenna = new kage.EventBus();/**
  * Provides an extendable class with full $.fn functionality
  * @class Component
  */
@@ -1521,124 +905,598 @@ kage.Component = kage.Class({
             object = '<div/>';
         }
         this.constructor = $; // jquery uses it's constructor internaly in some methods
-        
+
         this.init(object); // init the object
     }
 });
 
 /**
- * Provides functionality for creating application models
- * @class Model
+ * Get the computed value of a css property
+ * @param {string} property a css property
+ * @return {mixed} the computed value of the property
+ */
+kage.Component.prototype.computedStyle = function(property) {
+    return window
+        .getComputedStyle(this.get(0)).getPropertyValue(property);
+};
+
+/**
+ * Get the computed width
+ * @return {string} computed width
+ */
+kage.Component.prototype.computedWidth = function() {
+    return parseFloat(this.computedStyle('width'));
+};
+
+/**
+ * Get the computed height
+ * @return {string}
+ */
+kage.Component.prototype.computedHeight = function() {
+    return parseFloat(this.computedStyle('height'));
+};
+
+
+/*
+ * We need to override some of the default jQuery methods, so we can be able to
+ * detect dom incertion
+ */
+var parentMethods = {
+    // inset inside methods
+    /*
+     * append
+     * appendTo
+     * html
+     */
+    append: $.fn.append,
+    /*
+     * prepend
+     * prependTo
+     */
+    prepend: $.fn.prepend,
+    // insert outside methods
+    /*
+     * after
+     * insertAfter
+     */
+    after: $.fn.after,
+    /*
+     * before
+     * insertBefore
+     */
+    before: $.fn.before
+};
+
+/**
+ * Triggers an event if item is a jquery object
+ * @param {type} item
+ * @return {undefined}
+ */
+var onAfterInsert = function(item) {
+    if (item.triggerHandler) {
+        if (item.closest('body').length > 0) {
+            item.triggerHandler('dom:insert');
+            item.find('*').each(function() {
+                $(this).triggerHandler('dom:insert');
+            });
+        }
+    }
+};
+
+/**
+ * modifys a dom insertion method
+ * @param {type} method
+ * @return {unresolved}
+ */
+var domEventsModifyer = function(method) {
+    return function() {
+        var args = Array.prototype.splice.call(arguments, 0),
+            result = undefined,
+            i = 0;
+
+        result = parentMethods[method].apply(this, args);
+
+        for (i = 0; i < args.length; i++) {
+            onAfterInsert(args[i]);
+        }
+
+        return result;
+    };
+};
+
+$.fn.append = domEventsModifyer('append');
+$.fn.prepend = domEventsModifyer('prepend');
+$.fn.after = domEventsModifyer('after');
+$.fn.before = domEventsModifyer('before');
+
+
+/*
+ * Override $.cleanData method so we can handle external listener map
+ * and we can emit a dom:destroy event on the objects being removed form the dom
+ */
+
+/**
+ * A list of event associations
+ * @class EventAssocList
+ * @returns {EventAssocList}
+ */
+var EventAssocList = function() {
+    this.list = [];
+};
+EventAssocList.prototype = {
+    /**
+     * Add an event association to the list and bind the event
+     * @param {type} object
+     * @param {type} type
+     * @param {type} fn
+     * @returns {EventAssocList}
+     */
+    add: function(object, type, fn) {
+        if (object.length !== undefined) {
+            for (var i = 0; i < object.length; i++) {
+                this.add(object[i], type, fn);
+            }
+
+            return this;
+        }
+
+        if (this.key(object, type, fn) === -1) {
+            this.list.push({
+                object: object,
+                type: type,
+                handler: fn
+            });
+        }
+
+        if (!object.on) {
+            object = $(object);
+        }
+
+        object.on(type, fn);
+
+        return this;
+    },
+
+    /**
+     * Get an item by index
+     * @param {number} index
+     * @returns {Array}
+     */
+    get: function(index) {
+        return this.list[index];
+    },
+
+    /**
+     * Find a element from the list
+     * @param {type} object
+     * @param {type} type
+     * @param {type} fn
+     * @param {type} selector
+     * @returns {object}
+     */
+    find: function(object, type, fn) {
+        var index = this.key(object, type, fn);
+
+        return this.get(index);
+    },
+
+    /**
+     * Get the index of an object in the list
+     * @param {type} object
+     * @param {type} type
+     * @param {type} fn
+     * @param {type} selector
+     * @returns {Number}
+     */
+    key: function(object, type, fn) {
+        var i = 0;
+        for (; i < this.length(); i++) {
+            var item = this.list[i];
+            if (item.object === object &&
+                item.type === type &&
+                item.handler === fn) {
+                return i;
+            }
+        }
+
+        return -1;
+    },
+
+    /**
+     * Get the number of items in the list
+     * @returns {number}
+     */
+    length: function() {
+        return this.list.length;
+    },
+
+    /**
+     * Deletes an item associated with an index, and unbinds the
+     * corresponding event
+     * @param {type} index
+     * @returns {EventAssocList}
+     */
+    removeItem: function(index) {
+        if (index !== -1) {
+            var event = this.get(index);
+            var object = event.object;
+
+            if (typeof(object.off) !== 'function') {
+                object = $(object);
+            }
+
+            object.off(event.type, event.handler);
+
+            this.list.splice(index, 1);
+        }
+
+        return this;
+    },
+
+    /**
+     * Remove all the items that match the input parameters
+     * @param {type} [object]
+     * @param {type} [type]
+     * @param {type} [fn]
+     * @param {type} [selector]
+     * @returns {EventAssocList}
+     */
+    remove: function(object, type, fn) {
+        var i;
+        // .remove() - removes all items
+        if (!object) {
+            return this.removeAll();
+        }
+        if (object.length !== undefined) {
+            for (i = 0; i < object.length; i++) {
+                this.remove(object[i], type, fn);
+            }
+        }
+
+        var length = this.list.length;
+        // .remove(object) - removes all items that match the object
+        if (object && !type) {
+            for (i = length - 1; i >= 0; i--) {
+                if (this.list[i].object === object) {
+                    this.removeItem(i);
+                }
+            }
+
+            return this;
+        }
+
+        // .remove(object, type) - removes all items that match the 
+        // object and event type
+        if (object && type && !fn) {
+            for (i = length - 1; i >= 0; i--) {
+                if (this.list[i].object === object &&
+                    this.list[i].type === type) {
+
+                    this.removeItem(i);
+                }
+            }
+
+            return this;
+        }
+
+
+        // .remove(object, type, fn,[selector]) - removes the item that 
+        // matches the input
+        return this.removeItem(this.key(object, type, fn));
+    },
+
+    /**
+     * Removes all the intems in the list and unbinds all of the
+     * corresponing events
+     * @returns {EventAssocList}
+     */
+    removeAll: function() {
+        var i = this.list.length - 1;
+        for (; i >= 0; i--) {
+            this.removeItem(i);
+        }
+
+        return this;
+    }
+};
+
+/**
+ * Data structure that holds element ids and a list of external events
+ * @static
+ * @class EventAssocData
+ * @type {Object}
+ */
+var EventAssocData = {
+    /**
+     * @property {number} assocIndex autoincrementing value used as index for element
+     */
+    assocIndex: 1,
+
+    /**
+     * @property {object} data data structure
+     */
+    data: {},
+
+    /**
+     * @property {string} property element property name in wich the element index will be saved
+     */
+    property: '__event_assoc_data__',
+
+    /**
+     * Checks if object is a valid
+     * @param {type} object
+     * @returns {Boolean}
+     */
+    accepts: function(object) {
+        return object.nodeType ?
+            object.nodeType === 1 || object.nodeType === 9 : true;
+    },
+
+    /**
+     * Gets or creates a key and returns it
+     * @param {object} object
+     * @returns {Number}
+     */
+    key: function(object) {
+        if (!EventAssocData.accepts(object)) {
+            return 0;
+        }
+
+        var key = object[EventAssocData.property];
+        if (!key) {
+            var descriptior = {};
+            key = EventAssocData.assocIndex;
+
+            try {
+                descriptior[EventAssocData.property] = {
+                    value: key
+                };
+
+                Object.defineProperties(object, descriptior);
+            }
+            catch (e) {
+                descriptior[EventAssocData.property] = key;
+
+                $.extend(object, descriptior);
+            }
+
+            EventAssocData.assocIndex++;
+        }
+
+        if (!EventAssocData.data[key]) {
+            EventAssocData.data[key] = new EventAssocList();
+        }
+
+        return key;
+    },
+
+    /**
+     * checks if an element exists in the data structure
+     * @param {object} object
+     * @returns {Boolean}
+     */
+    has: function(object) {
+        var key = object[EventAssocData.property];
+        if (key) {
+            return key in EventAssocData.data;
+        }
+
+        return false;
+    },
+
+    /**
+     * Get event associations corresponding to a given object
+     * @param {object} object
+     * @returns {object}
+     */
+    get: function(object) {
+        var key = EventAssocData.key(object),
+            data = EventAssocData.data[key];
+
+        return data;
+    },
+
+    /**
+     * Removes an item from the data struct
+     * @param {object} object
+     * @returns {undefined}
+     */
+    remove: function(object) {
+        if (!EventAssocData.has(object)) {
+            return;
+        }
+
+        var key = EventAssocData.key(object),
+            data = EventAssocData.data[key];
+
+        if (data) {
+            data.removeAll();
+        }
+
+        delete(EventAssocData.data[key]);
+    }
+};
+
+/**
+ * Class that gives fast access to the event association data structure
+ * @class EventAssoc
+ * @static
+ * @type {Object}
+ */
+var EventAssoc = {
+    /**
+     * Adds an item
+     * @param {type} owner
+     * @param {type} other
+     * @param {type} types
+     * @param {type} fn
+     * @param {type} selector
+     * @param {type} data
+     * @returns {undefined}
+     */
+    add: function(owner, other, types, fn) {
+        var list = EventAssocData.get(owner);
+        if (list) {
+            list.add(other, types, fn);
+        }
+    },
+
+    /**
+     * Removes an item
+     * @param {type} owner
+     * @param {type} other
+     * @param {type} types
+     * @param {type} fn
+     * @param {type} selector
+     * @returns {undefined}
+     */
+    remove: function(owner, other, types, fn) {
+        if (!EventAssocData.has(owner)) {
+            return;
+        }
+
+        var list = EventAssocData.get(owner);
+        if (list) {
+            list.remove(other, types, fn);
+        }
+    }
+};
+
+var returnFalse = function() {
+    return false;
+};
+
+/**
+ * Start listening to an external jquery object
+ * @param {jQuery} other
+ * @param {string|object} types
+ * @param {funcion} fn
+ * @returns {jQuery}
+ */
+$.fn.listenTo = function(other, types, fn) {
+    if (!other.on ||
+        !other.one ||
+        !other.off
+    ) {
+        other = $(other);
+    }
+
+    if (fn === false) {
+        fn = returnFalse;
+    }
+    else if (!fn) {
+        return this;
+    }
+
+    return this.each(function() {
+        EventAssoc.add(this, other, types, fn);
+    });
+};
+
+/**
+ * Start listening to an external jquery object (ONCE)
+ * @param {jQuery} other
+ * @param {string|object} types
+ * @param {function} fn
+ * @returns {jQuery}
+ */
+$.fn.listenToOnce = function(other, types, fn) {
+    var _this = this;
+    callback = function(event) {
+        _this.stopListening(event);
+        return fn.apply(this, arguments);
+    };
+
+    return this.listenTo(other, types, callback);
+};
+
+/**
+ * Stop listening to an external jquery object
+ * @param {jQuery} [other]
+ * @param {string|object} [types]
+ * @param {function} [fn]
+ * @returns {jQuery}
+ */
+$.fn.stopListening = function(other, types, fn) {
+    if (other.target && other.handleObj) {
+        return this.each(function() {
+            EventAssoc.remove(this, other.target,
+                other.handleObj.type, other.handleObj.handler);
+        });
+    }
+
+    if (other && (!other.on ||
+            !other.one ||
+            !other.off
+        )) {
+        other = $(other);
+    }
+
+    if (fn === false) {
+        fn = returnFalse;
+    }
+
+    return this.each(function() {
+        EventAssoc.remove(this, other, types, fn);
+    });
+};
+
+/**
+ * Get all the event associations connected to the current jQuery object
+ * @returns {null|Array}
+ */
+$.fn.externalListeners = function() {
+    var data = [];
+    this.each(function() {
+        if (EventAssocData.has(this)) {
+            data.push(EventAssocData.get(this));
+        }
+    });
+
+    if (data.length > 0) {
+        return data;
+    }
+
+    return null;
+};
+
+// override cleanData method to clear existing event associations
+// cleans all event associations
+// unbinds all the external events
+// this will be executed when you use remove() or empty()
+var cleanData = $.cleanData;
+
+$.cleanData = function(elems) {
+    var i = 0;
+    for (; i < elems.length; i++) {
+        if (elems[i] !== undefined) {
+
+            // emit a destroy event when an element is beening cleaned
+            // this event won't bubble up because we are using triggerHandler
+            $(elems[i]).triggerHandler('dom:destroy');
+
+            if (EventAssocData.has(elems[i])) {
+                EventAssocData.remove(elems[i]);
+            }
+        }
+    }
+    return cleanData(elems);
+};/**
+ * Application Model
+ * @class kage.Model
  */
 kage.Model = kage.Class({
-    extends: kage.EventBus, 
+    extends: kage.EventBus,
     _construct: function() {
-        kage.Model._super(this);
+        kage.ViewModel._super(this);
         
         /**
          * @property {Object} _data model data
+         * @private
          */
         this._data = {};
     }
 });
-
-/**
- * Creates a new model an initializes it's properties
- * @static
- *
- * @param {object} parameters object attributes
- * @return {Model} the newly created model
- */
-kage.Model.create = function(parameters, model_class) {
-    if(!model_class) {
-        model_class = kage.Model;
-    }
-
-    if(typeof(model_class) !== 'function') {
-        throw new Error('model_class has to be a class constructor');
-    }
-
-    var model = new model_class();
-    if(!$.isPlainObject(parameters)) {
-        throw new Error('Input should be a javascript object');
-    }
-
-    model.loadObject(parameters);
-
-    return model;
-};
-
-/**
- * Creates a collection of models with initialized properties
- * @static
- *
- * @param {Array} array array of parameteres
- * @return {Collection} a collection of models
- */
-kage.Model.createFromArray = function(array, model_class) {
-    if(!$.isArray(array)) {
-        throw new Error('Input should be an array');
-    }
-
-    var model_collection = new kage.util.Collection();
-
-    for (var i = 0; i < array.length; i++) {
-        model_collection.push(kage.Model.create(array[i], model_class));
-    }
-
-    return model_collection;
-};
-
-/**
- * Fetches a json object from a url and create a collection of models
- * @param {type} model_class
- * @param {type} opt
- */
-kage.Model.fetch = function(model_class, opt) {
-    if(typeof(model_class) === 'object') {
-        opt = model_class;
-        model_class = undefined;
-    }
-
-    var success = opt.success;
-
-    var load = function(response) {
-        var models = kage.Model.createFromArray(response, model_class);
-
-        if(typeof(success) === 'function') {
-            success(models, response);
-        }
-    };
-
-    opt.success = load;
-    $.ajax(opt);
-};
-
-/**
- * Feches a json object from a url and creates a model object
- * @param {type} model_class
- * @param {type} opt
- * @returns {undefined}
- */
-kage.Model.fetchOne = function(model_class, opt) {
-    if(typeof(model_class) === 'object') {
-        opt = model_class;
-        model_class = undefined;
-    }
-
-    var success = opt.success;
-
-    var load = function(response) {
-        var model = skage.Model.create(response, model_class);
-
-        if(typeof(success) === 'function') {
-            success(model, response);
-        }
-    };
-
-    opt.success = load;
-    $.ajax(opt);
-};
 
 /**
  * Set a model data property
@@ -1648,10 +1506,12 @@ kage.Model.fetchOne = function(model_class, opt) {
  */
 kage.Model.prototype.set = function(property, value) {
     if(typeof(property) === 'object') {
-        return this.loadObject(property);
+        this._data = property;
+        this.trigger('change:null', property);
+        this.trigger('change', {property: null, value: property});
     }
 
-    this._data[property] = value;
+    eval('this._data.' + property + ' = value;');
 
     this.trigger('change:' + property, value);
     this.trigger('change', {property: property, value: value});
@@ -1660,45 +1520,18 @@ kage.Model.prototype.set = function(property, value) {
 };
 
 /**
- * Get a model data property
+ * Get property's value
  * @param {string} property
  * @returns {mixed}
  */
 kage.Model.prototype.get = function(property) {
-    return this._data[property];
-};
-
-/**
- * Get all data attributes
- * @returns {object}
- */
-kage.Model.prototype.getAll = function() {
-    return this._data;
-};
-
-/**
- * Loads the moddel attributes from an object.
- * @param {object} object
- * @returns {kage.Model}
- */
-kage.Model.prototype.loadObject = function(object) {
-    if(!$.isPlainObject(object)) {
-        throw new TypeError("Javascript object is required");
+    if(!property) {
+        // retuns a reference to the data object
+        return this._data;
     }
-
-    for(var i in object) {
-        if(object.hasOwnProperty(i)) {
-            this._data[i] = object[i];
-            this.trigger('change:' + i);
-        }
-    }
-
-    this.trigger('change');
-
-    return this;
-};
-
-/**
+    
+    return eval('this._data.' + property);
+};/**
  * Provides functionality for handling mustache templates
  * @class View
  * @param {string} template_id the template filename without the extension
@@ -1885,10 +1718,6 @@ kage.View.prototype._loadResource = function(resource) {
     } else {
         throw new Error("Unable to find template in cache. "+
                 "Please check if this template exists in the application config.");
-        // disable synchronous loading
-//        var html = kage.util.Http.Get(resource);
-//        template = kage.View.Compile(html);
-//        kage.View.Cache.add(resource, template);
     }
 
     return template;
@@ -1994,16 +1823,16 @@ kage.View.init._prefetchFromArray = function(list, callbacks) {
  * @returns {undefined}
  */
 kage.View._fetchTemplate = function(resource, callback) {
-    new kage.util.Http(resource, true).
-        onSuccess(function(template) {
-            kage.View.init._compileAndCache(resource, template);
-            callback();
-        }).
-        onFail(function() {
-            console.log("Error fetching template: '" + resource + "'.");
-            callback();
-        }).
-        get();
+    kage.util.Http({
+        type: 'GET',
+        url: resource
+    }).success(function(template) {
+        kage.View.init._compileAndCache(resource, template);
+        callback();
+    }).fail(function() {
+        console.error("Error fetching template: '" + resource + "'.");
+        callback();
+    });
 };
 
 /**
@@ -2029,8 +1858,10 @@ kage.Section = kage.Class({
 
         var _this = this;
 
-        this.on('domInsert', function(event) {
-            if(typeof(_this.onDomInsert) === 'function') {
+        this._createDomEvents();
+
+        this.on('dom:insert', function(event) {
+            if (typeof(_this.onDomInsert) === 'function') {
                 _this.onDomInsert(event);
             }
             _this.off(event);
@@ -2060,193 +1891,6 @@ kage.Section.prototype.View = function(opt) {
     }
 
     return kage.View.make(opt);
-};
-
-/**
- * One way data binding between view and model
- * @param model {kage.Model}
- * @param bindAttr {string} (Optional)
- * @returns {undefined}
- */
-// TODO: test this method
-kage.Section.prototype.dataBindTo = function(model, bindAttr) {
-    if(!(model instanceof kage.Model)) {
-        throw new Error('Model has to be an instance of `kage.Model`.');
-    }
-
-    if(!bindAttr) {
-        bindAttr = 'model';
-    }
-
-    var modelAttr = model.getAll();
-    for(var i in modelAttr) {
-        this.on('change', '*[' + bindAttr + '="' + i + '"]', function() {
-            var tag = $(this);
-            model.getAll()[i] = tag.val();
-            model.trigger('save', {property: i, value: tag.val()});
-        });
-    }
-};
-
-/**
- * One way data binding between model and view
- * @param model {kage.Model}
- * @param bindAttr {string} (Optional)
- * @returns {undefined}
- */
-// TODO: test this method
-kage.Section.prototype.dataBindFrom = function(model, bindAttr) {
-    if(!(model instanceof kage.Model)) {
-        throw new Error('Model has to be an instance of `kage.Model`.');
-    }
-
-    if(!bindAttr) {
-        bindAttr = 'model';
-    }
-
-    var _this = this;
-    this.listenTo(model, 'change', function(data) {
-        if(typeof(data) !== 'object') {
-            return;
-        }
-
-        var tags = _this.find('*[' + bindAttr + '="' + data.property + '"]');
-
-        tags.each(function() {
-            var tag = $(this);
-
-            switch(this.tagName.toLowerCase()) {
-                case 'textarea':
-                case 'input':
-                    if(tag.attr('type').toLowerCase() === 'radio') {
-                        if(tag.val() === data.value) {
-                            tag.attr('checked', true);
-                        }
-                        break;
-                    } else if(tag.attr('type').toLowerCase() === 'checkbox') {
-                        tag.attr('checked', Boolean(data.value));
-                        break;
-                    }
-                case 'select':
-                    tag.val(data.value);
-                    break;
-                default:
-                    tag.html(data.value);
-                    break;
-            }
-        });
-    });
-};
-
-/**
- * Get the computed value of a css property
- * @param {string} property a css property
- * @return {mixed} the computed value of the property
- */
-kage.Section.prototype.computedStyle = function(property) {
-    return window
-            .getComputedStyle(this.get(0)).getPropertyValue(property);
-};
-
-/**
- * Get the computed width
- * @return {string} computed width
- */
-kage.Section.prototype.computedWidth = function() {
-    return parseFloat(this.computedStyle('width'));
-};
-
-/**
- * Get the computed height
- * @return {string}
- */
-kage.Section.prototype.computedHeight = function() {
-    return parseFloat(this.computedStyle('height'));
-};
-
-/**
- * Sets the sections width to its parents dimensions
- * @param {boolean} includeMargins
- */
-kage.Section.prototype.fillVertical = function(includeMargins) {
-    if (!includeMargins) {
-        includeMargins = true;
-    }
-    var parent = this.parent();
-    var parentHeight = parent.height();
-    var paddingAndBorders = this.outerHeight(includeMargins) - this.height();
-
-    this.height(parentHeight - paddingAndBorders);
-
-    return this;
-};
-
-/**
- * Sets the sections height to its parents dimensions
- * @param {boolean} includeMargins
- */
-kage.Section.prototype.fillHorizontal = function(includeMargins) {
-    if (!includeMargins) {
-        includeMargins = true;
-    }
-
-    var parent = this.parent();
-    var parentWidth = parent.width();
-    var paddingAndBorders = this.outerWidth(includeMargins) - this.width();
-
-    this.width(parentWidth - paddingAndBorders);
-
-    return this;
-};
-
-/**
- * Sets the sections width and height to its parents dimensions
- */
-kage.Section.prototype.fillBoth = function() {
-    this.fillHorizontal().
-            fillVertical();
-
-    return this;
-};
-
-/**
- * Centers the section verticaly
- */
-kage.Section.prototype.centerVertical = function() {
-    this.css('top', '50%');
-    this.css('margin-top', -(this.outerHeight() / 2));
-
-    if ((this.position().top - (this.outerHeight() / 2)) < 0) {
-        this.css('top', 0);
-        this.css('margin-top', 0);
-    }
-
-    return this;
-};
-
-/**
- * Centers the section horizontaly
- */
-kage.Section.prototype.centerHorizontal = function() {
-    this.css('left', '50%');
-    this.css('margin-left', -(this.outerWidth() / 2));
-
-    if ((this.position().left - (this.outerWidth() / 2)) < 0) {
-        this.css('left', 0);
-        this.css('margin-left', 0);
-    }
-
-    return this;
-};
-
-/**
- * Centers the section horizontaly an verticaly
- */
-kage.Section.prototype.centerBoth = function() {
-    this.centerHorizontal().
-            centerVertical();
-
-    return this;
 };
 
 return kage._init();

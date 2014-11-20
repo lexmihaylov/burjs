@@ -13,7 +13,7 @@ function(
         }
     });
     
-    $(name).prototype.on_dom_insert = function() {
+    $(name).prototype.onDomInsert = function() {
         // TODO: do something on dom insert
     };
     
