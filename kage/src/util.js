@@ -136,122 +136,67 @@ kage.util.AsyncTask.prototype.start = function() {
 /**
  * caretes an http request to a given url
  * @class Http
+ * @param {Object} options
+ * @returns {Object} promise
+ */
+kage.util.Http = function(options) {
+    return $.ajax(options);
+};
+
+/**
+ * executes a post http request
  * @param {string} url
- * @param {bool} async default is false
+ * @param {Object} request data
+ * @returns {Object} promise
  */
-kage.util.Http = kage.Class({
-    _construct: function(url, async, dataType) {
-        // by default the http requests are synchronious
-        if (!async) {
-            async = false;
-        }
-
-        // $.ajax settings object
-        this._ajaxOpt = {
-            url: url,
-            async: async,
-            dataType: 'html'
-        };
-        
-        if(dataType) {
-            this._ajaxOpt.dataType = dataType;
-        }
-    }
-});
+kage.util.Http.post(url, data) {
+    return kage.util.Http({
+        type: 'POST',
+        url: url,
+        data: data
+    });
+};
 
 /**
- * executes a GET http request
- * @static
- * 
+ * executes a get http request
  * @param {string} url
- * @param {object} data http params
+ * @param {Object} request data
+ * @returns {Object} promise
  */
-kage.util.Http.Get = function(url, data) {
-    var response = null;
-
-    new kage.util.Http(url, false)
-            .onSuccess(function(result) {
-                response = result;
-            })
-            .onFail(function() {
-                throw new Error('Failed fetching: ' + url);
-            })
-            .get(data);
-
-    return response;
+kage.util.Http.get(url, data) {
+    return kage.util.Http({
+        type: 'GET',
+        url: url,
+        data: data
+    });
 };
 
 /**
- * executes a POST http request
- * @static
- * 
+ * executes a put http request
  * @param {string} url
- * @param {object} data http params
+ * @param {Object} request data
+ * @returns {Object} promise
  */
-kage.util.Http.Post = function(url, data) {
-    var response = null;
-    new kage.util.Http(url, false)
-            .onSuccess(function(result) {
-                response = result;
-            })
-            .onFail(function() {
-                throw new Error('Failed fetching: ' + url);
-            })
-            .post(data);
-
-    return response;
+kage.util.Http.put = function(url, data) {
+    return kage.util.Http({
+        type: 'PUT',
+        url: url,
+        data: data
+    });
 };
 
 /**
- * Adds a callback for successful execution of the http reguest
- * 
- * @param {function} fn
+ * executes a delete http request
+ * @param {string} url
+ * @param {Object} request data
+ * @returns {Object} promise
  */
-kage.util.Http.prototype.onSuccess = function(fn) {
-    this._ajaxOpt.success = fn;
-    return this;
-};
-
-/**
- * Adds a callback for failed http execution
- * 
- * @param {function} fn
- */
-kage.util.Http.prototype.onFail = function(fn) {
-    this._ajaxOpt.error = fn;
-    return this;
-};
-
-/**
- * executes the http request
- * 
- * @param {string} type type of the http request (GET or POST)
- * @param {object} data http parameters
- */
-kage.util.Http.prototype.exec = function(type, data) {
-    this._ajaxOpt.type = type;
-    this._ajaxOpt.data = data;
-
-    $.ajax(this._ajaxOpt);
-    return this;
-};
-
-/**
- * Executes a GET http request
- * 
- * @param {object} data http parameters
- */
-kage.util.Http.prototype.get = function(data) {
-    return this.exec('GET', data);
-};
-
-/**
- * Executes a POST http request
- * 
- * @param {object} data http parameters
- */
-kage.util.Http.prototype.post = function(data) {
-    return this.exec('POST', data);
+kage.util.Http.delete = function(url, data) {
+    return kage.util.Http({
+        type: 'DELETE',
+        url: url,
+        data: data
+    });
 };
 
 /**

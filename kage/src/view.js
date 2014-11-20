@@ -185,10 +185,6 @@ kage.View.prototype._loadResource = function(resource) {
     } else {
         throw new Error("Unable to find template in cache. "+
                 "Please check if this template exists in the application config.");
-        // disable synchronous loading
-//        var html = kage.util.Http.Get(resource);
-//        template = kage.View.Compile(html);
-//        kage.View.Cache.add(resource, template);
     }
 
     return template;
@@ -294,16 +290,16 @@ kage.View.init._prefetchFromArray = function(list, callbacks) {
  * @returns {undefined}
  */
 kage.View._fetchTemplate = function(resource, callback) {
-    new kage.util.Http(resource, true).
-        onSuccess(function(template) {
-            kage.View.init._compileAndCache(resource, template);
-            callback();
-        }).
-        onFail(function() {
-            console.log("Error fetching template: '" + resource + "'.");
-            callback();
-        }).
-        get();
+    kage.util.Http({
+        type: 'GET',
+        url: resource
+    }).success(function(template) {
+        kage.View.init._compileAndCache(resource, template);
+        callback();
+    }).fail(function() {
+        console.error("Error fetching template: '" + resource + "'.");
+        callback();
+    });
 };
 
 /**

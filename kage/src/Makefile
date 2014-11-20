@@ -7,8 +7,6 @@ SOURCES = license.js \
         util.js \
         event_bus.js \
         antenna.js \
-        dom_insert_extension.js \
-        external_listener_extension.js \
         component.js \
         model.js \
         view.js \

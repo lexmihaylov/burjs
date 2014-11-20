@@ -38,25 +38,9 @@
     var onAfterInsert = function(item) {
         if (item.triggerHandler) {
             if(item.closest('body').length > 0) {
-                item.triggerHandler('domInsert');
+                item.triggerHandler('dom:insert');
                 item.find('*').each(function() {
-                    $(this).triggerHandler('domInsert');
-                });
-            }
-        }
-    };
-    
-    /**
-     * Triggers an event before the element has been inserted
-     * @param {type} item
-     * @returns {undefined}
-     */
-    var onBeforeInsert = function(item) {
-        if(item.triggerHandler) {
-            if(item.closest('body').length === 0) {
-                item.triggerHandler('beforeDomInsert');
-                item.find('*').each(function() {
-                    $(this).triggerHandler('beforeDomInsert');
+                    $(this).triggerHandler('dom:insert');
                 });
             }
         }
@@ -72,10 +56,6 @@
             var args = Array.prototype.splice.call(arguments,0),
                 result = undefined,
                 i = 0;
-        
-            for(i = 0; i < args.length; i++) {
-                onBeforeInsert(args[i]);
-            }
             
             result = parentMethods[method].apply(this, args);
             
