@@ -110,24 +110,6 @@ var kage = {
         } else {
             return null;
         }
-    },
-    
-    /**
-     * Asyncronously loads and compiles all app templates 
-     * defined in the application config
-     * @returns {promise}
-     */
-    startApp: function() {
-        var deffered = $.Deferred();
-        
-        kage.View.init({
-           progress: deffered.notify,
-           done: deffered.resolve,
-           views: kage.config('templates').views,
-           urls: kage.config('templates').urls
-        });
-        
-        return deffered.promise();
     }
 };
 
