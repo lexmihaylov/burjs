@@ -1,0 +1,15 @@
+{
+  "name": "kagejs",
+  "version": "0.1.0",
+  "main": "kage.js",
+  "ignore": [
+    "Makefile",
+    ".c9",
+    "src/*.*",
+    "tests/*.*",
+    "**/*.txt"
+  ],
+  "dependencies": {
+    "jquery": "latest"
+  }
+}
