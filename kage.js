@@ -462,7 +462,7 @@ kage.util.Http = function(options) {
  * @param {Object} request data
  * @returns {Object} promise
  */
-kage.util.Http.post(url, data) {
+kage.util.Http.post = function(url, data) {
     return kage.util.Http({
         type: 'POST',
         url: url,
@@ -476,7 +476,7 @@ kage.util.Http.post(url, data) {
  * @param {Object} request data
  * @returns {Object} promise
  */
-kage.util.Http.get(url, data) {
+kage.util.Http.get = function(url, data) {
     return kage.util.Http({
         type: 'GET',
         url: url,
