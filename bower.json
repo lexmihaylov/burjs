@@ -10,7 +10,7 @@
     "Makefile",
     ".c9",
     "src",
-    "tests/*.*",
+    "tests",
     "**/*.txt"
   ],
   "dependencies": {
