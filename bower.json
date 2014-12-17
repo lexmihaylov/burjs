@@ -9,7 +9,7 @@
   "ignore": [
     "Makefile",
     ".c9",
-    "src/*.*",
+    "src",
     "tests/*.*",
     "**/*.txt"
   ],
