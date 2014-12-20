@@ -104,6 +104,7 @@ kage.View.escapeHtml = function(html) {
 
 /**
  * Compiles a template to javascript code
+ * Note: this is an adaptation of underscore's template system
  * 
  * @static
  * @param {string} html The template code
