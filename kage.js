@@ -1541,7 +1541,7 @@ kage.View = kage.Class({
  * Creates an instance of View
  * 
  * @static
- * @param {String} template
+ * @param {String|Function} template template string or a compiled template function
  * @param {Object} context(optional)
  * @return {Component}
  */
@@ -1565,6 +1565,24 @@ kage.View.prototype.render = function(variables) {
     }
     
     return template.call(this._context, variables);
+};
+
+/**
+ * Returns compiled template for caching
+ * 
+ * @param {object} variables variables to pass to the template
+ * @return {String}
+ */
+kage.View.prototype.compile = function(variables) {
+    var template = null;
+    
+    if(typeof(this._template) === 'function') {
+        template = this._template;
+    } else {
+        template = kage.View.Compile(this._template);
+    }
+    
+    return template;
 };
 
 /**
