@@ -1,6 +1,6 @@
 
 /**
-* Project kage
+* Project bur
 * @version 0.1.0
 * @author Alexander Mihaylov (lex.mihaylov@gmail.com)
 * @license http://opensource.org/licenses/MIT MIT License (MIT)
@@ -35,19 +35,19 @@
                 typeof (root.$.fn) !== 'object' ||
                 !root.$.fn.jquery) {
 
-            throw new Error("kage.js dependency missing: jQuery");
+            throw new Error("bur.js dependency missing: jQuery");
         }
         
-        root.kage = factory(root.$);
+        root.bur = factory(root.$);
     }
 })(this, function($) {
 
 /**
  * A library for creating an MVC onepage web applications.
  * The library is built for use with jquery and depends on requirejs
- * @namespace kage
+ * @namespace bur
  */
-var kage = {
+var bur = {
     /**
      * @var {string} VERSION library version
      */
@@ -98,10 +98,10 @@ var kage = {
      * Setups the application paths
      */
     _setAppDir: function(appDir) {
-        kage._Config.appDir = appDir;
-        for (var i in kage._Config) {
+        bur._Config.appDir = appDir;
+        for (var i in bur._Config) {
             if (i !== 'appDir') {
-                kage._Config[i] = appDir + kage._Config[i];
+                bur._Config[i] = appDir + bur._Config[i];
             }
         }
     },
@@ -111,46 +111,46 @@ var kage = {
      * @return {Object}
      */
     _init: function() {
-        if(!kage._isInitialized) {
-            kage.window = $(window);
-            kage.dom = $('html');
-            kage.dom.body = $('body');
-            kage._isInitialized = true;
+        if(!bur._isInitialized) {
+            bur.window = $(window);
+            bur.dom = $('html');
+            bur.dom.body = $('body');
+            bur._isInitialized = true;
         }
         
-        return kage;
+        return bur;
     },
     
     /**
      * Gives access to the libraries configuration variable
      * @param {type} attr
      * @param {type} value
-     * @returns {kage|Object|kage._Config}
+     * @returns {bur|Object|bur._Config}
      */
     config: function(attr, value) {
         
         if($.isPlainObject(attr)) {
             if(attr.appDir) {
-                kage._setAppDir(attr.appDir);
+                bur._setAppDir(attr.appDir);
             }
             
-            kage._Config = $.extend(true, kage._Config, attr);
+            bur._Config = $.extend(true, bur._Config, attr);
             
-            return kage;
+            return bur;
         } else if(typeof(attr) === 'string'){
             if(!value) {
-                return kage._Config[attr];
+                return bur._Config[attr];
             } else {
                 if(attr === 'appDir') {
-                    kage._setAppDir(value);
+                    bur._setAppDir(value);
                 } else {
-                    kage._Config[attr] = value;
+                    bur._Config[attr] = value;
                 }
                 
-                return kage;
+                return bur;
             }
         } else if(!attr) {
-            return kage._Config;
+            return bur._Config;
         } else {
             return null;
         }
@@ -163,7 +163,7 @@ var kage = {
  * @param {Object} definition the class definition object
  * @return {function} the newly created class
  */
-kage.Class = function(definition) {
+bur.Class = function(definition) {
     // load class helper functions
     // define simple constructor
     var classDefinition = function() {};
@@ -180,7 +180,7 @@ kage.Class = function(definition) {
 
         // extend a class if it's set in the definition
         if (definition.extends) {
-            kage.Class._inherits(classDefinition, definition.extends);
+            bur.Class._inherits(classDefinition, definition.extends);
 
         }
 
@@ -189,10 +189,10 @@ kage.Class = function(definition) {
             if (definition.implements instanceof Array) {
                 var i;
                 for (i = 0; i < definition.implements.length; i++) {
-                    kage.Class._extendPrototypeOf(classDefinition, definition.implements[i]);
+                    bur.Class._extendPrototypeOf(classDefinition, definition.implements[i]);
                 }
             } else if (typeof definition.imlements === 'object') {
-                kage.Class._extendPrototypeOf(classDefinition, definition.implements);
+                bur.Class._extendPrototypeOf(classDefinition, definition.implements);
             } else {
                 throw new Error("error implementing object methods");
             }
@@ -200,7 +200,7 @@ kage.Class = function(definition) {
 
         // set the prototype object of the class
         if (definition.prototype) {
-            kage.Class._extendPrototypeOf(classDefinition, definition.prototype);
+            bur.Class._extendPrototypeOf(classDefinition, definition.prototype);
         }
 
         if (definition.static) {
@@ -281,7 +281,7 @@ kage.Class = function(definition) {
  * @private
  * @static
  */
-kage.Class._inherits = function(childClass, baseClass) {
+bur.Class._inherits = function(childClass, baseClass) {
     // inherit parent's methods
     var std_class = function() {
     };
@@ -303,7 +303,7 @@ kage.Class._inherits = function(childClass, baseClass) {
  * @private
  * @static
  */
-kage.Class._extendPrototypeOf = function(childClass, methods) {
+bur.Class._extendPrototypeOf = function(childClass, methods) {
     for (var i in methods) {
         childClass.prototype[i] = methods[i];
     }
@@ -315,7 +315,7 @@ kage.Class._extendPrototypeOf = function(childClass, methods) {
  * Holds utility classes and methods
  * @namespace util
  */
-kage.util = {};
+bur.util = {};
 
 
 /**
@@ -323,7 +323,7 @@ kage.util = {};
  * @class cookie
  * @static
  */
-kage.util.cookie = {};
+bur.util.cookie = {};
 
 /**
  * Create a cookie on the clients browser
@@ -336,7 +336,7 @@ kage.util.cookie = {};
  * opt.domain If domain is not set then the current domain
  * will be set to cookie
  */
-kage.util.cookie.set = function(name, value, opt) {
+bur.util.cookie.set = function(name, value, opt) {
     value = escape(value);
     if (!opt)
         opt = {};
@@ -365,7 +365,7 @@ kage.util.cookie.set = function(name, value, opt) {
  * 
  * @param {string} name
  */
-kage.util.cookie.get = function(name) {
+bur.util.cookie.get = function(name) {
     var expr = new RegExp(name + '=(.*?)(;|$)', 'g');
     var matches = expr.exec(document.cookie);
     if (!matches || !matches[1]) {
@@ -380,8 +380,8 @@ kage.util.cookie.get = function(name) {
  * @param {string} name
  * @return {mixed} the value of the cookie or null if the cookie does not exist
  */
-kage.util.cookie.destroy = function(name) {
-    kage.util.cookie.set(name, null, {expires: -1});
+bur.util.cookie.destroy = function(name) {
+    bur.util.cookie.set(name, null, {expires: -1});
 };
 
 
@@ -391,7 +391,7 @@ kage.util.cookie.destroy = function(name) {
  * @param {function} task the task that will be executed async
  * @param {int} timeout delay before task execution
  */
-kage.util.AsyncTask = kage.Class({
+bur.util.AsyncTask = bur.Class({
     _construct: function(task, timeout) {
         if (task && typeof task === 'function') {
             this._task = task;
@@ -410,7 +410,7 @@ kage.util.AsyncTask = kage.Class({
  * 
  * @param {function} fn callback
  */
-kage.util.AsyncTask.prototype.onStart = function(fn) {
+bur.util.AsyncTask.prototype.onStart = function(fn) {
     this._onStart = fn;
     return this;
 };
@@ -420,7 +420,7 @@ kage.util.AsyncTask.prototype.onStart = function(fn) {
  * 
  * @param {function} fn callback
  */
-kage.util.AsyncTask.prototype.onFinish = function(fn) {
+bur.util.AsyncTask.prototype.onFinish = function(fn) {
     this._onFinish = fn;
     return this;
 };
@@ -429,7 +429,7 @@ kage.util.AsyncTask.prototype.onFinish = function(fn) {
  * starts the task execution
  * 
  */
-kage.util.AsyncTask.prototype.start = function() {
+bur.util.AsyncTask.prototype.start = function() {
     var _this = this;
     this._taskID = window.setTimeout(function() {
         if (typeof _this._onStart === 'function') {
@@ -451,7 +451,7 @@ kage.util.AsyncTask.prototype.start = function() {
 /**
  * Kills a async task before it has been executed
  */
-kage.util.AsyncTask.prototype.kill = function() {
+bur.util.AsyncTask.prototype.kill = function() {
     if(this._taskID !== null) {
         window.clearTimeout(this._taskID);
     }
@@ -466,7 +466,7 @@ kage.util.AsyncTask.prototype.kill = function() {
  * @param {Object} options
  * @returns {Object} promise
  */
-kage.util.Http = function(options) {
+bur.util.Http = function(options) {
     return $.ajax(options);
 };
 
@@ -476,8 +476,8 @@ kage.util.Http = function(options) {
  * @param {Object} request data
  * @returns {Object} promise
  */
-kage.util.Http.post = function(url, data) {
-    return kage.util.Http({
+bur.util.Http.post = function(url, data) {
+    return bur.util.Http({
         type: 'POST',
         url: url,
         data: data
@@ -490,8 +490,8 @@ kage.util.Http.post = function(url, data) {
  * @param {Object} request data
  * @returns {Object} promise
  */
-kage.util.Http.get = function(url, data) {
-    return kage.util.Http({
+bur.util.Http.get = function(url, data) {
+    return bur.util.Http({
         type: 'GET',
         url: url,
         data: data
@@ -504,8 +504,8 @@ kage.util.Http.get = function(url, data) {
  * @param {Object} request data
  * @returns {Object} promise
  */
-kage.util.Http.put = function(url, data) {
-    return kage.util.Http({
+bur.util.Http.put = function(url, data) {
+    return bur.util.Http({
         type: 'PUT',
         url: url,
         data: data
@@ -518,8 +518,8 @@ kage.util.Http.put = function(url, data) {
  * @param {Object} request data
  * @returns {Object} promise
  */
-kage.util.Http.delete = function(url, data) {
-    return kage.util.Http({
+bur.util.Http.delete = function(url, data) {
+    return bur.util.Http({
         type: 'DELETE',
         url: url,
         data: data
@@ -531,10 +531,10 @@ kage.util.Http.delete = function(url, data) {
  * @class Collection
  * @param {mixed} args.. elements of the arrays
  */
-kage.util.Collection = kage.Class({
+bur.util.Collection = bur.Class({
     extends: Array,
     _construct: function() {
-        kage.util.Collection._super(this);
+        bur.util.Collection._super(this);
         var argv = this.splice.call(arguments, 0);
         for (var i = 0; i < argv.length; i++) {
             this.push(argv[i]);
@@ -547,7 +547,7 @@ kage.util.Collection = kage.Class({
  * 
  * @param {function} fn callback
  */
-kage.util.Collection.prototype.each = function(fn) {
+bur.util.Collection.prototype.each = function(fn) {
 
     for (var i = 0; i < this.length; i++) {
         var result = fn(this[i], i);
@@ -563,7 +563,7 @@ kage.util.Collection.prototype.each = function(fn) {
  * @param {type} index
  * @returns {Boolean}
  */
-kage.util.Collection.prototype.has = function(index) {
+bur.util.Collection.prototype.has = function(index) {
     return index in this;
 };
 
@@ -572,7 +572,7 @@ kage.util.Collection.prototype.has = function(index) {
  * @param {type} value
  * @returns {Boolean}
  */
-kage.util.Collection.prototype.contains = function(value) {
+bur.util.Collection.prototype.contains = function(value) {
     return (this.indexOf(value) !== -1);
 };
 
@@ -581,7 +581,7 @@ kage.util.Collection.prototype.contains = function(value) {
  * 
  * @param {int} index item index
  */
-kage.util.Collection.prototype.remove = function(index) {
+bur.util.Collection.prototype.remove = function(index) {
     this.splice(index, 1);
 };
 
@@ -590,7 +590,7 @@ kage.util.Collection.prototype.remove = function(index) {
  * 
  * @param {Array|Collection} array secondary array
  */
-kage.util.Collection.prototype.extend = function(array) {
+bur.util.Collection.prototype.extend = function(array) {
     if (array instanceof Array) {
         for (var i = 0; i < array.length; i++) {
             this.push(array[i]);
@@ -607,7 +607,7 @@ kage.util.Collection.prototype.extend = function(array) {
  * 
  * @return {string}
  */
-kage.util.Collection.prototype.toJson = function() {
+bur.util.Collection.prototype.toJson = function() {
     return JSON.stringify(this);
 };
 
@@ -616,7 +616,7 @@ kage.util.Collection.prototype.toJson = function() {
  * @class HashMap
  * @param {object} map an initial hash map
  */
-kage.util.HashMap = kage.Class({
+bur.util.HashMap = bur.Class({
     _construct: function(map) {
         this._map = {};
         if (map) {
@@ -638,7 +638,7 @@ kage.util.HashMap = kage.Class({
  * @param {string} key
  * @return {boolean} 
  */
-kage.util.HashMap.prototype.has = function(key) {
+bur.util.HashMap.prototype.has = function(key) {
     return key in this._map;
 };
 
@@ -647,7 +647,7 @@ kage.util.HashMap.prototype.has = function(key) {
  * 
  * @param {function} fn callback
  */
-kage.util.HashMap.prototype.each = function(fn) {
+bur.util.HashMap.prototype.each = function(fn) {
     for (var i in this._map) {
         if (this._map.hasOwnProperty(i)) {
             var result = fn(this._map[i], i);
@@ -667,7 +667,7 @@ kage.util.HashMap.prototype.each = function(fn) {
  * @param {string} key
  * @param {string} value 
  */
-kage.util.HashMap.prototype.add = function(key, value) {
+bur.util.HashMap.prototype.add = function(key, value) {
     this._map[key] = value;
     return this;
 };
@@ -677,7 +677,7 @@ kage.util.HashMap.prototype.add = function(key, value) {
  * @param {type} key
  * @returns {mixed}
  */
-kage.util.HashMap.prototype.get = function(key) {
+bur.util.HashMap.prototype.get = function(key) {
     return this._map[key];
 };
 
@@ -687,7 +687,7 @@ kage.util.HashMap.prototype.get = function(key) {
  * @param {mixed} val
  * @return {string}
  */
-kage.util.HashMap.prototype.keyOf = function(val) {
+bur.util.HashMap.prototype.keyOf = function(val) {
     var retKey = null;
     this.each(function(value, key) {
         if (value === val) {
@@ -705,7 +705,7 @@ kage.util.HashMap.prototype.keyOf = function(val) {
  * @param {type} value
  * @returns {Boolean}
  */
-kage.util.HashMap.prototype.contains = function(value) {
+bur.util.HashMap.prototype.contains = function(value) {
     return (this.keyOf(value) !== null);
 };
 
@@ -713,7 +713,7 @@ kage.util.HashMap.prototype.contains = function(value) {
  * Removes an element from the hash map
  * @param {string} key
  */
-kage.util.HashMap.prototype.remove = function(key) {
+bur.util.HashMap.prototype.remove = function(key) {
     delete(this._map[key]);
 
     return this;
@@ -724,7 +724,7 @@ kage.util.HashMap.prototype.remove = function(key) {
  * 
  * @param {object|HashMap} object
  */
-kage.util.HashMap.prototype.extend = function(object) {
+bur.util.HashMap.prototype.extend = function(object) {
     if ($.isPlainObject(object)) {
         for (var i in object) {
             if (object.hasOwnProperty(i)) {
@@ -742,7 +742,7 @@ kage.util.HashMap.prototype.extend = function(object) {
  * Returns the size of the hash map
  * @returns {Number}
  */
-kage.util.HashMap.prototype.size = function() {
+bur.util.HashMap.prototype.size = function() {
     var counter = 0;
     for(var i in this._map) {
         if(this._map.hasOwnProperty(i)) {
@@ -758,20 +758,20 @@ kage.util.HashMap.prototype.size = function() {
  * 
  * @return {string} 
  */
-kage.util.HashMap.prototype.toJson = function() {
+bur.util.HashMap.prototype.toJson = function() {
     return JSON.stringify(this._map);
 };
 
-kage.EventBus = kage.Class({
+bur.EventBus = bur.Class({
     _construct: function () {
         /**
          * @property {HashMap<String, Array>} _events holds the event callbacks
          */
-        this._events = new kage.util.HashMap();
+        this._events = new bur.util.HashMap();
     }
 });
 
-kage.EventBus.prototype._normalizeTypes = function (types) {
+bur.EventBus.prototype._normalizeTypes = function (types) {
     if (typeof (types) === 'string') {
         if (types.indexOf(',') === -1) {
             types = [types];
@@ -790,16 +790,16 @@ kage.EventBus.prototype._normalizeTypes = function (types) {
  * @param {Array|String} types the event'(s) name(s)
  * @param {function} callback the callback function
  * @param {boolean} one execute the handler once
- * @return {kage.EventBus}
+ * @return {bur.EventBus}
  */
-kage.EventBus.prototype.on = function (types, callback, /* INTENAL */ one) {
+bur.EventBus.prototype.on = function (types, callback, /* INTENAL */ one) {
 
     types = this._normalizeTypes(types);
 
     for (var i = 0; i < types.length; ++i) {
         var type = types[i];
         if (!this._events.has(type)) {
-            this._events.add(type, new kage.util.Collection);
+            this._events.add(type, new bur.util.Collection);
         }
         if (one === true) {
             var fn = callback;
@@ -822,9 +822,9 @@ kage.EventBus.prototype.on = function (types, callback, /* INTENAL */ one) {
  * Adds an event handler that will be executed once
  * @param {type} types
  * @param {type} callback
- * @return {kage.EventBus}
+ * @return {bur.EventBus}
  */
-kage.EventBus.prototype.one = function (types, callback) {
+bur.EventBus.prototype.one = function (types, callback) {
     return this.on(types, callback, true);
 };
 
@@ -833,9 +833,9 @@ kage.EventBus.prototype.one = function (types, callback) {
  * Unbind an event handler
  * @param {type} types handler type(s)
  * @param {type} callback handler callback
- * @return {kage.EventBus}
+ * @return {bur.EventBus}
  */
-kage.EventBus.prototype.off = function (types, callback) {
+bur.EventBus.prototype.off = function (types, callback) {
     types = this._normalizeTypes(types);
     for (var i = 0; i < types.length; ++i) {
         var type = types[i];
@@ -856,9 +856,9 @@ kage.EventBus.prototype.off = function (types, callback) {
  *
  * @param {string} type the event name
  * @patam {data} data object to be passed to the handler
- * @return {kage.EventBus}
+ * @return {bur.EventBus}
  */
-kage.EventBus.prototype.trigger = function (type, data) {
+bur.EventBus.prototype.trigger = function (type, data) {
     if (this._events.has(type)) {
         var _this = this;
         var event = {
@@ -880,21 +880,21 @@ kage.EventBus.prototype.trigger = function (type, data) {
  * An alias for trigger method
  * @param {type} type
  * @param {type} data
- * @returns {kage.EventBus}
+ * @returns {bur.EventBus}
  */
-kage.EventBus.prototype.triggerHandler = function (type, data) {
+bur.EventBus.prototype.triggerHandler = function (type, data) {
     return this.trigger(type, data);
 };/**
  * Creates a global event bus for communication between different components
- * @var {kage.EventBus}
- * @namespace kage
+ * @var {bur.EventBus}
+ * @namespace bur
  */
-kage.Antenna = new kage.EventBus();/**
+bur.Antenna = new bur.EventBus();/**
  * Provides functionality for creating UI components
  * @class Component
  * @param {string} tag tag type as a string (ex: '<div/>')
  */
-kage.Component = kage.Class({
+bur.Component = bur.Class({
     extends: $,
     _construct: function(object) {
         // set a default object
@@ -912,7 +912,7 @@ kage.Component = kage.Class({
  * @param {string} property a css property
  * @return {mixed} the computed value of the property
  */
-kage.Component.prototype.computedStyle = function(property) {
+bur.Component.prototype.computedStyle = function(property) {
     return window
         .getComputedStyle(this.get(0)).getPropertyValue(property);
 };
@@ -921,7 +921,7 @@ kage.Component.prototype.computedStyle = function(property) {
  * Get the computed width
  * @return {string} computed width
  */
-kage.Component.prototype.computedWidth = function() {
+bur.Component.prototype.computedWidth = function() {
     return parseFloat(this.computedStyle('width'));
 };
 
@@ -929,7 +929,7 @@ kage.Component.prototype.computedWidth = function() {
  * Get the computed height
  * @return {string}
  */
-kage.Component.prototype.computedHeight = function() {
+bur.Component.prototype.computedHeight = function() {
     return parseFloat(this.computedStyle('height'));
 };
 
@@ -1484,12 +1484,12 @@ kage.Component.prototype.computedHeight = function() {
     };
 })();/**
  * Application Model
- * @class kage.Model
+ * @class bur.Model
  */
-kage.Model = kage.Class({
-    extends: kage.EventBus,
+bur.Model = bur.Class({
+    extends: bur.EventBus,
     _construct: function() {
-        kage.ViewModel._super(this);
+        bur.ViewModel._super(this);
         
         /**
          * @property {Object} _data model data
@@ -1503,9 +1503,9 @@ kage.Model = kage.Class({
  * Set a model data property
  * @param {string} property property name
  * @param {mixed} value property value
- * @returns {kage.Model}
+ * @returns {bur.Model}
  */
-kage.Model.prototype.set = function(property, value) {
+bur.Model.prototype.set = function(property, value) {
     if(typeof(property) === 'object') {
         this._data = property;
         this.trigger('change:*', property);
@@ -1525,7 +1525,7 @@ kage.Model.prototype.set = function(property, value) {
  * @param {string} property
  * @returns {mixed}
  */
-kage.Model.prototype.get = function(property) {
+bur.Model.prototype.get = function(property) {
     if(!property) {
         // retuns a reference to the data object
         return this._data;
@@ -1539,7 +1539,7 @@ kage.Model.prototype.get = function(property) {
  * @param {object} context optional context parameter
  * 
  */
-kage.View = kage.Class({
+bur.View = bur.Class({
     _construct: function(template, context) {
         this._template = template;
         
@@ -1559,8 +1559,8 @@ kage.View = kage.Class({
  * @param {Object} context(optional)
  * @return {Component}
  */
-kage.View.make = function(template, context) {
-    return new kage.View(template, context);
+bur.View.make = function(template, context) {
+    return new bur.View(template, context);
 };
 
 /**
@@ -1569,13 +1569,13 @@ kage.View.make = function(template, context) {
  * @param {object} variables variables to pass to the template
  * @return {String}
  */
-kage.View.prototype.render = function(variables) {
+bur.View.prototype.render = function(variables) {
     var template = null;
     
     if(typeof(this._template) === 'function') {
         template = this._template;
     } else {
-        template = kage.View.Compile(this._template);
+        template = bur.View.Compile(this._template);
     }
     
     return template.call(this._context, variables);
@@ -1587,13 +1587,13 @@ kage.View.prototype.render = function(variables) {
  * @param {object} variables variables to pass to the template
  * @return {String}
  */
-kage.View.prototype.compile = function(variables) {
+bur.View.prototype.compile = function(variables) {
     var template = null;
     
     if(typeof(this._template) === 'function') {
         template = this._template;
     } else {
-        template = kage.View.Compile(this._template);
+        template = bur.View.Compile(this._template);
     }
     
     return template;
@@ -1603,7 +1603,7 @@ kage.View.prototype.compile = function(variables) {
  * Tmplate regular expression settings
  * @var {Object}
  */
-kage.View.settings = {
+bur.View.settings = {
     interpolate: /<%=([\s\S]+?)%>/g,
     escape: /<%-([\s\S]+?)%>/g,
     evaluate: /<%([\s\S]+?)%>/g
@@ -1613,7 +1613,7 @@ kage.View.settings = {
  * Template special chars escape map
  * @var {Object}
  */
-kage.View.escapes = {
+bur.View.escapes = {
     "'": "'",
     '\\': '\\',
     '\r': 'r',
@@ -1626,14 +1626,14 @@ kage.View.escapes = {
  * Template special char regualt expression
  * @var {RegExp}
  */
-kage.View.escaper = /\\|'|\r|\n|\u2028|\i2028/g;
+bur.View.escaper = /\\|'|\r|\n|\u2028|\i2028/g;
 
 
 /**
  * Html entities map used for escaping html
  * @var {Object}
  */
-kage.View.htmlEntities = {
+bur.View.htmlEntities = {
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
@@ -1648,9 +1648,9 @@ kage.View.htmlEntities = {
  * @return {String}
  * @static
  */
-kage.View.escapeHtml = function(html) {
+bur.View.escapeHtml = function(html) {
     return String(html).replace(/[&<>"'\/]/g, function (entity) {
-        return kage.View.htmlEntities[entity];
+        return bur.View.htmlEntities[entity];
     });
 };
 
@@ -1662,19 +1662,19 @@ kage.View.escapeHtml = function(html) {
  * @param {string} html The template code
  * @return {function} compiled template
  */
-kage.View.Compile = function(template) {
+bur.View.Compile = function(template) {
 
     var matcher = new RegExp([
-            (kage.View.settings.interpolate).source,
-            (kage.View.settings.escape).source,
-            (kage.View.settings.evaluate).source
+            (bur.View.settings.interpolate).source,
+            (bur.View.settings.escape).source,
+            (bur.View.settings.evaluate).source
         ].join('|') + '|$', 'g');
 
     var source = '',
         index = 0;
     template.replace(matcher, function(match, interpolate, escape, evaluate, offset) {
-        source += template.slice(index, offset).replace(kage.View.escaper, function(match) {
-            return '\\' +kage.View.escapes[match];
+        source += template.slice(index, offset).replace(bur.View.escaper, function(match) {
+            return '\\' +bur.View.escapes[match];
         });
 
         index = offset + match.length;
@@ -1682,7 +1682,7 @@ kage.View.Compile = function(template) {
         if(interpolate) {
             source += "'+((__v=" + interpolate + ")==null?'':__v)+'";
         } else if(escape) {
-            source += "'+((__v=" + escape + ")==null?'':kage.View.escapeHtml(__v))+'";
+            source += "'+((__v=" + escape + ")==null?'':bur.View.escapeHtml(__v))+'";
         } else if(evaluate) {
             source += "'; " + evaluate + " __s+='";
         }
@@ -1693,17 +1693,17 @@ kage.View.Compile = function(template) {
     var source = "var __v,__s=''; with(obj||{}){ __s+='" + source + "'; }; return __s;";
 
     try {
-        render = new Function('obj, kage', source);
+        render = new Function('obj, bur', source);
     } catch (e) {
         e.source = source;
         throw e;
     }
 
     return function(vars) {
-        return render.call(this, vars, kage);
+        return render.call(this, vars, bur);
     };
 };
 
-return kage._init();
+return bur._init();
 
 });

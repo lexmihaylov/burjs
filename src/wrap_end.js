@@ -1,3 +1,3 @@
-return kage._init();
+return bur._init();
 
 });

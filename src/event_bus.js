@@ -1,13 +1,13 @@
-kage.EventBus = kage.Class({
+bur.EventBus = bur.Class({
     _construct: function () {
         /**
          * @property {HashMap<String, Array>} _events holds the event callbacks
          */
-        this._events = new kage.util.HashMap();
+        this._events = new bur.util.HashMap();
     }
 });
 
-kage.EventBus.prototype._normalizeTypes = function (types) {
+bur.EventBus.prototype._normalizeTypes = function (types) {
     if (typeof (types) === 'string') {
         if (types.indexOf(',') === -1) {
             types = [types];
@@ -26,16 +26,16 @@ kage.EventBus.prototype._normalizeTypes = function (types) {
  * @param {Array|String} types the event'(s) name(s)
  * @param {function} callback the callback function
  * @param {boolean} one execute the handler once
- * @return {kage.EventBus}
+ * @return {bur.EventBus}
  */
-kage.EventBus.prototype.on = function (types, callback, /* INTENAL */ one) {
+bur.EventBus.prototype.on = function (types, callback, /* INTENAL */ one) {
 
     types = this._normalizeTypes(types);
 
     for (var i = 0; i < types.length; ++i) {
         var type = types[i];
         if (!this._events.has(type)) {
-            this._events.add(type, new kage.util.Collection);
+            this._events.add(type, new bur.util.Collection);
         }
         if (one === true) {
             var fn = callback;
@@ -58,9 +58,9 @@ kage.EventBus.prototype.on = function (types, callback, /* INTENAL */ one) {
  * Adds an event handler that will be executed once
  * @param {type} types
  * @param {type} callback
- * @return {kage.EventBus}
+ * @return {bur.EventBus}
  */
-kage.EventBus.prototype.one = function (types, callback) {
+bur.EventBus.prototype.one = function (types, callback) {
     return this.on(types, callback, true);
 };
 
@@ -69,9 +69,9 @@ kage.EventBus.prototype.one = function (types, callback) {
  * Unbind an event handler
  * @param {type} types handler type(s)
  * @param {type} callback handler callback
- * @return {kage.EventBus}
+ * @return {bur.EventBus}
  */
-kage.EventBus.prototype.off = function (types, callback) {
+bur.EventBus.prototype.off = function (types, callback) {
     types = this._normalizeTypes(types);
     for (var i = 0; i < types.length; ++i) {
         var type = types[i];
@@ -92,9 +92,9 @@ kage.EventBus.prototype.off = function (types, callback) {
  *
  * @param {string} type the event name
  * @patam {data} data object to be passed to the handler
- * @return {kage.EventBus}
+ * @return {bur.EventBus}
  */
-kage.EventBus.prototype.trigger = function (type, data) {
+bur.EventBus.prototype.trigger = function (type, data) {
     if (this._events.has(type)) {
         var _this = this;
         var event = {
@@ -116,8 +116,8 @@ kage.EventBus.prototype.trigger = function (type, data) {
  * An alias for trigger method
  * @param {type} type
  * @param {type} data
- * @returns {kage.EventBus}
+ * @returns {bur.EventBus}
  */
-kage.EventBus.prototype.triggerHandler = function (type, data) {
+bur.EventBus.prototype.triggerHandler = function (type, data) {
     return this.trigger(type, data);
 };

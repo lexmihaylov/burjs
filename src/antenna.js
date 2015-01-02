@@ -1,6 +1,6 @@
 /**
  * Creates a global event bus for communication between different components
- * @var {kage.EventBus}
- * @namespace kage
+ * @var {bur.EventBus}
+ * @namespace bur
  */
-kage.Antenna = new kage.EventBus();
+bur.Antenna = new bur.EventBus();

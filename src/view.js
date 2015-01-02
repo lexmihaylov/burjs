@@ -5,7 +5,7 @@
  * @param {object} context optional context parameter
  * 
  */
-kage.View = kage.Class({
+bur.View = bur.Class({
     _construct: function(template, context) {
         this._template = template;
         
@@ -25,8 +25,8 @@ kage.View = kage.Class({
  * @param {Object} context(optional)
  * @return {Component}
  */
-kage.View.make = function(template, context) {
-    return new kage.View(template, context);
+bur.View.make = function(template, context) {
+    return new bur.View(template, context);
 };
 
 /**
@@ -35,13 +35,13 @@ kage.View.make = function(template, context) {
  * @param {object} variables variables to pass to the template
  * @return {String}
  */
-kage.View.prototype.render = function(variables) {
+bur.View.prototype.render = function(variables) {
     var template = null;
     
     if(typeof(this._template) === 'function') {
         template = this._template;
     } else {
-        template = kage.View.Compile(this._template);
+        template = bur.View.Compile(this._template);
     }
     
     return template.call(this._context, variables);
@@ -53,13 +53,13 @@ kage.View.prototype.render = function(variables) {
  * @param {object} variables variables to pass to the template
  * @return {String}
  */
-kage.View.prototype.compile = function(variables) {
+bur.View.prototype.compile = function(variables) {
     var template = null;
     
     if(typeof(this._template) === 'function') {
         template = this._template;
     } else {
-        template = kage.View.Compile(this._template);
+        template = bur.View.Compile(this._template);
     }
     
     return template;
@@ -69,7 +69,7 @@ kage.View.prototype.compile = function(variables) {
  * Tmplate regular expression settings
  * @var {Object}
  */
-kage.View.settings = {
+bur.View.settings = {
     interpolate: /<%=([\s\S]+?)%>/g,
     escape: /<%-([\s\S]+?)%>/g,
     evaluate: /<%([\s\S]+?)%>/g
@@ -79,7 +79,7 @@ kage.View.settings = {
  * Template special chars escape map
  * @var {Object}
  */
-kage.View.escapes = {
+bur.View.escapes = {
     "'": "'",
     '\\': '\\',
     '\r': 'r',
@@ -92,14 +92,14 @@ kage.View.escapes = {
  * Template special char regualt expression
  * @var {RegExp}
  */
-kage.View.escaper = /\\|'|\r|\n|\u2028|\i2028/g;
+bur.View.escaper = /\\|'|\r|\n|\u2028|\i2028/g;
 
 
 /**
  * Html entities map used for escaping html
  * @var {Object}
  */
-kage.View.htmlEntities = {
+bur.View.htmlEntities = {
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
@@ -114,9 +114,9 @@ kage.View.htmlEntities = {
  * @return {String}
  * @static
  */
-kage.View.escapeHtml = function(html) {
+bur.View.escapeHtml = function(html) {
     return String(html).replace(/[&<>"'\/]/g, function (entity) {
-        return kage.View.htmlEntities[entity];
+        return bur.View.htmlEntities[entity];
     });
 };
 
@@ -128,19 +128,19 @@ kage.View.escapeHtml = function(html) {
  * @param {string} html The template code
  * @return {function} compiled template
  */
-kage.View.Compile = function(template) {
+bur.View.Compile = function(template) {
 
     var matcher = new RegExp([
-            (kage.View.settings.interpolate).source,
-            (kage.View.settings.escape).source,
-            (kage.View.settings.evaluate).source
+            (bur.View.settings.interpolate).source,
+            (bur.View.settings.escape).source,
+            (bur.View.settings.evaluate).source
         ].join('|') + '|$', 'g');
 
     var source = '',
         index = 0;
     template.replace(matcher, function(match, interpolate, escape, evaluate, offset) {
-        source += template.slice(index, offset).replace(kage.View.escaper, function(match) {
-            return '\\' +kage.View.escapes[match];
+        source += template.slice(index, offset).replace(bur.View.escaper, function(match) {
+            return '\\' +bur.View.escapes[match];
         });
 
         index = offset + match.length;
@@ -148,7 +148,7 @@ kage.View.Compile = function(template) {
         if(interpolate) {
             source += "'+((__v=" + interpolate + ")==null?'':__v)+'";
         } else if(escape) {
-            source += "'+((__v=" + escape + ")==null?'':kage.View.escapeHtml(__v))+'";
+            source += "'+((__v=" + escape + ")==null?'':bur.View.escapeHtml(__v))+'";
         } else if(evaluate) {
             source += "'; " + evaluate + " __s+='";
         }
@@ -159,14 +159,14 @@ kage.View.Compile = function(template) {
     var source = "var __v,__s=''; with(obj||{}){ __s+='" + source + "'; }; return __s;";
 
     try {
-        render = new Function('obj, kage', source);
+        render = new Function('obj, bur', source);
     } catch (e) {
         e.source = source;
         throw e;
     }
 
     return function(vars) {
-        return render.call(this, vars, kage);
+        return render.call(this, vars, bur);
     };
 };
 

@@ -1,9 +1,9 @@
 /**
  * A library for creating an MVC onepage web applications.
  * The library is built for use with jquery and depends on requirejs
- * @namespace kage
+ * @namespace bur
  */
-var kage = {
+var bur = {
     /**
      * @var {string} VERSION library version
      */
@@ -54,10 +54,10 @@ var kage = {
      * Setups the application paths
      */
     _setAppDir: function(appDir) {
-        kage._Config.appDir = appDir;
-        for (var i in kage._Config) {
+        bur._Config.appDir = appDir;
+        for (var i in bur._Config) {
             if (i !== 'appDir') {
-                kage._Config[i] = appDir + kage._Config[i];
+                bur._Config[i] = appDir + bur._Config[i];
             }
         }
     },
@@ -67,46 +67,46 @@ var kage = {
      * @return {Object}
      */
     _init: function() {
-        if(!kage._isInitialized) {
-            kage.window = $(window);
-            kage.dom = $('html');
-            kage.dom.body = $('body');
-            kage._isInitialized = true;
+        if(!bur._isInitialized) {
+            bur.window = $(window);
+            bur.dom = $('html');
+            bur.dom.body = $('body');
+            bur._isInitialized = true;
         }
         
-        return kage;
+        return bur;
     },
     
     /**
      * Gives access to the libraries configuration variable
      * @param {type} attr
      * @param {type} value
-     * @returns {kage|Object|kage._Config}
+     * @returns {bur|Object|bur._Config}
      */
     config: function(attr, value) {
         
         if($.isPlainObject(attr)) {
             if(attr.appDir) {
-                kage._setAppDir(attr.appDir);
+                bur._setAppDir(attr.appDir);
             }
             
-            kage._Config = $.extend(true, kage._Config, attr);
+            bur._Config = $.extend(true, bur._Config, attr);
             
-            return kage;
+            return bur;
         } else if(typeof(attr) === 'string'){
             if(!value) {
-                return kage._Config[attr];
+                return bur._Config[attr];
             } else {
                 if(attr === 'appDir') {
-                    kage._setAppDir(value);
+                    bur._setAppDir(value);
                 } else {
-                    kage._Config[attr] = value;
+                    bur._Config[attr] = value;
                 }
                 
-                return kage;
+                return bur;
             }
         } else if(!attr) {
-            return kage._Config;
+            return bur._Config;
         } else {
             return null;
         }

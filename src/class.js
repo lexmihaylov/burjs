@@ -4,7 +4,7 @@
  * @param {Object} definition the class definition object
  * @return {function} the newly created class
  */
-kage.Class = function(definition) {
+bur.Class = function(definition) {
     // load class helper functions
     // define simple constructor
     var classDefinition = function() {};
@@ -21,7 +21,7 @@ kage.Class = function(definition) {
 
         // extend a class if it's set in the definition
         if (definition.extends) {
-            kage.Class._inherits(classDefinition, definition.extends);
+            bur.Class._inherits(classDefinition, definition.extends);
 
         }
 
@@ -30,10 +30,10 @@ kage.Class = function(definition) {
             if (definition.implements instanceof Array) {
                 var i;
                 for (i = 0; i < definition.implements.length; i++) {
-                    kage.Class._extendPrototypeOf(classDefinition, definition.implements[i]);
+                    bur.Class._extendPrototypeOf(classDefinition, definition.implements[i]);
                 }
             } else if (typeof definition.imlements === 'object') {
-                kage.Class._extendPrototypeOf(classDefinition, definition.implements);
+                bur.Class._extendPrototypeOf(classDefinition, definition.implements);
             } else {
                 throw new Error("error implementing object methods");
             }
@@ -41,7 +41,7 @@ kage.Class = function(definition) {
 
         // set the prototype object of the class
         if (definition.prototype) {
-            kage.Class._extendPrototypeOf(classDefinition, definition.prototype);
+            bur.Class._extendPrototypeOf(classDefinition, definition.prototype);
         }
 
         if (definition.static) {
@@ -122,7 +122,7 @@ kage.Class = function(definition) {
  * @private
  * @static
  */
-kage.Class._inherits = function(childClass, baseClass) {
+bur.Class._inherits = function(childClass, baseClass) {
     // inherit parent's methods
     var std_class = function() {
     };
@@ -144,7 +144,7 @@ kage.Class._inherits = function(childClass, baseClass) {
  * @private
  * @static
  */
-kage.Class._extendPrototypeOf = function(childClass, methods) {
+bur.Class._extendPrototypeOf = function(childClass, methods) {
     for (var i in methods) {
         childClass.prototype[i] = methods[i];
     }

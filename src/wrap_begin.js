@@ -7,10 +7,10 @@
                 typeof (root.$.fn) !== 'object' ||
                 !root.$.fn.jquery) {
 
-            throw new Error("kage.js dependency missing: jQuery");
+            throw new Error("bur.js dependency missing: jQuery");
         }
         
-        root.kage = factory(root.$);
+        root.bur = factory(root.$);
     }
 })(this, function($) {
 

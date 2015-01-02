@@ -1,4 +1,4 @@
-BUILD_FILE = ../kage.js
+BUILD_FILE = ../bur.js
 
 SOURCES = license.js \
         wrap_begin.js \

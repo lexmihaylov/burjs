@@ -3,7 +3,7 @@
  * @class Component
  * @param {string} tag tag type as a string (ex: '<div/>')
  */
-kage.Component = kage.Class({
+bur.Component = bur.Class({
     extends: $,
     _construct: function(object) {
         // set a default object
@@ -21,7 +21,7 @@ kage.Component = kage.Class({
  * @param {string} property a css property
  * @return {mixed} the computed value of the property
  */
-kage.Component.prototype.computedStyle = function(property) {
+bur.Component.prototype.computedStyle = function(property) {
     return window
         .getComputedStyle(this.get(0)).getPropertyValue(property);
 };
@@ -30,7 +30,7 @@ kage.Component.prototype.computedStyle = function(property) {
  * Get the computed width
  * @return {string} computed width
  */
-kage.Component.prototype.computedWidth = function() {
+bur.Component.prototype.computedWidth = function() {
     return parseFloat(this.computedStyle('width'));
 };
 
@@ -38,7 +38,7 @@ kage.Component.prototype.computedWidth = function() {
  * Get the computed height
  * @return {string}
  */
-kage.Component.prototype.computedHeight = function() {
+bur.Component.prototype.computedHeight = function() {
     return parseFloat(this.computedStyle('height'));
 };
 

@@ -1,11 +1,11 @@
 /**
  * Application Model
- * @class kage.Model
+ * @class bur.Model
  */
-kage.Model = kage.Class({
-    extends: kage.EventBus,
+bur.Model = bur.Class({
+    extends: bur.EventBus,
     _construct: function() {
-        kage.ViewModel._super(this);
+        bur.ViewModel._super(this);
         
         /**
          * @property {Object} _data model data
@@ -19,9 +19,9 @@ kage.Model = kage.Class({
  * Set a model data property
  * @param {string} property property name
  * @param {mixed} value property value
- * @returns {kage.Model}
+ * @returns {bur.Model}
  */
-kage.Model.prototype.set = function(property, value) {
+bur.Model.prototype.set = function(property, value) {
     if(typeof(property) === 'object') {
         this._data = property;
         this.trigger('change:*', property);
@@ -41,7 +41,7 @@ kage.Model.prototype.set = function(property, value) {
  * @param {string} property
  * @returns {mixed}
  */
-kage.Model.prototype.get = function(property) {
+bur.Model.prototype.get = function(property) {
     if(!property) {
         // retuns a reference to the data object
         return this._data;
