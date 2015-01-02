@@ -395,6 +395,7 @@ kage.util.AsyncTask = kage.Class({
     _construct: function(task, timeout) {
         if (task && typeof task === 'function') {
             this._task = task;
+            this._taskID = null;
             this._timeout = timeout || 0;
             this._onStart = null;
             this._onFinish = null;
@@ -430,18 +431,31 @@ kage.util.AsyncTask.prototype.onFinish = function(fn) {
  */
 kage.util.AsyncTask.prototype.start = function() {
     var _this = this;
-    window.setTimeout(function() {
+    this._taskID = window.setTimeout(function() {
         if (typeof _this._onStart === 'function') {
             _this._onStart();
         }
 
         var data = _this._task();
-
+        
+        _this._taskID = null;
+        
         if (typeof _this._onFinish === 'function') {
             _this._onFinish(data);
         }
     }, this._timeout);
 
+    return this;
+};
+
+/**
+ * Kills a async task before it has been executed
+ */
+kage.util.AsyncTask.prototype.kill = function() {
+    if(this._taskID !== null) {
+        window.clearTimeout(this._taskID);
+    }
+    
     return this;
 };
 
