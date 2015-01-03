@@ -1,15 +1,10 @@
 Burjs
 =======
+The Burjs probject is ment to be used a mediator that can bind all your favorite libraries in a single object oriented
+MV* application. Burjs is build on top of jQuery, which enables developers to use a wide variaty of plugins. This library 
+implements a Component, Model and View classes that developers can use to build their MV* application structure.
 
-JavaScript library for building widget based applications that uses the MV* 
-approach. Burjs is built on top of jQuery and can use all of the plugins 
-developed for it. This library is ment to be used as mediator that can combine 
-different useful libraries in a nicely organized application structure. Burjs 
-provides tools for easy OO style development and a 'Component' class that extends the jQuery prototype.
-
-Installation
-============
-
+#Installation
 You can install it either by downloading it from GitHub as a zip or by using one of the methods listed bellow:
 ####Using git
     git clone https://github.com/lexmihaylov/burjs.git
@@ -19,3 +14,5 @@ You can install it either by downloading it from GitHub as a zip or by using one
 
 ####Using bower
     bower install https://github.com/lexmihaylov/burjs.git
+    
+#Usage
