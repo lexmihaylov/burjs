@@ -11,8 +11,8 @@ Installation
 ============
 
 You can install it either by downloading it from GitHub or using one of the methods listed bellow:
->####Using wget
-> `wget https://raw.githubusercontent.com/lexmihaylov/burjs/master/bur.js`
+####Using wget
+    wget https://raw.githubusercontent.com/lexmihaylov/burjs/master/bur.js
 
 ####Using bower
-> `bower install https://github.com/lexmihaylov/burjs.git`
+    bower install https://github.com/lexmihaylov/burjs.git
