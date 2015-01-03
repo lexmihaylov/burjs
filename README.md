@@ -10,7 +10,10 @@ provides tools for easy OO style development and a 'Component' class that extend
 Installation
 ============
 
-You can install it either by downloading it from GitHub or using one of the methods listed bellow:
+You can install it either by downloading it from GitHub as a zip or by using one of the methods listed bellow:
+####Using git
+    git clone https://github.com/lexmihaylov/burjs.git
+    
 ####Using wget
     wget https://raw.githubusercontent.com/lexmihaylov/burjs/master/bur.js
 
