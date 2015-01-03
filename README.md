@@ -55,7 +55,7 @@ myComponent.appendTo('body');
 __Rendering Views__
 
 _my-template.ejs_:
-```ejs
+```html
 <p>
     Hello, <%= name %>
 </p>
@@ -68,11 +68,46 @@ var MyComponent = bur.Class({
         MyComponent._super(this, '<input type="text" />');
         
         bur.Http.get('templates/my-template.ejs').success($.proxy(function(template) {
-            var view = bur.View.make('templates/my-template.ejs').render({
+            var view = bur.View.make(template).render({
                 name: 'World'
             });
             
             this.html(view);
+        }, this));
+    }
+});
+```
+__Using Models__
+
+You could use either the default model class or you could create your own.
+
+_my-template.ejs_:
+```html
+<p>
+    Hello, <%= model.get('name') %>
+</p>
+```
+_MyComponent.js_:
+```javascript
+var MyComponent = bur.Class({
+    extends: bur.Component,
+    _construct: function() {
+        MyComponent._super(this, '<input type="text" />');
+        this.model = new bur.Model();
+        this.model.set({
+            name: 'World'
+        });
+        
+        bur.Http.get('templates/my-template.ejs').success($.proxy(function(template) {
+            (var rerenderView = $.proxy(function() {
+                var view = bur.View.make(template).render({
+                    model: this.model
+                });
+                
+                this.html(view);
+            }, this))();
+            
+            this.model.on('change', renderedView);
         }, this));
     }
 });
