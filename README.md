@@ -5,6 +5,7 @@ MV* application. Burjs is build on top of jQuery, which enables developers to us
 
 ##Installation
 You can install it either by downloading it from GitHub as a zip or by using one of the methods listed bellow:
+
 __Using git__
 
     git clone https://github.com/lexmihaylov/burjs.git
