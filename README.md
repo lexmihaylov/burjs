@@ -126,4 +126,4 @@ var MyComponent = bur.Class({
 ```
 ##Documentation
 
-<center>__Comming Soon__</center>
+__Comming Soon__
