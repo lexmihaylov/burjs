@@ -5,15 +5,15 @@ MV* application. Burjs is build on top of jQuery, which enables developers to us
 
 ##Installation
 You can install it either by downloading it from GitHub as a zip or by using one of the methods listed bellow:
-####Using git
+__Using git__
 
     git clone https://github.com/lexmihaylov/burjs.git
     
-####Using wget
+__Using wget__
 
     wget https://raw.githubusercontent.com/lexmihaylov/burjs/master/bur.js
 
-####Using bower
+__Using bower__
 
     bower install https://github.com/lexmihaylov/burjs.git
     
@@ -65,7 +65,7 @@ _MyComponent.js_:
 var MyComponent = bur.Class({
     extends: bur.Component,
     _construct: function() {
-        MyComponent._super(this, '<input type="text" />');
+        MyComponent._super(this, '<div />');
         
         bur.Http.get('templates/my-template.ejs').success($.proxy(function(template) {
             var view = bur.View.make(template).render({
@@ -92,7 +92,7 @@ _MyComponent.js_:
 var MyComponent = bur.Class({
     extends: bur.Component,
     _construct: function() {
-        MyComponent._super(this, '<input type="text" />');
+        MyComponent._super(this, '<div />');
         this.model = new bur.Model();
         this.model.set({
             name: 'World'
