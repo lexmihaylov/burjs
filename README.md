@@ -124,6 +124,3 @@ var MyComponent = bur.Class({
     }
 });
 ```
-##Documentation
-
-__Comming Soon__
