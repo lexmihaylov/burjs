@@ -113,7 +113,9 @@ var MyComponent = bur.Class({
         });
         
         bur.util.Http.get('templates/my-template.ejs').success($.proxy(function(template) {
-            (var rerenderView = $.proxy(function() {
+            var rerenderView;
+            
+            (rerenderView = $.proxy(function() {
                 var view = bur.View.make(template).render({
                     model: this.model
                 });
