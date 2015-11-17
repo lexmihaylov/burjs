@@ -3,7 +3,7 @@
   "authors": [
     "Alexander Mihaylov <lex.mihaylov@gmail.com>"
   ],
-  "description": "JavaScript library for building widget based application that uses the MV* approach. Kage.js uses require.js to import its modules and is built for use with the jQuery library.",
+  "description": "JavaScript library for building widget based application that uses the MV* approach. Bur.js uses require.js to import its modules and is built for use with the jQuery library.",
   "version": "0.1.0",
   "license": "MIT",
   "main": "bur.js",

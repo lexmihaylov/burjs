@@ -81,7 +81,7 @@ var MyComponent = bur.Class({
     _construct: function() {
         MyComponent._super(this, '<div />');
         
-        bur.util.Http.get('templates/my-template.ejs').success($.proxy(function(template) {
+        $.get('templates/my-template.ejs').success($.proxy(function(template) {
             var view = bur.View.make(template).render({
                 name: 'World'
             });
@@ -112,7 +112,7 @@ var MyComponent = bur.Class({
             name: 'World'
         });
         
-        bur.util.Http.get('templates/my-template.ejs').success($.proxy(function(template) {
+        $.get('templates/my-template.ejs').done($.proxy(function(template) {
             var rerenderView;
             
             (rerenderView = $.proxy(function() {
