@@ -1,7 +1,7 @@
 
 /**
 * Project bur
-* @version 0.1.0
+* @version 1.3.0
 * @author Alexander Mihaylov (lex.mihaylov@gmail.com)
 * @license http://opensource.org/licenses/MIT MIT License (MIT)
 *
